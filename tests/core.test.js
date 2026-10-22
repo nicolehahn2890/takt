@@ -16,3 +16,15 @@ test('uid ist eindeutig und beginnt mit dem Praefix', function () {
   ok(a !== b, 'zwei uids gleich');
   ok(a.indexOf('w') === 0 && b.indexOf('w') === 0, 'Praefix fehlt');
 });
+
+test('silenceBounds schneidet Stille vorn und hinten ab', function () {
+  var sr = 100, d = [];
+  for (var i = 0; i < 200; i++) d.push(i >= 20 && i < 60 ? 0.5 : 0);
+  var b = Takt.silenceBounds(d, sr, 0.01, 0.03);
+  eq([b.start.toFixed(2), b.end.toFixed(2)], ['0.17', '0.63']);
+});
+
+test('silenceBounds bei reiner Stille liefert alles', function () {
+  var b = Takt.silenceBounds([0, 0, 0, 0], 2, 0.01, 0.03);
+  eq([b.start, b.end], [0, 2]);
+});
