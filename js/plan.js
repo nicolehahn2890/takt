@@ -55,6 +55,14 @@ window.Takt = window.Takt || {};
     return steps;
   };
 
+  /* Uebung nachschlagen; geloeschte eigene Uebung ergibt einen sicheren Ersatz */
+  T.exerciseFor = function (exId, exIndex, fallbackName) {
+    var e = exId && exIndex ? exIndex[exId] : null;
+    if (e) return e;
+    return { id: exId, name: fallbackName || 'Uebung', alias: [], beschreibung: '', hinweis: '', tags: [], beidseitig: false,
+      typ: 'zeit', atem: null, hilfsmittel: [], bild: null, icon: 'ganz', quelle: 'eigen' };
+  };
+
   T.totalSeconds = function (steps) {
     return (steps || []).reduce(function (sum, s) { return sum + s.duration; }, 0);
   };

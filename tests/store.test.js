@@ -57,3 +57,48 @@ test('loadRun verwirft Trainings ohne savedAt, wenn ein Alter verlangt ist', fun
   s.setItem('takt_run_v1', JSON.stringify({ a: 1 }));
   eq(Takt.store.loadRun(s, { maxAgeMs: 1800000, now: 10 }), null);
 });
+
+test('load alter Daten ohne notes ergaenzt leeres Objekt', function () {
+  var s = FakeStorage();
+  s.setItem('takt_v1', JSON.stringify({ settings: {} }));
+  eq(Takt.store.load(s).notes, {});
+});
+
+test('normalizeUrl ergaenzt https und lehnt Unsinn ab', function () {
+  var n = Takt.store.normalizeUrl;
+  eq(n('youtu.be/x'), 'https://youtu.be/x');
+  eq(n('  https://a.b/c '), 'https://a.b/c');
+  eq(n('http://x.de/v?t=30'), 'http://x.de/v?t=30');
+  eq(n('javascript:alert(1)'), null);
+  eq(n('ftp://x.de'), null);
+  eq(n(''), null);
+  eq(n('kein link'), null);
+  eq(n(null), null);
+});
+
+test('validateOwn verlangt einen Namen', function () {
+  var r = Takt.store.validateOwn({});
+  eq(r.ok, false);
+  ok(r.errors.some(function (e) { return e.field === 'name'; }), 'Fehler am Namen');
+});
+
+test('validateOwn begrenzt den Namen auf 60 Zeichen', function () {
+  eq(Takt.store.validateOwn({ name: new Array(62).join('x') }).ok, false);
+});
+
+test('validateOwn lehnt unbekannte Tags und kaputte Links ab', function () {
+  var r = Takt.store.validateOwn({ name: 'Test', tags: ['quatsch'], videoUrl: 'javascript:x' });
+  eq(r.errors.map(function (e) { return e.field; }).sort(), ['tags', 'videoUrl']);
+});
+
+test('validateOwn baut eine eigene Uebung', function () {
+  var r = Takt.store.validateOwn({ name: '  Mein Ding ', beschreibung: 'Langsam', tags: ['core'], beidseitig: true, videoUrl: 'youtu.be/x' });
+  eq(r.ok, true);
+  var e = r.exercise;
+  ok(e.id.indexOf('own-') === 0, 'id');
+  eq([e.name, e.quelle, e.typ, e.beidseitig, e.videoUrl, e.tags], ['Mein Ding', 'eigen', 'zeit', true, 'https://youtu.be/x', ['core']]);
+});
+
+test('validateOwn behaelt die Id beim Bearbeiten', function () {
+  eq(Takt.store.validateOwn({ id: 'own-abc', name: 'Neu' }).exercise.id, 'own-abc');
+});

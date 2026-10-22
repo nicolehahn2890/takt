@@ -76,3 +76,10 @@ test('workIndex zaehlt nur Uebungen', function () {
   var s = Takt.buildSteps(testWorkout(), exIdx(), { prepSeconds: 5 });
   eq(s.slice(0, 4).map(function (x) { return x.workIndex; }), [null, 0, null, 1]);
 });
+
+test('exerciseFor liefert die Uebung oder einen sicheren Ersatz', function () {
+  var idx = Takt.indexExercises(Takt.EXERCISES);
+  eq(Takt.exerciseFor('plank', idx, 'x').name, 'Plank');
+  var e = Takt.exerciseFor('own-geloescht', idx, 'Alter Name');
+  eq([e.id, e.name, e.typ, e.beidseitig, e.tags], ['own-geloescht', 'Alter Name', 'zeit', false, []]);
+});
