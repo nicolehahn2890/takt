@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1a1418">
+<title>Takt · iPhone-Test 2</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a1418;--bg2:#2e1a28;--card:#241b21;--line:rgba(255,255,255,.09);--pink:#C8729A;--lila:#B88CC0;--text:#f6edf1;--muted:#a8949f;--ok:#7bc47a;--warn:#e8b860;--bad:#d86868}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;font-size:16px;line-height:1.45;padding:0 0 calc(40px + env(safe-area-inset-bottom))}
+header{background:linear-gradient(160deg,var(--bg2),var(--bg));padding:calc(22px + env(safe-area-inset-top)) 18px 18px}
+h1{font-size:24px;font-weight:700}
+header p{color:var(--muted);font-size:14px;margin-top:8px}
+header ol{color:var(--muted);font-size:14px;margin:8px 0 0 20px}
+main{max-width:560px;margin:0 auto;padding:0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px 16px;margin-top:14px}
+h2{font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--pink);color:var(--bg);font-size:14px;flex:none}
+.card>p,.hint{color:var(--muted);font-size:14px;margin-bottom:10px}
+.hint{font-size:13px}
+b{color:var(--text)}
+label{display:block;font-size:14px;color:var(--muted);margin:8px 0}
+select,textarea{width:100%;margin-top:6px;background:#1a1418;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:16px}
+textarea{min-height:70px;resize:vertical}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+button{border:0;border-radius:14px;background:rgba(255,255,255,.09);color:var(--text);font:inherit;font-weight:600;font-size:15px;padding:13px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button.main{background:var(--pink);color:var(--bg)}
+button:active{transform:scale(.97)}
+.q{margin:14px 0 4px}
+.q>span{display:block;font-size:15px;font-weight:600;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font-size:14px;font-weight:500;padding:9px 12px;border:1px solid var(--line);background:transparent}
+.chips button.on{background:var(--lila);color:var(--bg);border-color:var(--lila);font-weight:700}
+.voice{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.voice:first-child{border-top:0}
+.voice .vn{flex:1;min-width:0}
+.voice .vn b{display:block;font-size:15px}
+.voice .vn small{display:block;color:var(--muted);font-size:11px;word-break:break-all}
+.voice.on .vn b{color:var(--lila)}
+.voice button{padding:10px 12px;font-size:14px}
+.trow{border-top:1px solid var(--line);padding:12px 0}
+.trow:first-of-type{border-top:0}
+.trow .th{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.trow .th b{font-size:15px}
+.trow small{display:block;color:var(--muted);font-size:12px}
+.trow select{padding:10px;font-size:14px}
+.status{font-size:14px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05);margin:8px 0}
+.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}.status.warn{color:var(--warn)}
+.big{font-size:64px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-2px;margin:6px 0}
+.meas{font-size:13px;color:var(--muted)}
+.meas div{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px dashed var(--line)}
+.meas div span:last-child{color:var(--text)}
+ol.steps{margin:0 0 10px 20px;color:var(--muted);font-size:14px}
+ol.steps li{margin:3px 0}
+#out{min-height:160px;font-size:12px;font-family:ui-monospace,monospace;display:none}
+#log{font-size:11px;color:var(--muted);font-family:ui-monospace,monospace;white-space:pre-wrap;max-height:160px;overflow:auto;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Takt · iPhone-Test 2</h1>
+  <p>Etwa 5 Minuten. Am Ende wieder auf <b>Ergebnis kopieren</b> tippen und den Text im Chat einfügen.</p>
+  <ol>
+    <li>Schalter an der Seite auf <b>Klingeln</b>.</li>
+    <li>Spotify starten und Musik laufen lassen, dann zurück zu Safari.</li>
+    <li>Wenn Spotify stoppt: von oben rechts nach unten wischen (Kontrollzentrum), dort auf Play tippen, wieder hochwischen. Das geht schneller als in die App zu wechseln.</li>
+  </ol>
+</header>
+
+<main>
+<section class="card" data-title="1 Stimmen">
+  <h2><span class="num">1</span> Stimmen vergleichen</h2>
+  <p>Hier siehst du jede deutsche Stimme einzeln, auch beide „Anna“. Tippe bei jeder auf „Anhören“ und dann auf den Namen der Stimme, die besser klingt. Diese Stimme wird in Test 2 benutzt.</p>
+  <div id="voices"></div>
+  <div class="q" data-key="v_better" data-label="Bessere Stimme" data-opts="Die erste|Die zweite|Klingen gleich"><span>Welche klingt besser?</span></div>
+  <p class="hint">Optional: Unter Einstellungen, Bedienungshilfen, Gesprochene Inhalte, Stimmen, Deutsch kannst du bessere Stimmen laden, zum Beispiel „Anna (Erweitert)“. Danach diese Seite neu laden und schauen, ob sie hier auftaucht.</p>
+  <div class="q" data-key="v_download" data-label="Geladene Stimme erscheint in der Liste" data-opts="Ja|Nein|Nicht probiert"><span>Ist eine neu geladene Stimme hier aufgetaucht?</span></div>
+</section>
+
+<section class="card" data-title="2 Browser-Stimme und Spotify">
+  <h2><span class="num">2</span> Browser-Stimme und Spotify</h2>
+  <p>Spotify läuft. Tippe in jeder Zeile auf „Ansage“ und wähle aus, was mit der Musik passiert. Vor jeder Zeile muss Spotify wieder laufen.</p>
+  <div id="speechRows"></div>
+</section>
+
+<section class="card" data-title="3 Ansage als Datei und Spotify">
+  <h2><span class="num">3</span> Ansage als Datei und Spotify</h2>
+  <p>Zum Vergleich: dieselbe Ansage, aber als fertige Datei abgespielt, so wie die Töne. Die Stimme ist eine andere, darauf kommt es hier nicht an. Wichtig ist nur, was mit Spotify passiert.</p>
+  <div class="status" id="fileStatus">Datei wird geladen …</div>
+  <div id="fileRows"></div>
+</section>
+
+<section class="card" data-title="4 App-Wechsel">
+  <h2><span class="num">4</span> App-Wechsel</h2>
+  <ol class="steps">
+    <li>Tippe auf „Start“. Es läuft 2 Minuten, mit einem Ton alle 10 Sekunden, ohne Sprache.</li>
+    <li>Wisch vom unteren Rand nach oben, um zum Homescreen zu kommen.</li>
+    <li>Öffne die <b>Spotify-App</b>, nicht das Kontrollzentrum.</li>
+    <li>Bleib dort und zähl langsam bis 30.</li>
+    <li>Geh zurück zu Safari, zum Beispiel über den App-Umschalter.</li>
+  </ol>
+  <div class="big" id="tTime">2:00</div>
+  <div class="row"><button class="main" id="btnTStart">Start</button><button id="btnTStop">Stopp</button></div>
+  <div class="meas" id="tMeas"></div>
+  <div class="q" data-key="a_heard" data-label="Töne gehört, während Spotify-App vorne war" data-opts="Ja|Nein|Weiß nicht"><span>Hast du Töne gehört, während die Spotify-App vorne war?</span></div>
+  <div class="q" data-key="a_time" data-label="Timer nach Rückkehr" data-opts="Zeit stimmte|Stand still|Fing neu an"><span>Was hat der Timer gezeigt, als du zurückkamst?</span></div>
+</section>
+
+<section class="card" data-title="Notizen">
+  <h2>Sonst noch etwas?</h2>
+  <label>Notizen<textarea data-key="note" data-label="Notizen" placeholder="Was ist dir aufgefallen?"></textarea></label>
+</section>
+
+<section class="card">
+  <h2>Ergebnis</h2>
+  <div class="row"><button class="main" id="btnCopy">Ergebnis kopieren</button><button id="btnReset">Alles zurücksetzen</button></div>
+  <div class="status" id="copyStatus" style="display:none"></div>
+  <textarea id="out" readonly></textarea>
+  <div id="log"></div>
+</section>
+</main>
+
+<script>
+(function(){
+'use strict';
+var KEY='takt_spike2_v1', TKEY='takt_spike2_timer';
+var TEXT='Plank. Vierzig Sekunden. Los gehts. Als Nächstes: Seitstütz links.';
+var OUTCOMES=['','läuft normal weiter','wird leiser, dann wieder normal','wird leiser und bleibt leise','pausiert, läuft von selbst weiter','stoppt, ich muss neu starten','Ansage nicht gehört'];
+var SPEECH_MODES=[['auto','A · Automatisch','Standard von Safari'],['ambient','B · Mischen','soll sich mit Musik mischen'],['transient','C · Kurz-Hinweis','soll Musik kurz leiser machen'],['transient-solo','D · Kurz-Solo','darf Musik kurz anhalten']];
+var FILE_MODES=[['auto','A · Automatisch','Standard von Safari'],['ambient','B · Mischen','soll sich mit Musik mischen'],['transient','C · Kurz-Hinweis','soll Musik kurz leiser machen']];
+var $=function(id){return document.getElementById(id)};
+var hasSession=('audioSession' in navigator);
+var S=load();
+var voices=[];
+
+function load(){try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&s.answers)return s}catch(e){}return {answers:{},auto:{},log:[],voiceURI:''}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function log(msg){var t=new Date().toLocaleTimeString('de-DE');S.log.push(t+'  '+msg);if(S.log.length>80)S.log.shift();save();$('log').textContent=S.log.slice(-25).join('\n')}
+window.addEventListener('error',function(e){log('Fehler: '+e.message)});
+function fmt(s){return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2)}
+function iosVersion(){var m=navigator.userAgent.match(/OS (\d+)_(\d+)(?:_(\d+))?/);return m?m[1]+'.'+m[2]+(m[3]?'.'+m[3]:''):'unbekannt'}
+
+/* ---------- Audio-Modus ---------- */
+var ctx=null;
+function setMode(m){
+  if(hasSession){try{navigator.audioSession.type=m;log('Audio-Modus: '+m+' (ist: '+navigator.audioSession.type+')')}catch(e){log('Audio-Modus Fehler: '+e.message)}}
+  if(ctx){try{ctx.close()}catch(e){}ctx=null}
+}
+function ac(){
+  if(!ctx){var C=window.AudioContext||window.webkitAudioContext;if(!C){log('Kein Web Audio');return null}ctx=new C()}
+  if(ctx.state!=='running')ctx.resume();
+  return ctx;
+}
+function beep(freq,dur){
+  var c=ac();if(!c)return;var t=c.currentTime+0.02;
+  var o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=freq;
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.7,t+0.015);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+0.05);
+}
+
+/* ---------- Stimmen ---------- */
+function loadVoices(){
+  if(!('speechSynthesis' in window))return;
+  var de=(speechSynthesis.getVoices()||[]).filter(function(v){return /^de/i.test(v.lang)});
+  if(de.length===voices.length&&$('voices').children.length)return;
+  voices=de;
+  var box=$('voices');box.innerHTML='';
+  if(!voices.length){box.textContent='Keine deutsche Stimme gefunden.';return}
+  voices.forEach(function(v,i){
+    var row=document.createElement('div');row.className='voice';
+    var n=document.createElement('div');n.className='vn';
+    var b=document.createElement('b');b.textContent=(i+1)+'. '+v.name;
+    var sm=document.createElement('small');sm.textContent=v.voiceURI+(v.localService?' · lokal':' · online')+(v.default?' · Standard':'');
+    n.appendChild(b);n.appendChild(sm);
+    var listen=document.createElement('button');listen.textContent='Anhören';
+    listen.addEventListener('click',function(e){e.stopPropagation();speakWith(v,TEXT)});
+    var pick=document.createElement('button');pick.textContent='Wählen';
+    pick.addEventListener('click',function(e){e.stopPropagation();S.voiceURI=v.voiceURI;save();markVoice();log('Stimme gewählt: '+(i+1)+'. '+v.name+' '+v.voiceURI)});
+    row.appendChild(n);row.appendChild(listen);row.appendChild(pick);row.setAttribute('data-uri',v.voiceURI);
+    box.appendChild(row);
+  });
+  if(!S.voiceURI||!voices.some(function(v){return v.voiceURI===S.voiceURI})){S.voiceURI=voices[0].voiceURI;save()}
+  markVoice();
+}
+function markVoice(){Array.prototype.forEach.call(document.querySelectorAll('.voice'),function(r){r.classList.toggle('on',r.getAttribute('data-uri')===S.voiceURI)})}
+function currentVoice(){return voices.filter(function(v){return v.voiceURI===S.voiceURI})[0]||null}
+function speakWith(v,text){
+  if(!('speechSynthesis' in window)){log('Keine Sprachausgabe');return}
+  if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(text);u.lang='de-DE';if(v)u.voice=v;
+  u.onstart=function(){log('Ansage startet')};
+  u.onend=function(){log('Ansage fertig')};
+  u.onerror=function(e){log('Ansage-Fehler: '+(e.error||'unbekannt'))};
+  speechSynthesis.speak(u);
+  log('Ansage ['+(v?v.voiceURI:'Standard')+']');
+}
+
+/* ---------- Datei-Ansage ---------- */
+var fileData=null;
+fetch('ansage.wav').then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.arrayBuffer()})
+  .then(function(buf){fileData=buf;$('fileStatus').textContent='Datei bereit ('+Math.round(buf.byteLength/1024)+' KB).';$('fileStatus').className='status ok'})
+  .catch(function(e){$('fileStatus').textContent='Datei konnte nicht geladen werden: '+e.message;$('fileStatus').className='status bad';log('Datei-Fehler: '+e.message)});
+function playFile(){
+  if(!fileData){log('Datei noch nicht geladen');return}
+  var c=ac();if(!c)return;
+  var copy=fileData.slice(0);
+  c.decodeAudioData(copy,function(buffer){
+    var src=c.createBufferSource();src.buffer=buffer;src.connect(c.destination);
+    src.onended=function(){log('Datei-Ansage fertig')};
+    src.start(c.currentTime+0.05);log('Datei-Ansage startet ('+Math.round(buffer.duration*10)/10+' s)');
+  },function(err){log('Datei dekodieren fehlgeschlagen: '+(err&&err.message||err))});
+}
+
+/* ---------- Testzeilen ---------- */
+function buildRows(boxId,modes,prefix,label,action){
+  var box=$(boxId);
+  modes.forEach(function(m){
+    var row=document.createElement('div');row.className='trow';
+    var th=document.createElement('div');th.className='th';
+    var info=document.createElement('div');
+    var b=document.createElement('b');b.textContent=m[1];var sm=document.createElement('small');sm.textContent=m[2];
+    info.appendChild(b);info.appendChild(sm);
+    var btn=document.createElement('button');btn.className='main';btn.textContent=label;
+    btn.addEventListener('click',function(){setMode(m[0]);action()});
+    th.appendChild(info);th.appendChild(btn);
+    var sel=document.createElement('select');
+    sel.setAttribute('data-key',prefix+m[0]);sel.setAttribute('data-label',label+', Modus '+m[1]);
+    OUTCOMES.forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t||'Was passierte mit Spotify?';sel.appendChild(o)});
+    row.appendChild(th);row.appendChild(sel);
+    if(!hasSession&&m[0]!=='auto')row.style.opacity='.4';
+    box.appendChild(row);
+  });
+}
+
+/* ---------- App-Wechsel ---------- */
+var T=null,lastTick=0,lastSec=null,hiddenAt=0;
+function tSave(){try{localStorage.setItem(TKEY,JSON.stringify(T))}catch(e){}}
+function remaining(){return T?Math.max(0,Math.ceil((T.start+T.dur*1000-Date.now())/1000)):0}
+function tStart(){
+  setMode('ambient');ac();
+  T={start:Date.now(),dur:120,beepsHidden:0,maxGap:0,hiddenMs:0,hiddenCount:0,reloaded:false,done:false,stoppedAt:null};
+  lastTick=0;lastSec=null;tSave();beep(1320,.3);log('App-Wechsel-Test gestartet');
+}
+function tStop(){if(T&&!T.done){T.stoppedAt=remaining();T.done=true;tSave();log('Gestoppt bei '+fmt(T.stoppedAt))}render()}
+function tick(){
+  if(!T||T.done){render();return}
+  var now=Date.now();
+  if(lastTick){var gap=now-lastTick;if(gap>T.maxGap)T.maxGap=gap}
+  lastTick=now;
+  var rem=remaining();if(lastSec===null)lastSec=rem;
+  if(rem!==lastSec){
+    if(rem===0){beep(1320,.6);T.done=true;T.stoppedAt=0;log('App-Wechsel-Test fertig')}
+    else if(rem%10===0){beep(660,.22)}
+    if(document.hidden&&rem%10===0)T.beepsHidden++;
+    lastSec=rem;tSave();
+  }
+  render();
+}
+function render(){
+  $('tTime').textContent=fmt(!T?120:(T.done?(T.stoppedAt||0):remaining()));
+  var m=$('tMeas');m.innerHTML='';if(!T)return;
+  [['Status',T.done?(T.stoppedAt===0?'fertig':'gestoppt'):'läuft'],
+   ['Wie oft im Hintergrund',String(T.hiddenCount)],
+   ['Zeit im Hintergrund',Math.round(T.hiddenMs/1000)+' s'],
+   ['Längste Timer-Pause',Math.round(T.maxGap/1000)+' s'],
+   ['Töne im Hintergrund ausgelöst',String(T.beepsHidden)],
+   ['Seite neu geladen',T.reloaded?'ja':'nein']
+  ].forEach(function(r){var d=document.createElement('div'),a=document.createElement('span'),b=document.createElement('span');a.textContent=r[0];b.textContent=r[1];d.appendChild(a);d.appendChild(b);m.appendChild(d)});
+  S.auto.timer={hiddenCount:T.hiddenCount,hiddenSec:Math.round(T.hiddenMs/1000),maxGapSec:Math.round(T.maxGap/1000),beepsHidden:T.beepsHidden,reloaded:T.reloaded,status:T.done?(T.stoppedAt===0?'fertig':'gestoppt bei '+fmt(T.stoppedAt||0)):'läuft'};
+}
+document.addEventListener('visibilitychange',function(){
+  if(document.hidden){hiddenAt=Date.now();if(T&&!T.done){T.hiddenCount++;tSave()}log('Hintergrund')}
+  else{var d=hiddenAt?Date.now()-hiddenAt:0;hiddenAt=0;if(T&&!T.done){T.hiddenMs+=d;tSave()}log('Zurück nach '+Math.round(d/1000)+' s')}
+});
+window.addEventListener('pagehide',function(){log('pagehide')});
+window.addEventListener('pageshow',function(e){if(e.persisted)log('pageshow aus Zwischenspeicher')});
+function restore(){
+  try{T=JSON.parse(localStorage.getItem(TKEY))}catch(e){T=null}
+  if(T&&!T.done&&remaining()>0){T.reloaded=true;tSave();log('Neu geladen, Timer läuft weiter')}
+}
+
+/* ---------- Antworten ---------- */
+function initAnswers(){
+  Array.prototype.forEach.call(document.querySelectorAll('.q[data-key]'),function(q){
+    var key=q.getAttribute('data-key'),box=document.createElement('div');box.className='chips';
+    q.getAttribute('data-opts').split('|').forEach(function(opt){
+      var b=document.createElement('button');b.type='button';b.textContent=opt;
+      if(S.answers[key]===opt)b.classList.add('on');
+      b.addEventListener('click',function(){S.answers[key]=(S.answers[key]===opt)?'':opt;save();Array.prototype.forEach.call(box.children,function(x){x.classList.toggle('on',S.answers[key]===x.textContent)})});
+      box.appendChild(b);
+    });
+    q.appendChild(box);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('select[data-key],textarea[data-key]'),function(el){
+    var key=el.getAttribute('data-key');if(S.answers[key])el.value=S.answers[key];
+    el.addEventListener('change',function(){S.answers[key]=el.value;save()});
+    el.addEventListener('input',function(){S.answers[key]=el.value;save()});
+  });
+}
+
+/* ---------- Ergebnis ---------- */
+function summary(){
+  var L=[],v=currentVoice();
+  L.push('TAKT iPhone-Test 2, Ergebnis vom '+new Date().toLocaleString('de-DE'));
+  L.push('iOS: '+iosVersion()+' | Audio-Modi: '+(hasSession?'ja':'nein'));
+  L.push('Stimmen: '+voices.map(function(x,i){return (i+1)+'. '+x.name+' ['+x.voiceURI+(x.localService?', lokal':', online')+']'}).join(' / '));
+  L.push('Gewählte Stimme: '+(v?v.name+' ['+v.voiceURI+']':'keine'));
+  if(S.auto.timer){var t=S.auto.timer;L.push('App-Wechsel-Messung: '+t.status+', '+t.hiddenCount+'x im Hintergrund, zusammen '+t.hiddenSec+' s, längste Timer-Pause '+t.maxGapSec+' s, Töne im Hintergrund '+t.beepsHidden+', neu geladen '+(t.reloaded?'ja':'nein'))}
+  var section='';
+  Array.prototype.forEach.call(document.querySelectorAll('[data-key]'),function(el){
+    var sec=el.closest('section'),title=sec?sec.getAttribute('data-title'):'';
+    if(title!==section){section=title;L.push('');L.push('['+title+']')}
+    L.push('- '+el.getAttribute('data-label')+': '+(S.answers[el.getAttribute('data-key')]||'-'));
+  });
+  L.push('');L.push('[Protokoll]');S.log.slice(-35).forEach(function(l){L.push(l)});
+  return L.join('\n');
+}
+function copy(){
+  var txt=summary(),out=$('out'),st=$('copyStatus');out.value=txt;out.style.display='block';st.style.display='block';
+  function done(){st.textContent='Kopiert. Jetzt im Chat einfügen.';st.className='status ok'}
+  function fallback(){out.focus();out.select();out.setSelectionRange(0,txt.length);var ok=false;try{ok=document.execCommand('copy')}catch(e){}
+    if(ok)done();else{st.textContent='Bitte den Text unten markieren und kopieren.';st.className='status warn'}}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,fallback)}else fallback();
+}
+function reset(){if(!confirm('Alle Antworten löschen?'))return;try{localStorage.removeItem(KEY);localStorage.removeItem(TKEY)}catch(e){}location.reload()}
+
+/* ---------- Start ---------- */
+buildRows('speechRows',SPEECH_MODES,'s_','Ansage',function(){speakWith(currentVoice(),TEXT)});
+buildRows('fileRows',FILE_MODES,'f_','Datei-Ansage',playFile);
+initAnswers();
+loadVoices();
+if('speechSynthesis' in window){if(speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',loadVoices);setTimeout(loadVoices,400);setTimeout(loadVoices,1500);setTimeout(loadVoices,4000)}
+restore();
+$('btnTStart').addEventListener('click',tStart);
+$('btnTStop').addEventListener('click',tStop);
+$('btnCopy').addEventListener('click',copy);
+$('btnReset').addEventListener('click',reset);
+$('log').textContent=S.log.slice(-25).join('\n');
+setInterval(tick,250);
+log('Seite geladen');
+})();
+</script>
+</body>
+</html>

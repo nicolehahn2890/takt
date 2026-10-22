@@ -50,6 +50,25 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 | Übungsbilder | Freie Datenbank (free-exercise-db, Public Domain) ist englisch, überwiegend Studio-Kraft; Dehnen/Bodyweight teilweise, Vacuum/Yoga fehlen | Ich schreibe die deutsche Bibliothek selbst, verknüpfe passende Bilder (werden ins Repo kopiert, damit offline), Rest bekommt Icons; eigene Fotos jederzeit möglich |
 | Trainingsinhalte | Ich bin kein Trainer | Vorlagen aus etablierten Standardübungen; Nicole prüft; Hinweis in der App "kein medizinischer Rat" (wichtig, sobald andere sie nutzen) |
 
+### 3.1 Ergebnis iPhone-Test 1 (2026-10-22, iPhone mit iOS 18.7, Safari)
+
+| Prüfpunkt | Ergebnis |
+|---|---|
+| Bildschirm bleibt an (Wake Lock) | klappt; wird beim App-Wechsel freigegeben und beim Zurückkommen automatisch neu gesetzt |
+| Töne (Web Audio) im Modus "ambient" | Spotify läuft normal weiter |
+| Töne/Ansage im Modus "auto" | Nicole notierte "Musik wird leiser"; nicht eindeutig, wird in Test 2 geprüft |
+| Browser-Stimme (speechSynthesis) | nur "Anna" (2 Einträge mit gleichem Namen, Testseite konnte sie nicht unterscheiden); klingt roboterhaft; Aussprache von Umlauten korrekt |
+| Browser-Stimme + Spotify | Spotify stoppt und startet nicht von selbst wieder (Hauptproblem) |
+| Stummschalter auf Stumm | weder Töne noch Ansage hörbar |
+| Timer nach App-Wechsel | Zeit stimmt; Hintergrund-Test war nur ca. 1 s lang, daher nicht aussagekräftig; wird in Test 2 wiederholt |
+| Audio-Modi (navigator.audioSession) | werden unterstützt |
+| Vibration | nicht verfügbar (iPhone) |
+
+**Entscheidungen danach (Nicole, 2026-10-22):**
+- Ansagen vorerst mit der Browser-Stimme (Roboterstimme). Fertige Sprachdateien mit natürlicher Stimme bleiben eine Option für später.
+- Immer Modus "mit Musik": Die App mischt sich in die Musik, der Stummschalter muss auf Klingeln stehen. Die App erinnert vor jedem Start daran. Kein eigener "Ohne Musik"-Modus.
+- Test 2 klärt: Gibt es einen Audio-Modus, bei dem die Browser-Stimme Spotify nicht stoppt? Zum Vergleich wird dieselbe Ansage als Datei abgespielt.
+
 ## 4. Produkt – Screens und Verhalten
 
 ### 4.1 Start

@@ -4,6 +4,7 @@ Dein Training, dein Takt: eine Web-App für eigene Home-Workouts mit Timer und S
 
 - Konzept: [docs/KONZEPT.md](docs/KONZEPT.md)
 - iPhone-Test (Schritt 0b): https://nicolehahn2890.github.io/takt/spike/
+- iPhone-Test 2 (Browser-Stimme und Spotify): https://nicolehahn2890.github.io/takt/spike2/
 - Mockups Training-Screen: https://nicolehahn2890.github.io/takt/mockups/
 
 Status: in Planung, die eigentliche App folgt in Schritt 1.
