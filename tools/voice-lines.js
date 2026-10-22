@@ -15,5 +15,6 @@ vm.createContext(ctx);
 
 var out = {};
 Object.keys(ctx.Takt.VOICE_LINES).forEach(function (k) { out[k] = ctx.Takt.VOICE_LINES[k]; });
-ctx.Takt.EXERCISES.forEach(function (e) { out['ex_' + e.id] = e.name; });
+// Optional: e.ansage, wenn Katja den Namen anders sprechen soll (z. B. Zahlen)
+ctx.Takt.EXERCISES.forEach(function (e) { out['ex_' + e.id] = e.ansage || e.name; });
 process.stdout.write(JSON.stringify(out));

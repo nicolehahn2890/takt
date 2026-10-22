@@ -360,4 +360,8 @@ window.Takt = window.Takt || {};
       'In der Position des herabschauenden Hundes die Arme beugen und den Kopf Richtung Boden senken, dann wieder hochdrücken.',
       'Trainiert vor allem die Schultern.')
   ];
+
+  // Ansagetexte, wo Katja den Namen anders sprechen soll
+  var ANSAGE = { 'huefte-90-90': 'Neunzig neunzig Hüfte' };
+  T.EXERCISES.forEach(function (e) { if (ANSAGE[e.id]) e.ansage = ANSAGE[e.id]; });
 })(window.Takt);

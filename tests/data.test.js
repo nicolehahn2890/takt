@@ -83,3 +83,8 @@ test('data: jede Haltung bleibt im Bild und ueber dem Boden', function () {
 test('data: Tag yoga hat 15 Uebungen', function () {
   eq(Takt.EXERCISES.filter(function (e) { return e.tags.indexOf('yoga') >= 0; }).length, 15);
 });
+
+test('data: jede Uebung hat eine Katja-Ansage', function () {
+  var missing = Takt.EXERCISES.filter(function (e) { return !(Takt.VOICE_FILES || {})['ex_' + e.id]; }).map(function (e) { return e.id; });
+  eq(missing.length, 0, 'fehlend: ' + missing.slice(0, 5).join(', '));
+});
