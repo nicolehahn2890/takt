@@ -42,6 +42,7 @@ body:has(.start:not([hidden])) { background: linear-gradient(160deg, var(--bg2),
   background: linear-gradient(160deg, var(--bg2), var(--bg) 55%);
   user-select: none; -webkit-user-select: none;
   padding-bottom: env(safe-area-inset-bottom); touch-action: manipulation;
+  cursor: pointer; /* iOS: sonst kommt der Tipp aufs Banner nicht an */
 }
 .t-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: calc(12px + env(safe-area-inset-top)) 16px 6px; }
 .t-name { font-weight: 700; font-size: 15px; }
@@ -96,6 +97,7 @@ body:has(.start:not([hidden])) { background: linear-gradient(160deg, var(--bg2),
 .banner {
   position: absolute; left: 12px; right: 12px; top: calc(60px + env(safe-area-inset-top)); z-index: 5;
   background: #e8b860; color: var(--bg); font-weight: 700; font-size: 14px; padding: 12px 14px; border-radius: 14px; text-align: center;
+  cursor: pointer;
 }
 .toast {
   position: fixed; left: 16px; right: 16px; top: calc(62px + env(safe-area-inset-top)); z-index: 10;

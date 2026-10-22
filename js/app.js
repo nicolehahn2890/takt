@@ -336,6 +336,7 @@ window.Takt = window.Takt || {};
       try {
         run = { workout: saved.workout || { id: null, name: 'Training', theme: 'core' }, engine: T.Engine.restore(saved.engine) };
         enterTraining();
+        T.wake.on();
         setNeedTap(true);
         loop();
         return;

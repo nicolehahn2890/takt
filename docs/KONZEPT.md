@@ -232,7 +232,7 @@ Projekt Homeworkout/
 |---|---|---|---|
 | 0a | Mockup des Training-Screens (statisches HTML, 2 Varianten) im Browser zeigen | Erledigt: Variante A (Ring) | ~40k |
 | 0b | Spike auf Nicoles iPhone (Pflicht, Hauptgerät): Mini-Seite mit Sprachansage, Ton, Bildschirm-an, Spotify nebenbei, Stummschalter, App-Wechsel | Erledigt: Test 1 und 2, Ergebnis in 3.1 und 3.2 | ~30k |
-| 1 | Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Sprachdateien für feste Sätze (gewählte Stimme), Training-Screen (Ring) mit einem Test-Workout, Test-Hilfe Uhrzeit (Repo + Pages gibt es schon) | Timer läuft auf dem iPhone über die Live-URL, sagt an, Spotify läuft weiter, Bildschirm bleibt an | ~220k |
+| 1 | Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Sprachdateien für feste Sätze (gewählte Stimme), Training-Screen (Ring) mit einem Test-Workout, Test-Hilfe Uhrzeit (Repo + Pages gibt es schon) | Erledigt 2026-10-22 (live, 52 Tests grün, Code-Review ohne kritische Funde). iPhone-Test durch Nicole steht aus | ~220k |
 | 2 | Bibliothek (100 Übungen, Bilder, Sprachdateien für alle Namen), Übungs-Screens, eigene Übungen mit Foto/Video | Übungen durchsuchbar, eigene anlegen | ~270k |
 | 3 | Workout-Editor, Start-Screen, 12 Vorlagen, Zeit-Budget, Intensität, Mix-Modus | Eigenes Workout bauen und starten | ~250k |
 | 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Teilen, Export/Import | Alle Extras nutzbar | ~220k |
@@ -240,10 +240,23 @@ Projekt Homeworkout/
 
 Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzungen. Jeder Schritt endet mit Test und Push.
 
+### 8.1 Offene Kleinigkeiten aus Schritt 1 (aus den Code-Reviews, bewusst zurückgestellt)
+
+- Kein `apple-touch-icon` / Favicon, Google Fonts extern statt lokal, Test-Hilfe `debugClock` vor Veröffentlichung auf `false` → Schritt 5 (PWA).
+- Bei jeder Änderung `?v=` in `index.html` hochzählen (iPhone-Cache); MP3s und Manifest haben keine Version.
+- Schließen-Knopf 38 px und Start-Knopf ca. 42 px kleiner als 44 px Touch-Ziel; `safe-area-inset-left/right` im Querformat; `-webkit-text-size-adjust`.
+- Wake Lock: Wettlauf, wenn `off()` während einer laufenden Anfrage kommt.
+- Abbruch mit ✕ stoppt eine laufende Ansage nicht; vor dem Start werden 4 ungenutzte Sätze (go, side, left, right) mitgeladen.
+- „Nochmal“ nach Wiederherstellung ohne Workout-Id wirkungslos; gespeicherter Trainingsstand wird beim Laden nicht auf sein Format geprüft (wichtig, sobald sich das Format in Schritt 2 bis 4 ändert).
+- Banner „Einmal tippen“ nach Rückkehr kann einen Tipp verschlucken, wenn der Ton inzwischen von selbst wieder läuft; Töne können sich bei unterbrochenem Ton stauen.
+- Stille-Beschnitt der Sprachdateien (Rand 0,03 s) könnte leise Wortanfänge kappen → beim iPhone-Test hören.
+- Ring springt sekundenweise statt flüssig.
+- Testlücken: `adjust` in der Pause, Wiederherstellen eines pausierten Stands, `prev` in der Vorbereitung, `load` mit falschen Datentypen.
+
 ## 9. Verifikation
 
 - Pro Schritt: `node --check` auf alle JS-Dateien; Agent `html-app-tester` (statische Prüfung); Vorschau im eingebauten Browser (`python -m http.server` im Projektordner, Handy-Viewport emuliert). Auf dem iPhone immer über die Live-URL (HTTPS), nie über die lokale IP.
-- Timer-Logik (Schrittliste, Budget, Intensität, Mix) als reine Funktionen mit einer kleinen Testseite `test.html`, die Fälle durchrechnet und grün/rot zeigt.
+- Timer-Logik (Schrittliste, Budget, Intensität, Mix) als reine Funktionen, getestet mit `node tests/run.js` (eigener kleiner Test-Runner, prüft auch: kein Grad-Zeichen, in `js/` nur ASCII).
 - Auf dem iPhone (Nicole): Sprachansage, Wake Lock, Installation auf Homescreen, Spotify nebenbei, App-Wechsel und Zurückkehren, Link/Code-Teilen (z. B. an den Laptop).
 - Ende: Vorlagen inhaltlich von Nicole abgenommen.
 
