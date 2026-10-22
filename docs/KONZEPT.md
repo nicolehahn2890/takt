@@ -77,7 +77,7 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 | Browser-Stimme + Spotify | Spotify stoppt in allen vier Modi (auto, ambient, transient, transient-solo) und startet nicht von selbst wieder |
 | Ansage als Datei (Web Audio) + Spotify | Spotify läuft in allen drei Modi (auto, ambient, transient) normal weiter, wird aber nicht leiser |
 | App-Wechsel zu Spotify | Seite lief weiter (längste Timer-Pause 2 s), Töne kamen auch im Hintergrund, kein Neuladen; insgesamt 14 s im Hintergrund gemessen |
-| "Restzeit war falsch" (Nicoles Beobachtung) | Ursache nicht gefunden. Laut Messung kein Neustart, kein Neuladen, Seite lief durchgehend, Restzeit wird aus der echten Uhrzeit berechnet; im Vorschau-Browser stimmt sie sekundengenau. Wahrscheinlichste Erklärung: Die gefühlte Zeit in Spotify (bis 30 gezählt) war länger als die gemessenen 14 bis 18 s. Wird in Schritt 1 mit einer Test-Hilfe geklärt (siehe 5.1) |
+| "Restzeit war falsch" (Nicoles Beobachtung) | Ursache nicht gefunden. Laut Messung kein Neustart, kein Neuladen, Seite lief durchgehend, Restzeit wird aus der echten Uhrzeit berechnet; im Vorschau-Browser stimmt sie sekundengenau. Wahrscheinlichste Erklärung: Die gefühlte Zeit in Spotify (bis 30 gezählt) war länger als die gemessenen 14 bis 18 s. In Schritt 1 nicht mehr aufgetreten, Uhrzeit-Zeile und Restzeit stimmten (siehe 3.3) |
 
 **Entscheidungen nach Test 2 (Nicole, 2026-10-22), ersetzen die Stimmen-Entscheidung aus 3.1:**
 - Ansagen kommen als fertige Sprachdateien mit natürlicher Stimme **Katja** (`de-DE-KatjaNeural`, erzeugt mit dem Python-Werkzeug edge-tts 7.3.1). Die Browser-Stimme wird nicht genutzt, weil sie Spotify stoppt.
@@ -85,6 +85,19 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 - Selbst eingetippte Übungen: Ton + Name groß auf dem Bildschirm, keine Ansage des Namens.
 - Beim Wechsel zu Spotify läuft das Training weiter.
 - Spotify wird bei Ansagen nicht leiser (geht in der Web-App nicht). Erst die spätere Store-Version (Capacitor) kann Musik absenken.
+
+### 3.3 Ergebnis iPhone-Test Schritt 1 (2026-10-22, App live, Version v=2)
+
+| Prüfpunkt | Ergebnis |
+|---|---|
+| Spotify bei Ansagen (Sprachdateien, Modus ambient) | Musik läuft weiter |
+| Stimme Katja | gut verständlich, keine abgeschnittenen Wortanfänge gemeldet |
+| Bildschirm bleibt an | ja |
+| Wechsel zur Spotify-App und zurück | funktioniert, Uhrzeit-Zeile und Restzeit laufen richtig weiter |
+| Neuladen mitten im Training | Training läuft an der richtigen Stelle weiter, nach Tipp aufs Banner kommt der Ton zurück |
+| Handy sperren und entsperren | während der Sperre ist das Training unterbrochen (iOS hält Web-Apps an, Grenze von Safari); danach erscheint das Banner, nach dem Tipp funktioniert der Ton wieder |
+
+Folgerung: Der Ansage-Weg über Sprachdateien ist bestätigt. Ansagen bei gesperrtem Handy gehen erst mit der Store-Version (Capacitor, Hintergrund-Audio).
 
 ## 4. Produkt – Screens und Verhalten
 
@@ -232,7 +245,7 @@ Projekt Homeworkout/
 |---|---|---|---|
 | 0a | Mockup des Training-Screens (statisches HTML, 2 Varianten) im Browser zeigen | Erledigt: Variante A (Ring) | ~40k |
 | 0b | Spike auf Nicoles iPhone (Pflicht, Hauptgerät): Mini-Seite mit Sprachansage, Ton, Bildschirm-an, Spotify nebenbei, Stummschalter, App-Wechsel | Erledigt: Test 1 und 2, Ergebnis in 3.1 und 3.2 | ~30k |
-| 1 | Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Sprachdateien für feste Sätze (gewählte Stimme), Training-Screen (Ring) mit einem Test-Workout, Test-Hilfe Uhrzeit (Repo + Pages gibt es schon) | Erledigt 2026-10-22 (live, 52 Tests grün, Code-Review ohne kritische Funde). iPhone-Test durch Nicole steht aus | ~220k |
+| 1 | Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Sprachdateien für feste Sätze (gewählte Stimme), Training-Screen (Ring) mit einem Test-Workout, Test-Hilfe Uhrzeit (Repo + Pages gibt es schon) | Erledigt 2026-10-22 (live, 52 Tests grün, Code-Review ohne kritische Funde, iPhone-Test bestanden, siehe 3.3) | ~220k |
 | 2 | Bibliothek (100 Übungen, Bilder, Sprachdateien für alle Namen), Übungs-Screens, eigene Übungen mit Foto/Video | Übungen durchsuchbar, eigene anlegen | ~270k |
 | 3 | Workout-Editor, Start-Screen, 12 Vorlagen, Zeit-Budget, Intensität, Mix-Modus | Eigenes Workout bauen und starten | ~250k |
 | 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Teilen, Export/Import | Alle Extras nutzbar | ~220k |
