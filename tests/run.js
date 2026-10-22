@@ -50,6 +50,12 @@ var degree = jsFiles('js').concat(jsFiles('data')).filter(function (rel) {
 });
 if (degree.length) { failed++; console.log('FAIL  Grad-Zeichen gefunden in: ' + degree.join(', ')); }
 
+// Globale Regel: js/ nur ASCII (Umlaute als \u-Escapes), data/ darf UTF-8 enthalten
+var nonAscii = jsFiles('js').filter(function (rel) {
+  return /[^\x00-\x7f]/.test(fs.readFileSync(path.join(root, rel), 'utf8'));
+});
+if (nonAscii.length) { failed++; console.log('FAIL  Nicht-ASCII-Zeichen (Umlaute als \\u-Escape schreiben) in: ' + nonAscii.join(', ')); }
+
 try {
   jsFiles('data').forEach(run);
   LOGIC.forEach(function (rel) { if (fs.existsSync(path.join(root, rel))) run(rel); });

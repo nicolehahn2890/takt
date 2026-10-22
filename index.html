@@ -2,18 +2,78 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1a1418">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Takt">
 <title>Takt</title>
-<style>
-body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:linear-gradient(160deg,#2e1a28,#1a1418);color:#f6edf1;font-family:system-ui,sans-serif;text-align:center;padding:24px}
-h1{margin:0;font-size:40px}
-p{margin:0;color:#a8949f}
-a{display:inline-block;margin-top:10px;background:#C8729A;color:#1a1418;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:14px}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css?v=1">
 </head>
 <body>
-<h1>Takt</h1>
-<p>Dein Training, dein Takt. Die App ist im Aufbau.</p>
-<a href="spike/">Zum iPhone-Test</a>
+
+<section id="screen-start" class="screen start" hidden>
+  <header class="brand">
+    <div id="brand-logo" class="logo"></div>
+    <div><h1>Takt</h1><p>Dein Training, dein Takt</p></div>
+  </header>
+  <h2>Vorlagen</h2>
+  <div id="start-list"></div>
+  <p class="hint">Vor dem Start: Schalter am iPhone auf Klingeln stellen und Musik in Spotify starten. Danach Takt vorne lassen.</p>
+</section>
+
+<section id="screen-train" class="screen train" hidden>
+  <div class="banner" id="banner" hidden>Einmal tippen, damit der Ton wieder geht.</div>
+  <div class="t-top">
+    <div><div class="t-name" id="t-name"></div><div class="t-sub" id="t-sub"></div></div>
+    <button class="t-close" id="b-close" aria-label="Training beenden">&#10005;</button>
+  </div>
+  <div class="dots" id="t-dots"></div>
+  <div class="t-mid" id="t-mid">
+    <div class="ring">
+      <svg viewBox="0 0 300 300" aria-hidden="true"><circle class="track" cx="150" cy="150" r="138"/><circle class="bar" id="t-bar" cx="150" cy="150" r="138"/></svg>
+      <div class="ring-in"><div class="phase" id="t-phase"></div><div class="time" id="t-time">0:00</div><div class="of" id="t-of"></div></div>
+    </div>
+    <div class="ex"><div class="ex-icon" id="t-icon"></div><h1 id="t-ex"></h1><p id="t-desc"></p></div>
+  </div>
+  <div class="t-next">
+    <div class="nl">Als Nächstes</div><div class="nn" id="t-next-name"></div><div class="ns" id="t-next-sub"></div>
+    <div class="nd" id="t-next-dur"></div>
+  </div>
+  <div class="t-ctrl">
+    <button id="b-prev"><span class="ic">&#9664;&#xFE0E;</span><small>Zurück</small></button>
+    <button id="b-minus"><span class="ic">&minus;15</span><small>Sek.</small></button>
+    <button id="b-toggle" class="main"><span class="ic" id="b-toggle-ic">&#10074;&#10074;</span><small id="b-toggle-label">Pause</small></button>
+    <button id="b-plus"><span class="ic">+15</span><small>Sek.</small></button>
+    <button id="b-next"><span class="ic">&#9654;&#xFE0E;</span><small>Nächste</small></button>
+  </div>
+  <div class="t-debug" id="t-debug" hidden></div>
+</section>
+
+<section id="screen-done" class="screen finish" hidden>
+  <div class="big">Geschafft!</div>
+  <p id="done-sub"></p>
+  <div class="row">
+    <button class="btn main" id="b-again" data-start="">Nochmal</button>
+    <button class="btn" id="b-home">Zur Startseite</button>
+  </div>
+</section>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="data/strings.js?v=1"></script>
+<script src="data/exercises.js?v=1"></script>
+<script src="data/templates.js?v=1"></script>
+<script src="data/voice-manifest.js?v=1"></script>
+<script src="js/core.js?v=1"></script>
+<script src="js/store.js?v=1"></script>
+<script src="js/plan.js?v=1"></script>
+<script src="js/engine.js?v=1"></script>
+<script src="js/announce.js?v=1"></script>
+<script src="js/audio.js?v=1"></script>
+<script src="js/wake.js?v=1"></script>
+<script src="js/app.js?v=1"></script>
 </body>
 </html>

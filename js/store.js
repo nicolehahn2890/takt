@@ -68,8 +68,25 @@ window.Takt = window.Takt || {};
     defaults: defaults,
     load: load,
     save: function (data, s) { return write(KEY, data, s); },
-    loadRun: function (s) { var r = read(RUN_KEY, s); return isObj(r) ? r : null; },
-    saveRun: function (snap, s) { return write(RUN_KEY, snap, s); },
+    /* opts.maxAgeMs: aelter gespeicherte Trainings werden verworfen (und geloescht) */
+    loadRun: function (s, opts) {
+      var r = read(RUN_KEY, s);
+      if (!isObj(r)) return null;
+      if (opts && opts.maxAgeMs) {
+        var now = opts.now != null ? opts.now : Date.now();
+        if (typeof r.savedAt !== 'number' || now - r.savedAt > opts.maxAgeMs) {
+          T.store.clearRun(s);
+          return null;
+        }
+      }
+      return r;
+    },
+    saveRun: function (snap, s, now) {
+      var copy = {};
+      Object.keys(snap || {}).forEach(function (k) { copy[k] = snap[k]; });
+      copy.savedAt = now != null ? now : Date.now();
+      return write(RUN_KEY, copy, s);
+    },
     clearRun: function (s) {
       var st = storageOf(s);
       if (!st) return;

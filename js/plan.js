@@ -20,7 +20,7 @@ window.Takt = window.Takt || {};
     function nameOf(item) {
       if (item.name) return item.name;
       var ex = item.exId ? exIndex[item.exId] : null;
-      return (ex && ex.name) || 'Übung';
+      return (ex && ex.name) || '\u00dcbung';
     }
 
     // Alle Uebungen in Reihenfolge, Runden aufgeloest

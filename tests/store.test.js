@@ -28,7 +28,32 @@ test('save und load behalten Workouts', function () {
 test('laufendes Training speichern und loeschen', function () {
   var s = FakeStorage();
   Takt.store.saveRun({ a: 1 }, s);
-  eq(Takt.store.loadRun(s), { a: 1 });
+  eq(Takt.store.loadRun(s).a, 1);
   Takt.store.clearRun(s);
   eq(Takt.store.loadRun(s), null);
+});
+
+test('saveRun stempelt savedAt', function () {
+  var s = FakeStorage();
+  Takt.store.saveRun({ a: 1 }, s, 5000);
+  eq(Takt.store.loadRun(s).savedAt, 5000);
+});
+
+test('loadRun verwirft Trainings, die zu alt sind', function () {
+  var s = FakeStorage();
+  Takt.store.saveRun({ a: 1 }, s, 0);
+  eq(Takt.store.loadRun(s, { maxAgeMs: 1800000, now: 1800001 }), null);
+  eq(s.getItem('takt_run_v1'), null);
+});
+
+test('loadRun behaelt frische Trainings', function () {
+  var s = FakeStorage();
+  Takt.store.saveRun({ a: 1 }, s, 0);
+  eq(Takt.store.loadRun(s, { maxAgeMs: 1800000, now: 1799999 }).a, 1);
+});
+
+test('loadRun verwirft Trainings ohne savedAt, wenn ein Alter verlangt ist', function () {
+  var s = FakeStorage();
+  s.setItem('takt_run_v1', JSON.stringify({ a: 1 }));
+  eq(Takt.store.loadRun(s, { maxAgeMs: 1800000, now: 10 }), null);
 });
