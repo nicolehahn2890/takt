@@ -42,11 +42,11 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 
 | Thema | Realität | Umgang |
 |---|---|---|
-| Musik + Ansage | Android senkt Musik bei Ansage automatisch ab (Ducking). iOS kann Musik bei Ansage kurz unterbrechen statt absenken; der Stummschalter schaltet Web-Audio-Töne stumm | Vor Schritt 1 ein Spike auf dem echten Handy (Sprache + Ton + Spotify + Stummschalter + Bildschirm an). Danach Entscheidung: Töne/Ansage wie geplant oder angepasst. Capacitor löst das später sauber |
+| Musik + Ansage | Auf dem iPhone getestet (3.1, 3.2): Browser-Stimme stoppt Spotify; Töne und Sprachdateien über Web Audio mischen sich mit Spotify, ohne es leiser zu machen; Stummschalter auf Stumm macht alles still | Ansagen als Sprachdateien über Web Audio im Modus ambient; vor jedem Start Hinweis "Schalter auf Klingeln"; Absenken der Musik erst mit Capacitor |
 | Musikquelle | YouTube im Handy-Browser stoppt beim App-Wechsel (ohne Premium) | Empfehlung in der App: Spotify-App (oder Laptop/Tablet) |
 | App im Hintergrund | Wechselt man zur Spotify-App, pausiert iOS die Web-App oder lädt sie beim Zurückkehren neu | Laufzustand (Schritt, Startzeitstempel) wird laufend gespeichert und beim Zurückkehren nahtlos fortgesetzt; Hinweis "Musik vor dem Start einschalten, dann App vorne lassen"; Bildschirm bleibt per Wake Lock an |
 | Speicher auf iPhone | Safari-Tab und installierte App haben getrennte Speicher; Safari kann Daten nach 7 Tagen ohne Nutzung löschen; Teil-Links öffnen immer in Safari | Installation auf dem Homescreen wird beim ersten Start empfohlen; Backup-Export prominent; Import auch per "Code einfügen", nicht nur per Link |
-| Stimmqualität | Browser-Stimmen schwanken (iOS Siri gut, Android Google gut, Windows ok) | Stimme in Einstellungen wählbar, Testknopf |
+| Stimmqualität | Safari bietet auf dem iPhone nur einfache, roboterhafte Anna-Stimmen | Natürliche Stimme als vorab erzeugte Dateien (edge-tts); Lizenz vor Veröffentlichung prüfen |
 | Übungsbilder | Freie Datenbank (free-exercise-db, Public Domain) ist englisch, überwiegend Studio-Kraft; Dehnen/Bodyweight teilweise, Vacuum/Yoga fehlen | Ich schreibe die deutsche Bibliothek selbst, verknüpfe passende Bilder (werden ins Repo kopiert, damit offline), Rest bekommt Icons; eigene Fotos jederzeit möglich |
 | Trainingsinhalte | Ich bin kein Trainer | Vorlagen aus etablierten Standardübungen; Nicole prüft; Hinweis in der App "kein medizinischer Rat" (wichtig, sobald andere sie nutzen) |
 
@@ -68,6 +68,23 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 - Ansagen vorerst mit der Browser-Stimme (Roboterstimme). Fertige Sprachdateien mit natürlicher Stimme bleiben eine Option für später.
 - Immer Modus "mit Musik": Die App mischt sich in die Musik, der Stummschalter muss auf Klingeln stehen. Die App erinnert vor jedem Start daran. Kein eigener "Ohne Musik"-Modus.
 - Test 2 klärt: Gibt es einen Audio-Modus, bei dem die Browser-Stimme Spotify nicht stoppt? Zum Vergleich wird dieselbe Ansage als Datei abgespielt.
+
+### 3.2 Ergebnis iPhone-Test 2 (2026-10-22, gleiches iPhone)
+
+| Prüfpunkt | Ergebnis |
+|---|---|
+| Verfügbare Stimmen in Safari | nur `com.apple.voice.compact.de-DE.Anna` und `...super-compact...Anna`, beide klingen gleich roboterhaft; eine in den iPhone-Einstellungen geladene bessere Stimme erscheint in Safari nicht |
+| Browser-Stimme + Spotify | Spotify stoppt in allen vier Modi (auto, ambient, transient, transient-solo) und startet nicht von selbst wieder |
+| Ansage als Datei (Web Audio) + Spotify | Spotify läuft in allen drei Modi (auto, ambient, transient) normal weiter, wird aber nicht leiser |
+| App-Wechsel zu Spotify | Seite lief weiter (längste Timer-Pause 2 s), Töne kamen auch im Hintergrund, kein Neuladen; insgesamt 14 s im Hintergrund gemessen |
+| "Restzeit war falsch" (Nicoles Beobachtung) | Ursache nicht gefunden. Laut Messung kein Neustart, kein Neuladen, Seite lief durchgehend, Restzeit wird aus der echten Uhrzeit berechnet; im Vorschau-Browser stimmt sie sekundengenau. Wahrscheinlichste Erklärung: Die gefühlte Zeit in Spotify (bis 30 gezählt) war länger als die gemessenen 14 bis 18 s. Wird in Schritt 1 mit einer Test-Hilfe geklärt (siehe 5.1) |
+
+**Entscheidungen nach Test 2 (Nicole, 2026-10-22), ersetzen die Stimmen-Entscheidung aus 3.1:**
+- Ansagen kommen als fertige Sprachdateien mit natürlicher Stimme **Katja** (`de-DE-KatjaNeural`, erzeugt mit dem Python-Werkzeug edge-tts 7.3.1). Die Browser-Stimme wird nicht genutzt, weil sie Spotify stoppt.
+- Lizenz-Hinweis: Für Nicoles private Nutzung unkritisch. Vor einer Veröffentlichung für andere muss die Nutzung der Stimme geprüft werden (Alternativen: freie Piper-Stimmen oder ein bezahlter Sprachdienst).
+- Selbst eingetippte Übungen: Ton + Name groß auf dem Bildschirm, keine Ansage des Namens.
+- Beim Wechsel zu Spotify läuft das Training weiter.
+- Spotify wird bei Ansagen nicht leiser (geht in der Web-App nicht). Erst die spätere Store-Version (Capacitor) kann Musik absenken.
 
 ## 4. Produkt – Screens und Verhalten
 
@@ -99,7 +116,7 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 - Pausen zeigen Countdown und Vorschau der nächsten Übung mit Bild.
 - Beidseitige Übungen: Zeit wird geteilt, Mitte: Ansage "Seite wechseln" + Ton.
 - Atem-Übungen: statt Ring ein atmender Kreis mit "Einatmen / Halten / Ausatmen" und Sekunden, Rhythmus pro Übung einstellbar (z. B. 4-4-6).
-- Ansagen: Übungsname beim Start, "noch 10 Sekunden", "3, 2, 1", "Pause", "Seite wechseln", "Geschafft". Umfang in Einstellungen wählbar (voll / nur Übungsname / nur Töne / still).
+- Ansagen (Sprachdateien): Übungsname beim Start, "Noch zehn Sekunden", "Pause", "Als Nächstes …", "Seite wechseln", "Geschafft"; "3, 2, 1" als Töne. Selbst eingetippte Übungen: Ton statt Name, Name groß auf dem Bildschirm. Umfang in Einstellungen wählbar (voll / nur Übungsname / nur Töne / still).
 - Bildschirm bleibt an (Wake Lock). Querformat (Tablet/TV) nutzt zwei Spalten.
 
 ### 4.5 Fertig
@@ -109,7 +126,7 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 - Knöpfe: "Nochmal", "Teilen" (Link), "Zur Startseite".
 
 ### 4.6 Einstellungen
-- Stimme: Stimme aus Liste (deutsche Stimmen des Geräts), Testknopf, Ansage-Umfang.
+- Ansagen: Ansage-Umfang, Testknopf. Die Stimme ist fest (vorab erzeugte Dateien).
 - Töne an/aus, Vibration an/aus (Android).
 - Standard-Dauer/-Pause für neue Einträge.
 - Backup: Export (JSON-Datei) / Import.
@@ -121,7 +138,10 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 - Timer auf Zeitstempel-Basis (nicht Sekunden hochzählen), damit nichts driftet. Laufzustand wird jede Sekunde gespeichert; nach Reload oder App-Wechsel läuft das Training an der richtigen Stelle weiter.
 - Wake Lock API; wird er verweigert (z. B. Stromsparmodus) oder fehlt er, Hinweis "Bildschirmsperre ausschalten / Stromsparmodus aus".
 - Töne über Web Audio (keine Sounddateien nötig). Der Countdown "3, 2, 1" läuft als Töne, nicht als Sprache (Sprachausgabe startet mit Verzögerung). Vor zeitkritischen Ansagen wird die Sprach-Warteschlange geleert.
-- Ansagen über Browser-Sprachausgabe (speechSynthesis). Erste Ansage wird durch den Start-Tipp freigeschaltet (iOS-Regel). Stimmenliste: `getVoices()` sofort abfragen und zusätzlich auf `voiceschanged` hören (iOS feuert das Event oft nicht).
+- Ansagen als vorab erzeugte MP3-Dateien, abgespielt über Web Audio mit `navigator.audioSession.type = 'ambient'` (mischt sich mit Spotify, getestet). Die Dateien eines Workouts werden vor dem Start geladen und dekodiert. Der Start-Tipp schaltet den Ton frei (iOS-Regel). Keine Browser-Sprachausgabe (stoppt Spotify).
+- Vor jedem Start Hinweis "Schalter auf Klingeln, Musik vorher starten".
+- Beim Wechsel zu Spotify läuft das Training weiter; Töne kamen im Test auch im Hintergrund.
+- Test-Hilfe (abschaltbar): klein Startuhrzeit und vergangene Zeit anzeigen, damit Nicole die Restzeit mit der iPhone-Uhr vergleichen kann (offene Beobachtung aus Test 2).
 - Offline-fähig und installierbar (PWA: manifest + Service Worker).
 - Export/Import als JSON.
 
@@ -151,8 +171,8 @@ Trainingsprotokoll (Datum, Workout, Dauer, Gefühl). Startseite zeigt Streak und
 ### 5.9 Intensitäts-Regler
 leicht: Arbeit ×0,8, Pause ×1,5 · normal: ×1/×1 · hart: Arbeit ×1,2, Pause ×0,6. Reihenfolge: erst Intensität, dann Zeit-Budget. Das Budget ist eine harte Obergrenze: "15 Minuten" ergibt nie mehr als 15 Minuten.
 
-### 5.10 Stimme wählbar
-V1: Auswahl unter den deutschen Stimmen des Geräts, Testknopf, Ansage-Umfang (voll / nur Übungsname / nur Töne / still). Ansagetexte liegen in `data/strings.js`, EN/ES-Spalten vorbereitet, Aktivierung in V2 mit übersetzten Übungsnamen. Übungsnamen werden so angesagt, wie sie in der Bibliothek stehen, bei eigener Übung wie getippt.
+### 5.10 Ansagen und Stimme
+Eine feste natürliche Stimme: **Katja** (`de-DE-KatjaNeural`, gewählt von Nicole am 2026-10-22 aus 3 Proben: Katja, Seraphina, Florian). Feste Sätze ("Noch zehn Sekunden", "Pause", "Als Nächstes", "Seite wechseln", "Links", "Rechts", "Geschafft", Begrüßung) und alle Übungsnamen der Bibliothek liegen als einzelne MP3-Dateien in `assets/voice/`. Erzeugt werden sie einmalig per Script `tools/make_voice.py` (edge-tts) aus `data/strings.js` und `data/exercises.js`; neue Bibliotheksübung = Script erneut laufen lassen. Selbst eingetippte Übungen haben keine Datei: Ton + Name groß. Einstellungen: Ansage-Umfang (voll / nur Übungsname / nur Töne / still). EN/ES später: dieselben Dateien in anderer Sprache erzeugen.
 
 ## 6. Inhalte
 
@@ -173,7 +193,7 @@ Projekt Homeworkout/
   css/app.css         Peach-Design-Tokens, Layout, Querformat
   js/app.js           Router, Screens, Rendering (reines DOM, keine Lib)
   js/timer.js         Ablauf-Engine: baut aus Workout + Budget + Intensität die Schrittliste, läuft auf Zeitstempeln, feuert Events (start, tick, warn10, countdown, rest, side, done)
-  js/voice.js         speechSynthesis + Web-Audio-Töne, Sprachtexte DE/EN/ES
+  js/voice.js         Web Audio: Töne + Sprachdateien laden, dekodieren, abspielen; Audio-Modus ambient
   js/store.js         localStorage (Workouts, Settings, Log, Anpassungen), IndexedDB nur für Fotos, Export/Import
   js/share.js         Link-Kodierung/Dekodierung
   js/mix.js           Mix-Modus, Zeit-Budget, Intensität (reine Funktionen, testbar)
@@ -181,6 +201,8 @@ Projekt Homeworkout/
   data/templates.js   Vorlagen (ebenso)
   data/strings.js     Ansagetexte und Oberflächentexte DE (EN/ES vorbereitet)
   data/badges.js      Abzeichen-Regeln (Name, Bedingung, Icon)
+  assets/voice/*.mp3  Sprachdateien (feste Sätze + Übungsnamen), natürliche Stimme
+  tools/make_voice.py erzeugt die Sprachdateien mit edge-tts (läuft auf Nicoles PC, nicht in der App)
   assets/ex/*.jpg     Übungsbilder (Public Domain)
   assets/icons/*.svg  Tag-Icons
   assets/app-icon-180.png, -192.png, -512.png   App-Icons als PNG (iOS ignoriert SVG-Icons); einmalig per Script aus dem SVG erzeugt
@@ -198,7 +220,7 @@ Projekt Homeworkout/
   learn: { [exId]: { plus: n, minus: n, snoozeUntilLog: n } } }
 ```
 
-**Browser-APIs:** speechSynthesis (`getVoices()` + `voiceschanged`), Web Audio (Oszillator-Beeps), Screen Wake Lock (bei `visibilitychange` erneut anfordern, Fehler abfangen), CompressionStream (Safari ab 16.4; Fallback: nur base64), IndexedDB (Fotos als Blob), Service Worker (Cache-first für App-Dateien, Bilder nachladen). Kein `fetch` auf lokale Dateien, Daten kommen als JS.
+**Browser-APIs:** Web Audio (Oszillator-Töne und Sprachdateien), Audio Session (`navigator.audioSession.type = 'ambient'`), Screen Wake Lock (bei `visibilitychange` erneut anfordern, Fehler abfangen), CompressionStream (Safari ab 16.4; Fallback: nur base64), IndexedDB (Fotos als Blob), Service Worker (Cache-first für App-Dateien, Bilder nachladen). Kein `fetch` auf lokale Dateien, Daten kommen als JS.
 
 **Design:** Peach-Tokens übernehmen: Hintergrund `#1a1418`, Header-Gradient `160deg #2e1a28→#1a1418`, Pink `#C8729A`, Lila `#B88CC0`, Font DM Sans, Pixel-Art-Logo (Pfirsich mit Stoppuhr). Thema-Farben: Vacuum/Core `#C0BEA0`, Bauch `#C8729A`, Dehnen `#A8C4A0`, Yoga `#B88CC0`, Beine/Po `#C4A882`, Rücken `#8AB4C4`. Regeln aus Peach übernehmen: kein `°`-Zeichen in JS-Strings, Sonderzeichen meiden.
 
@@ -208,10 +230,10 @@ Projekt Homeworkout/
 
 | Schritt | Inhalt | Ergebnis zum Prüfen | Tokens (grob) |
 |---|---|---|---|
-| 0a | Mockup des Training-Screens (statisches HTML, 2 Varianten) im Browser zeigen | Nicole wählt Richtung | ~40k |
-| 0b | Spike auf Nicoles iPhone (Pflicht, Hauptgerät): Mini-Seite mit Sprachansage, Ton, Bildschirm-an, Spotify nebenbei, Stummschalter, App-Wechsel | Klarheit, was auf dem iPhone wirklich geht; Ergebnis fließt in Schritt 1 | ~30k |
-| 1 | Repo `takt` + GitHub Pages anlegen; Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Voice, Training-Screen mit einem Test-Workout | Timer läuft auf dem iPhone über die Live-URL, spricht, bleibt an | ~200k |
-| 2 | Bibliothek (100 Übungen, Bilder), Übungs-Screens, eigene Übungen mit Foto/Video | Übungen durchsuchbar, eigene anlegen | ~250k |
+| 0a | Mockup des Training-Screens (statisches HTML, 2 Varianten) im Browser zeigen | Erledigt: Variante A (Ring) | ~40k |
+| 0b | Spike auf Nicoles iPhone (Pflicht, Hauptgerät): Mini-Seite mit Sprachansage, Ton, Bildschirm-an, Spotify nebenbei, Stummschalter, App-Wechsel | Erledigt: Test 1 und 2, Ergebnis in 3.1 und 3.2 | ~30k |
+| 1 | Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Sprachdateien für feste Sätze (gewählte Stimme), Training-Screen (Ring) mit einem Test-Workout, Test-Hilfe Uhrzeit (Repo + Pages gibt es schon) | Timer läuft auf dem iPhone über die Live-URL, sagt an, Spotify läuft weiter, Bildschirm bleibt an | ~220k |
+| 2 | Bibliothek (100 Übungen, Bilder, Sprachdateien für alle Namen), Übungs-Screens, eigene Übungen mit Foto/Video | Übungen durchsuchbar, eigene anlegen | ~270k |
 | 3 | Workout-Editor, Start-Screen, 12 Vorlagen, Zeit-Budget, Intensität, Mix-Modus | Eigenes Workout bauen und starten | ~250k |
 | 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Teilen, Export/Import | Alle Extras nutzbar | ~220k |
 | 5 | PWA (Manifest, Service Worker, Icons), Querformat, Feinschliff, Installations-Hinweis beim ersten Start, Abschlusstest auf dem iPhone | Installierbar, offline, auf dem Homescreen | ~120k |
@@ -240,7 +262,7 @@ Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzu
 - Alles zeitbasiert, keine Wiederholungs-Übungen.
 - Vorlagen schreibgeschützt, Bearbeiten erzeugt Kopie.
 - Nur Dunkelmodus in V1 (Peach-Stil).
-- Stimme wählbar (Extra 10) in V1 = Auswahl unter den deutschen Stimmen des Geräts + Ansage-Umfang. Englisch/Spanisch als Ansagesprache kommt in V2 zusammen mit übersetzten Übungsnamen (eine englische Stimme, die "Beckenheben" vorliest, klingt schlecht). Die Texte sind in V1 schon so abgelegt, dass das nur Inhalt ist, kein Umbau.
+- Stimme (Extra 10) in V1 = eine feste natürliche Stimme als Sprachdateien + einstellbarer Ansage-Umfang (Entscheidung nach Test 2). Englisch/Spanisch kommt später, indem dieselben Dateien in anderer Sprache erzeugt werden.
 - Zeit-Budget ist eine harte Obergrenze; Intensität wird davor angewendet.
 - Countdown "3, 2, 1" als Töne, nicht als Sprache.
 
