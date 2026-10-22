@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Takt - Mockup A (Ring)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a1418;--bg2:#2e1a28;--pink:#C8729A;--lila:#B88CC0;--text:#f6edf1;--muted:#a8949f;--theme:#C8729A}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:linear-gradient(160deg,var(--bg2),var(--bg) 55%);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;display:flex;flex-direction:column;height:100%;overflow:hidden;-webkit-user-select:none;user-select:none}
+.top{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 8px}
+.top .name{font-weight:700;font-size:15px}
+.top .sub{color:var(--muted);font-size:12px;margin-top:2px}
+.top .x{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:16px;color:var(--muted)}
+.dots{display:flex;gap:4px;padding:0 18px 6px}
+.dots i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.12)}
+.dots i.done{background:var(--pink)}
+.dots i.cur{background:var(--lila)}
+.mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:0 18px;min-height:0}
+.ring{position:relative;width:min(68vw,280px);aspect-ratio:1;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:11;stroke-linecap:round}
+.ring .track{stroke:rgba(255,255,255,.08)}
+.ring .bar{stroke:var(--theme);transition:stroke-dashoffset 1s linear,stroke .4s}
+.ring.rest .bar{stroke:var(--lila)}
+.ring .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .phase{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--lila);margin-bottom:6px;min-height:14px}
+.ring .time{font-size:74px;font-weight:700;letter-spacing:-2px;line-height:1;font-variant-numeric:tabular-nums}
+.ring .of{color:var(--muted);font-size:13px;margin-top:8px}
+.ex{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.thumb{width:72px;height:72px;border-radius:18px;background:rgba(255,255,255,.06);display:grid;place-items:center;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover;filter:saturate(.8)}
+.thumb svg{width:44px;height:44px;stroke:var(--lila);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ex h1{font-size:30px;font-weight:700;line-height:1.1}
+.ex .side{display:inline-block;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--bg);background:var(--lila);border-radius:999px;padding:3px 10px;font-weight:700}
+.ex p{color:var(--muted);font-size:14px;max-width:300px;line-height:1.35}
+.next{margin:0 18px;background:rgba(255,255,255,.06);border-radius:16px;padding:10px 12px;display:flex;align-items:center;gap:12px}
+.next .nt{width:42px;height:42px;border-radius:10px;background:rgba(255,255,255,.08);overflow:hidden;flex:none;display:grid;place-items:center}
+.next .nt img{width:100%;height:100%;object-fit:cover}
+.next .nt svg{width:26px;height:26px;stroke:var(--lila);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.next .nl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px}
+.next .nn{font-weight:600;font-size:15px}
+.next .nd{margin-left:auto;color:var(--muted);font-variant-numeric:tabular-nums;font-size:14px}
+.ctrl{display:grid;grid-template-columns:1fr 1fr 1.5fr 1fr 1fr;gap:8px;padding:14px 18px 6px}
+.ctrl button{border:0;border-radius:16px;background:rgba(255,255,255,.08);color:var(--text);font:inherit;font-weight:600;font-size:13px;padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+.ctrl button small{font-size:10px;color:var(--muted);font-weight:500}
+.ctrl .main{background:var(--theme);color:var(--bg);font-size:15px}
+.hint{text-align:center;color:var(--muted);font-size:11px;padding:0 0 calc(14px + env(safe-area-inset-bottom))}
+</style>
+</head>
+<body>
+<div class="top">
+  <div><div class="name">Core kurz</div><div class="sub" id="sub">Uebung 3 von 8 &middot; noch 7:40</div></div>
+  <div class="x">&#10005;</div>
+</div>
+<div class="dots"><i class="done"></i><i class="done"></i><i class="cur"></i><i></i><i></i><i></i><i></i><i></i></div>
+
+<div class="mid">
+  <div class="ring" id="ring">
+    <svg viewBox="0 0 300 300"><circle class="track" cx="150" cy="150" r="138"/><circle class="bar" id="bar" cx="150" cy="150" r="138"/></svg>
+    <div class="inner"><div class="phase" id="phase"></div><div class="time" id="time">0:40</div><div class="of" id="of">von 0:40</div></div>
+  </div>
+  <div class="ex">
+    <div class="thumb" id="thumb"></div>
+    <h1 id="exname">Plank</h1>
+    <span class="side" id="side" style="display:none"></span>
+    <p id="desc">Unterarme unter den Schultern, Koerper eine Linie, Bauch fest.</p>
+  </div>
+</div>
+
+<div class="next"><div class="nt" id="nt"></div><div><div class="nl">Als Naechstes</div><div class="nn" id="nn">Pause</div></div><div class="nd" id="nd">0:10</div></div>
+
+<div class="ctrl">
+  <button>&#9664;<small>Zurueck</small></button>
+  <button>&minus;15<small>Sek.</small></button>
+  <button class="main" id="pause">&#10074;&#10074;<small style="color:rgba(26,20,24,.7)">Pause</small></button>
+  <button>+15<small>Sek.</small></button>
+  <button>&#9654;<small>Weiter</small></button>
+</div>
+<div class="hint">Tipp irgendwo = Pause / Weiter</div>
+
+<script>
+var ICON='<svg viewBox="0 0 48 48"><circle cx="10" cy="14" r="4"/><path d="M14 18 L34 22 L44 20"/><path d="M34 22 L30 34"/><path d="M14 18 L12 30 L8 40"/><path d="M12 30 L20 40"/></svg>';
+var IMG='https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/0.jpg';
+function pic(el,src){el.innerHTML='';if(src){var im=new Image();im.onload=function(){el.innerHTML='';el.appendChild(im)};im.onerror=function(){el.innerHTML=ICON};im.src=src;el.innerHTML=ICON}else{el.innerHTML=ICON}}
+var steps=[
+ {kind:'work',name:'Plank',desc:'Unterarme unter den Schultern, Koerper eine Linie, Bauch fest.',dur:40,img:IMG},
+ {kind:'rest',dur:10},
+ {kind:'work',name:'Seitstuetz',desc:'Ellbogen unter der Schulter, Huefte hoch, Blick geradeaus.',dur:30,side:'Links',img:null},
+ {kind:'work',name:'Seitstuetz',desc:'Ellbogen unter der Schulter, Huefte hoch, Blick geradeaus.',dur:30,side:'Rechts',img:null},
+ {kind:'rest',dur:10},
+ {kind:'work',name:'Dead Bug',desc:'Ruecken fest am Boden, Arm und Gegenbein langsam strecken.',dur:40,img:null}
+];
+var C=2*Math.PI*138, i=0, left=steps[0].dur, paused=false;
+var bar=document.getElementById('bar');bar.style.strokeDasharray=C;
+function fmt(s){return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2)}
+function nextWork(from){for(var k=from+1;k<steps.length;k++){if(steps[k].kind==='work')return steps[k]}return steps[0]}
+function show(){
+ var s=steps[i], ring=document.getElementById('ring');
+ ring.classList.toggle('rest',s.kind==='rest');
+ document.getElementById('phase').textContent=s.kind==='rest'?'Pause':'';
+ document.getElementById('time').textContent=fmt(left);
+ document.getElementById('of').textContent='von '+fmt(s.dur);
+ bar.style.strokeDashoffset=C*(1-left/s.dur);
+ var nx = s.kind==='rest'? nextWork(i) : (steps[i+1]&&steps[i+1].kind==='rest'?{name:'Pause',dur:steps[i+1].dur,img:null}:nextWork(i));
+ if(s.kind==='work'){
+  document.getElementById('exname').textContent=s.name;
+  document.getElementById('desc').textContent=s.desc;
+  var sd=document.getElementById('side');sd.style.display=s.side?'inline-block':'none';sd.textContent=s.side||'';
+  if(show.lastImg!==s.img){pic(document.getElementById('thumb'),s.img);show.lastImg=s.img}
+ }else{
+  document.getElementById('exname').textContent='Durchatmen';
+  document.getElementById('desc').textContent='Gleich: '+nx.name+(nx.side?' ('+nx.side+')':'');
+  document.getElementById('side').style.display='none';
+  pic(document.getElementById('thumb'),null);show.lastImg=null;
+ }
+ document.getElementById('nn').textContent=nx.name+(nx.side?' '+nx.side:'');
+ document.getElementById('nd').textContent=fmt(nx.dur);
+ pic(document.getElementById('nt'),nx.img||null);
+}
+show();
+setInterval(function(){ if(paused)return; left--; if(left<=0){ i=(i+1)%steps.length; left=steps[i].dur; } show(); },1000);
+document.getElementById('pause').addEventListener('click',function(e){e.stopPropagation();paused=!paused;this.innerHTML=paused?'&#9654;<small style="color:rgba(26,20,24,.7)">Weiter</small>':'&#10074;&#10074;<small style="color:rgba(26,20,24,.7)">Pause</small>'});
+document.querySelector('.mid').addEventListener('click',function(){document.getElementById('pause').click()});
+</script>
+</body>
+</html>

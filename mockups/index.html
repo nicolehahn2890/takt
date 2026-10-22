@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Takt - Mockups Training-Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#120e11;--pink:#C8729A;--lila:#B88CC0;--text:#f6edf1;--muted:#a8949f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;padding:28px 20px 40px}
+h1{font-size:22px;font-weight:700}
+.sub{color:var(--muted);font-size:14px;margin-top:6px;max-width:720px;line-height:1.4}
+.grid{display:flex;gap:40px;flex-wrap:wrap;justify-content:center;margin-top:28px}
+.col{display:flex;flex-direction:column;align-items:center;gap:14px}
+.phone{width:390px;height:780px;border-radius:44px;border:10px solid #2a2226;background:#000;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.5);position:relative}
+.phone iframe{width:100%;height:100%;border:0;display:block}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:26px;background:#2a2226;border-radius:0 0 18px 18px;z-index:2}
+.cap{text-align:center;max-width:390px}
+.cap b{display:inline-block;font-size:16px;background:var(--pink);color:#1a1418;border-radius:999px;padding:4px 14px;margin-bottom:8px}
+.cap p{color:var(--muted);font-size:13px;line-height:1.45}
+.cap a{color:var(--lila)}
+@media (max-width:900px){.phone{width:340px;height:680px}}
+</style>
+</head>
+<body>
+<h1>Takt &middot; Training-Screen: zwei Richtungen</h1>
+<p class="sub">Beide laufen mit einem Fake-Timer (ohne Ton). Gleiche Inhalte, gleicher Peach-Look, anderer Fokus. Tippen auf die Mitte pausiert. Das Plank-Bild kommt aus der freien Datenbank, der Seitstuetz zeigt das Icon, das Uebungen ohne Bild bekommen.</p>
+<div class="grid">
+  <div class="col">
+    <div class="phone"><div class="notch"></div><iframe src="training-a.html" title="Mockup A"></iframe></div>
+    <div class="cap"><b>A &middot; Ring</b><p>Die Uhr ist das Zentrum: grosser Ring, Zeit in der Mitte, Uebung darunter mit kleinem Bild. Ruhig, klassisch, viel Luft. <a href="training-a.html" target="_blank">Gross oeffnen</a></p></div>
+  </div>
+  <div class="col">
+    <div class="phone"><div class="notch"></div><iframe src="training-b.html" title="Mockup B"></iframe></div>
+    <div class="cap"><b>B &middot; Flaeche</b><p>Der ganze Bildschirm fuellt sich mit der Zeit. Bild gross oben, riesige Sekunden, Pause wird lila. Plakativ, aus Entfernung lesbar. <a href="training-b.html" target="_blank">Gross oeffnen</a></p></div>
+  </div>
+</div>
+</body>
+</html>

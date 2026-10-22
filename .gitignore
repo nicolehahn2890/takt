@@ -1,0 +1,4 @@
+.claude/
+.superpowers/
+*.log
+.env

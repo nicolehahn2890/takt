@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Takt Test">
+<meta name="theme-color" content="#1a1418">
+<title>Takt · iPhone-Test</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a1418;--bg2:#2e1a28;--card:#241b21;--line:rgba(255,255,255,.09);--pink:#C8729A;--lila:#B88CC0;--text:#f6edf1;--muted:#a8949f;--ok:#7bc47a;--warn:#e8b860;--bad:#d86868}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;font-size:16px;line-height:1.45;padding:0 0 calc(40px + env(safe-area-inset-bottom))}
+header{background:linear-gradient(160deg,var(--bg2),var(--bg));padding:calc(22px + env(safe-area-inset-top)) 18px 18px}
+h1{font-size:24px;font-weight:700}
+header p{color:var(--muted);font-size:14px;margin-top:8px}
+main{max-width:560px;margin:0 auto;padding:0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px 16px;margin-top:14px}
+h2{font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--pink);color:var(--bg);font-size:14px;flex:none}
+.card>p,.hint{color:var(--muted);font-size:14px;margin-bottom:10px}
+.hint{font-size:13px}
+b{color:var(--text)}
+dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{word-break:break-word}
+label{display:block;font-size:14px;color:var(--muted);margin:8px 0}
+select,textarea{width:100%;margin-top:6px;background:#1a1418;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:16px}
+textarea{min-height:70px;resize:vertical}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+button{border:0;border-radius:14px;background:rgba(255,255,255,.09);color:var(--text);font:inherit;font-weight:600;font-size:15px;padding:13px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button.main{background:var(--pink);color:var(--bg)}
+button:active{transform:scale(.97)}
+.q{margin:14px 0 4px}
+.q>span{display:block;font-size:15px;font-weight:600;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font-size:14px;font-weight:500;padding:9px 12px;border:1px solid var(--line);background:transparent}
+.chips button.on{background:var(--lila);color:var(--bg);border-color:var(--lila);font-weight:700}
+.mode{border-top:1px solid var(--line);padding:12px 0}
+.mode:first-of-type{border-top:0}
+.mode .mh{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mode .mh b{font-size:15px}
+.mode small{display:block;color:var(--muted);font-size:12px}
+.mode.active .mh b{color:var(--lila)}
+.mode.active .pick{background:var(--lila);color:var(--bg)}
+.mode .sel{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.mode .sel label{margin:0;font-size:12px}
+.mode .sel select{padding:10px;font-size:14px}
+.status{font-size:14px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05);margin:8px 0}
+.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}.status.warn{color:var(--warn)}
+.big{font-size:64px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-2px;margin:6px 0}
+.meas{font-size:13px;color:var(--muted)}
+.meas div{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px dashed var(--line)}
+.meas div span:last-child{color:var(--text)}
+.banner{background:var(--warn);color:var(--bg);font-weight:700;padding:12px 16px;border-radius:14px;margin:14px 14px 0;display:none}
+#out{min-height:160px;font-size:12px;font-family:ui-monospace,monospace;display:none}
+#log{font-size:11px;color:var(--muted);font-family:ui-monospace,monospace;white-space:pre-wrap;max-height:160px;overflow:auto;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Takt · iPhone-Test</h1>
+  <p>Geh die Tests von oben nach unten durch und tippe jeweils an, was passiert ist. Am Ende tippst du auf <b>Ergebnis kopieren</b> und fügst den Text im Chat bei Claude ein. Dauer: etwa 10 Minuten.</p>
+  <p>Vorher: Lautstärke etwa auf die Hälfte. Wenn du beim Training eine Box oder Kopfhörer nutzt, verbinde sie jetzt.</p>
+</header>
+<div class="banner" id="banner">Seite wurde neu geladen. Tippe einmal irgendwo, damit Töne wieder gehen.</div>
+
+<main>
+<section class="card" data-title="Gerät">
+  <h2>Dein Gerät</h2>
+  <dl id="info"></dl>
+</section>
+
+<section class="card" data-title="1 Sprachansage">
+  <h2><span class="num">1</span> Sprachansage</h2>
+  <p>Schalter an der Seite auf <b>Klingeln</b> (nicht stumm). Wähle eine Stimme und tippe auf „Ansage testen“. Probier ruhig mehrere Stimmen aus.</p>
+  <label>Stimme<select id="voice"></select></label>
+  <div class="row"><button class="main" id="btnSpeak">Ansage testen</button></div>
+  <div class="q" data-key="t1_heard" data-label="Ansage gehört" data-opts="Ja|Nein|Erst beim zweiten Mal"><span>Hast du die Ansage gehört?</span></div>
+  <div class="q" data-key="t1_voice" data-label="Stimme klingt" data-opts="Gut|Geht so|Roboterhaft"><span>Wie klingt die Stimme, die dir am besten gefällt?</span></div>
+  <div class="q" data-key="t1_umlaut" data-label="Seitstütz richtig ausgesprochen" data-opts="Ja|Nein"><span>Wurde „Seitstütz“ richtig ausgesprochen?</span></div>
+</section>
+
+<section class="card" data-title="2 Töne und Stummschalter">
+  <h2><span class="num">2</span> Töne und Stummschalter</h2>
+  <p>Erst mit Schalter auf <b>Klingeln</b> testen, dann den Schalter auf <b>Stumm</b> stellen und beide Knöpfe nochmal drücken.</p>
+  <div class="row"><button class="main" id="btnBeep">Töne testen (3, 2, 1)</button><button id="btnSpeak2">Ansage testen</button></div>
+  <div class="q" data-key="t2_ring_beep" data-label="Töne bei Klingeln" data-opts="Gehört|Nicht gehört"><span>Töne bei Schalter auf Klingeln</span></div>
+  <div class="q" data-key="t2_mute_beep" data-label="Töne bei Stumm" data-opts="Gehört|Nicht gehört"><span>Töne bei Schalter auf Stumm</span></div>
+  <div class="q" data-key="t2_mute_speech" data-label="Ansage bei Stumm" data-opts="Gehört|Nicht gehört"><span>Ansage bei Schalter auf Stumm</span></div>
+  <p class="hint">Danach den Schalter wieder auf Klingeln stellen.</p>
+</section>
+
+<section class="card" data-title="3 Musik nebenbei">
+  <h2><span class="num">3</span> Musik nebenbei</h2>
+  <p>Das ist der wichtigste Test. Starte <b>Spotify</b> (oder Apple Music), lass Musik laufen und komm zurück zu Safari. Tippe in jeder Zeile auf „Ton“ und dann auf „Ansage“. Wähle jeweils aus, was mit deiner Musik passiert ist.</p>
+  <p class="hint" id="modeHint"></p>
+  <div id="modes">
+    <div class="mode" data-mode="auto">
+      <div class="mh"><div><b>A · Automatisch</b><small>Standard von Safari</small></div><button class="pick">Wählen</button></div>
+      <div class="row"><button class="tb">Ton</button><button class="ts">Ansage</button></div>
+      <div class="sel"><label>Musik beim Ton<select data-key="t3_auto_beep" data-label="Modus A Automatisch, Ton"></select></label><label>Musik bei Ansage<select data-key="t3_auto_speech" data-label="Modus A Automatisch, Ansage"></select></label></div>
+    </div>
+    <div class="mode" data-mode="ambient">
+      <div class="mh"><div><b>B · Mischen</b><small>soll sich mit Musik mischen</small></div><button class="pick">Wählen</button></div>
+      <div class="row"><button class="tb">Ton</button><button class="ts">Ansage</button></div>
+      <div class="sel"><label>Musik beim Ton<select data-key="t3_ambient_beep" data-label="Modus B Mischen, Ton"></select></label><label>Musik bei Ansage<select data-key="t3_ambient_speech" data-label="Modus B Mischen, Ansage"></select></label></div>
+    </div>
+    <div class="mode" data-mode="transient">
+      <div class="mh"><div><b>C · Kurz-Hinweis</b><small>soll Musik kurz leiser machen</small></div><button class="pick">Wählen</button></div>
+      <div class="row"><button class="tb">Ton</button><button class="ts">Ansage</button></div>
+      <div class="sel"><label>Musik beim Ton<select data-key="t3_transient_beep" data-label="Modus C Kurz-Hinweis, Ton"></select></label><label>Musik bei Ansage<select data-key="t3_transient_speech" data-label="Modus C Kurz-Hinweis, Ansage"></select></label></div>
+    </div>
+    <div class="mode" data-mode="playback">
+      <div class="mh"><div><b>D · Wiedergabe</b><small>kann deine Musik stoppen, darum zuletzt</small></div><button class="pick">Wählen</button></div>
+      <div class="row"><button class="tb">Ton</button><button class="ts">Ansage</button></div>
+      <div class="sel"><label>Musik beim Ton<select data-key="t3_playback_beep" data-label="Modus D Wiedergabe, Ton"></select></label><label>Musik bei Ansage<select data-key="t3_playback_speech" data-label="Modus D Wiedergabe, Ansage"></select></label></div>
+    </div>
+  </div>
+  <p class="hint">Falls die Musik stoppt: in Spotify wieder starten, zurück zu Safari und mit der nächsten Zeile weitermachen.</p>
+  <div class="q" data-key="t3_fav" data-label="Lieblings-Modus" data-opts="A|B|C|D|Alle gleich"><span>Welcher Modus hat sich am besten angefühlt?</span></div>
+</section>
+
+<section class="card" data-title="4 Bildschirm bleibt an">
+  <h2><span class="num">4</span> Bildschirm bleibt an</h2>
+  <p>Tippe auf „Bildschirm-an starten“, leg das Handy hin und fass es nicht an. Warte länger als deine automatische Sperre, meistens 30 Sekunden oder 1 Minute.</p>
+  <div class="row"><button class="main" id="btnWake">Bildschirm-an starten</button></div>
+  <div class="status" id="wakeStatus">Noch nicht gestartet</div>
+  <div class="q" data-key="t4_on" data-label="Bildschirm blieb an" data-opts="Ja|Nein, ging aus|Wurde nur dunkler"><span>Ist der Bildschirm angeblieben?</span></div>
+  <div class="q" data-key="t4_lowpower" data-label="Stromsparmodus an" data-opts="Ja|Nein"><span>War der Stromsparmodus an (gelbe Batterie)?</span></div>
+</section>
+
+<section class="card" data-title="5 Timer und App-Wechsel">
+  <h2><span class="num">5</span> Timer und App-Wechsel</h2>
+  <p>Musik in Spotify darf laufen. Tippe auf „Test-Training starten“ (2 Minuten, Ton alle 10 Sekunden). Wechsle nach etwa 20 Sekunden zu Spotify, bleib dort etwa 30 Sekunden und komm dann zurück zu Safari.</p>
+  <div class="big" id="tTime">2:00</div>
+  <div class="row"><button class="main" id="btnTStart">Test-Training starten</button><button id="btnTStop">Stopp</button></div>
+  <div class="meas" id="tMeas"></div>
+  <div class="q" data-key="t5_bg_heard" data-label="Töne gehört, während Spotify vorne war" data-opts="Ja|Nein|Teilweise"><span>Hast du Töne gehört, während Spotify vorne war?</span></div>
+  <div class="q" data-key="t5_back" data-label="Nach Rückkehr" data-opts="Lief richtig weiter|Stand still|Fing neu an"><span>Als du zurückkamst: Was hat der Timer gemacht?</span></div>
+</section>
+
+<section class="card" data-title="6 Homescreen (optional)">
+  <h2><span class="num">6</span> Als App auf dem Homescreen (optional)</h2>
+  <p>Tippe in Safari auf das Teilen-Symbol und dann auf „Zum Home-Bildschirm“. Öffne „Takt Test“ vom Homescreen und mach dort Test 1, 4 und 5 nochmal. Tippe dort ebenfalls auf „Ergebnis kopieren“ und füge den Text zusätzlich im Chat ein.</p>
+</section>
+
+<section class="card" data-title="Notizen">
+  <h2>Sonst noch etwas?</h2>
+  <label>Notizen<textarea data-key="note" data-label="Notizen" placeholder="Was ist dir aufgefallen?"></textarea></label>
+</section>
+
+<section class="card">
+  <h2>Ergebnis</h2>
+  <div class="row"><button class="main" id="btnCopy">Ergebnis kopieren</button><button id="btnReset">Alles zurücksetzen</button></div>
+  <div class="status" id="copyStatus" style="display:none"></div>
+  <textarea id="out" readonly></textarea>
+  <div id="log"></div>
+</section>
+</main>
+
+<script>
+(function(){
+'use strict';
+var KEY='takt_spike_v1', TKEY='takt_spike_timer';
+var MUSIC_OPTS=['','läuft normal weiter','wird leiser','pausiert kurz, läuft dann weiter','stoppt ganz','App-Ton nicht gehört'];
+var SPEECH_TEXT='Plank. Vierzig Sekunden. Los gehts. Als Nächstes: Seitstütz links.';
+var $=function(id){return document.getElementById(id)};
+var S=load();
+var voices=[];
+var hasSession=('audioSession' in navigator);
+
+function load(){
+  try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&s.answers)return s}catch(e){}
+  return {answers:{},auto:{},log:[],voice:'',mode:''};
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function log(msg){
+  var t=new Date().toLocaleTimeString('de-DE');
+  S.log.push(t+'  '+msg); if(S.log.length>80)S.log.shift(); save();
+  $('log').textContent=S.log.slice(-25).join('\n');
+}
+window.addEventListener('error',function(e){log('Fehler: '+e.message)});
+function fmt(s){return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2)}
+
+/* ---------- Geraet ---------- */
+function iosVersion(){var m=navigator.userAgent.match(/OS (\d+)_(\d+)(?:_(\d+))?/);return m?m[1]+'.'+m[2]+(m[3]?'.'+m[3]:''):'unbekannt'}
+function standalone(){return (window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true}
+function infoRows(){
+  return [
+    ['iOS-Version',iosVersion()],
+    ['Geöffnet als',standalone()?'Homescreen-App':'Safari-Tab'],
+    ['Sprachausgabe',('speechSynthesis' in window)?'ja':'nein'],
+    ['Deutsche Stimmen',voices.length+(voices.length?' ('+voices.map(function(v){return v.name}).join(', ')+')':'')],
+    ['Audio-Modi',hasSession?'ja (aktuell: '+navigator.audioSession.type+')':'nein'],
+    ['Bildschirm-an',('wakeLock' in navigator)?'ja':'nein'],
+    ['Link-Kompression',('CompressionStream' in window)?'ja':'nein'],
+    ['Vibration',('vibrate' in navigator)?'ja':'nein'],
+    ['Browser',navigator.userAgent]
+  ];
+}
+function renderInfo(){
+  var dl=$('info'); dl.innerHTML='';
+  infoRows().forEach(function(r){
+    if(r[0]==='Browser')return;
+    var dt=document.createElement('dt');dt.textContent=r[0];
+    var dd=document.createElement('dd');dd.textContent=r[1];
+    dl.appendChild(dt);dl.appendChild(dd);
+  });
+}
+
+/* ---------- Stimmen ---------- */
+function loadVoices(){
+  if(!('speechSynthesis' in window))return;
+  var all=speechSynthesis.getVoices()||[];
+  var de=all.filter(function(v){return /^de/i.test(v.lang)});
+  if(de.length===voices.length&&$('voice').options.length)return;
+  voices=de.sort(function(a,b){return a.name.localeCompare(b.name)});
+  var sel=$('voice'); sel.innerHTML='';
+  if(!voices.length){var o=document.createElement('option');o.value='';o.textContent='Standard (keine deutsche Stimme gefunden)';sel.appendChild(o)}
+  voices.forEach(function(v){var o=document.createElement('option');o.value=v.name;o.textContent=v.name+' ('+v.lang+')';sel.appendChild(o)});
+  if(S.voice&&voices.some(function(v){return v.name===S.voice}))sel.value=S.voice;
+  else if(voices.length){var pref=voices.filter(function(v){return /anna|helena|petra/i.test(v.name)})[0]||voices[0];sel.value=pref.name;S.voice=pref.name;save()}
+  renderInfo();
+}
+function currentVoice(){var n=$('voice').value;return voices.filter(function(v){return v.name===n})[0]||null}
+function speak(text){
+  if(!('speechSynthesis' in window)){log('Keine Sprachausgabe vorhanden');return}
+  if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang='de-DE'; var v=currentVoice(); if(v)u.voice=v; u.rate=1;
+  u.onerror=function(e){log('Ansage-Fehler: '+(e.error||'unbekannt'))};
+  speechSynthesis.speak(u);
+  log('Ansage: '+text+(v?' ['+v.name+']':''));
+}
+
+/* ---------- Toene ---------- */
+var ctx=null;
+function ac(){
+  if(!ctx){var C=window.AudioContext||window.webkitAudioContext;if(!C){log('Kein Web Audio');return null}ctx=new C()}
+  if(ctx.state!=='running'){ctx.resume()}
+  return ctx;
+}
+function beep(freq,dur,when){
+  var c=ac();if(!c)return;
+  var t=c.currentTime+(when||0)+0.02;
+  var o=c.createOscillator(),g=c.createGain();
+  o.type='sine';o.frequency.value=freq;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(0.7,t+0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+0.05);
+}
+function countdown(){beep(880,.16,0);beep(880,.16,1);beep(1320,.5,2);log('Ton: 3, 2, 1')}
+var unlocked=false;
+function unlock(){
+  ac();
+  if('speechSynthesis' in window&&!unlocked){var u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u);unlocked=true}
+  $('banner').style.display='none';
+}
+document.addEventListener('touchend',unlock,{passive:true});
+document.addEventListener('click',unlock);
+
+/* ---------- Audio-Modi ---------- */
+function setMode(m){
+  if(hasSession){
+    try{navigator.audioSession.type=m;log('Audio-Modus gesetzt: '+m+' (ist jetzt: '+navigator.audioSession.type+')')}
+    catch(e){log('Audio-Modus Fehler: '+e.message)}
+  }else{log('Audio-Modi nicht unterstützt, nur Standard')}
+  if(ctx){try{ctx.close()}catch(e){}ctx=null}
+  S.mode=m;save();
+  Array.prototype.forEach.call(document.querySelectorAll('.mode'),function(el){el.classList.toggle('active',el.getAttribute('data-mode')===m)});
+  renderInfo();
+}
+function initModes(){
+  $('modeHint').textContent=hasSession?'Dein iPhone unterstützt Audio-Modi. Teste alle vier Zeilen.':'Dein iPhone kennt keine Audio-Modi. Teste nur Zeile A.';
+  Array.prototype.forEach.call(document.querySelectorAll('.mode'),function(el){
+    var m=el.getAttribute('data-mode');
+    if(!hasSession&&m!=='auto')el.style.opacity='.4';
+    el.querySelector('.pick').addEventListener('click',function(){setMode(m)});
+    el.querySelector('.tb').addEventListener('click',function(){if(S.mode!==m)setMode(m);countdown()});
+    el.querySelector('.ts').addEventListener('click',function(){if(S.mode!==m)setMode(m);speak(SPEECH_TEXT)});
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.mode select'),function(sel){
+    MUSIC_OPTS.forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t||'bitte wählen';sel.appendChild(o)});
+  });
+}
+
+/* ---------- Bildschirm an ---------- */
+var wl=null,wlWanted=false,wlSince=0;
+function wakeStatus(txt,cls){var el=$('wakeStatus');el.textContent=txt;el.className='status '+(cls||'')}
+function wakeOn(){
+  wlWanted=true;
+  if(!('wakeLock' in navigator)){wakeStatus('Wird von diesem Browser nicht unterstützt','bad');S.auto.wakeLock='nicht unterstützt';save();return}
+  navigator.wakeLock.request('screen').then(function(lock){
+    wl=lock;wlSince=Date.now();S.auto.wakeLock='aktiv';save();log('Bildschirm-an aktiv');
+    lock.addEventListener('release',function(){log('Bildschirm-an wurde freigegeben');S.auto.wakeLockReleased=(S.auto.wakeLockReleased||0)+1;save()});
+  }).catch(function(e){
+    S.auto.wakeLock='verweigert: '+e.name+' '+e.message;save();
+    wakeStatus('Verweigert: '+e.message+'. Ist der Stromsparmodus an?','bad');log('Bildschirm-an verweigert: '+e.name+' '+e.message);
+  });
+}
+setInterval(function(){
+  if(wl&&!wl.released){wakeStatus('Aktiv seit '+fmt(Math.floor((Date.now()-wlSince)/1000))+'. Handy hinlegen und warten.','ok')}
+  else if(wlWanted&&wl&&wl.released){wakeStatus('Wurde beendet, zum Beispiel durch App-Wechsel. Kommt automatisch zurück, sonst nochmal tippen.','warn')}
+},1000);
+
+/* ---------- Timer + App-Wechsel ---------- */
+var T=null,lastTick=0,lastSec=null,hiddenAt=0;
+function tSave(){try{localStorage.setItem(TKEY,JSON.stringify(T))}catch(e){}}
+function remaining(){return T?Math.max(0,Math.ceil((T.start+T.dur*1000-Date.now())/1000)):0}
+function tStart(){
+  unlock();
+  T={start:Date.now(),dur:120,beepsHidden:0,maxGap:0,hiddenMs:0,reloaded:false,done:false,stoppedAt:null};
+  lastTick=0;lastSec=null;tSave();
+  speak('Test Training. Zwei Minuten. Los gehts.');
+  log('Test-Training gestartet');
+  if(!wl||wl.released)wakeOn();
+}
+function tStop(){if(T&&!T.done){T.stoppedAt=remaining();T.done=true;tSave();log('Test-Training gestoppt bei '+fmt(T.stoppedAt))}renderTimer()}
+function tick(){
+  if(!T||T.done){renderTimer();return}
+  var now=Date.now();
+  if(lastTick){var gap=now-lastTick;if(gap>T.maxGap)T.maxGap=gap}
+  lastTick=now;
+  var rem=remaining();
+  if(lastSec===null)lastSec=rem;
+  if(rem!==lastSec){
+    var hid=document.hidden;
+    if(rem===0){beep(1320,.6);speak('Geschafft');T.done=true;T.stoppedAt=0;log('Test-Training fertig');if(hid)T.beepsHidden++}
+    else if(rem<=3){beep(880,.16);if(hid)T.beepsHidden++}
+    else if(rem===10){speak('Noch zehn Sekunden');if(hid)T.beepsHidden++}
+    else if(rem%10===0){beep(660,.22);if(hid)T.beepsHidden++}
+    lastSec=rem;tSave();
+  }
+  renderTimer();
+}
+function renderTimer(){
+  var shown=!T?120:(T.done?(T.stoppedAt||0):remaining());
+  $('tTime').textContent=fmt(shown);
+  var m=$('tMeas');m.innerHTML='';
+  if(!T)return;
+  var rows=[
+    ['Status',T.done?(T.stoppedAt===0?'fertig':'gestoppt'):'läuft'],
+    ['Zeit im Hintergrund',Math.round(T.hiddenMs/1000)+' s'],
+    ['Längste Timer-Pause',Math.round(T.maxGap/1000)+' s'],
+    ['Töne im Hintergrund ausgelöst',String(T.beepsHidden)],
+    ['Seite neu geladen',T.reloaded?'ja':'nein']
+  ];
+  rows.forEach(function(r){var d=document.createElement('div');var a=document.createElement('span'),b=document.createElement('span');a.textContent=r[0];b.textContent=r[1];d.appendChild(a);d.appendChild(b);m.appendChild(d)});
+  S.auto.timer={hiddenSec:Math.round(T.hiddenMs/1000),maxGapSec:Math.round(T.maxGap/1000),beepsHidden:T.beepsHidden,reloaded:T.reloaded};
+}
+document.addEventListener('visibilitychange',function(){
+  if(document.hidden){hiddenAt=Date.now();log('App im Hintergrund')}
+  else{
+    var d=hiddenAt?Date.now()-hiddenAt:0;hiddenAt=0;
+    if(T&&!T.done){T.hiddenMs+=d;tSave()}
+    log('Zurück nach '+Math.round(d/1000)+' s');
+    if(wlWanted&&(!wl||wl.released))wakeOn();
+  }
+});
+window.addEventListener('pageshow',function(e){if(e.persisted)log('Seite aus Zwischenspeicher wiederhergestellt')});
+function restoreTimer(){
+  try{T=JSON.parse(localStorage.getItem(TKEY))}catch(e){T=null}
+  if(T&&!T.done&&remaining()>0){
+    T.reloaded=true;tSave();lastTick=0;lastSec=null;
+    log('Seite wurde während des Timers neu geladen, Timer läuft weiter');
+    $('banner').style.display='block';
+  }
+}
+
+/* ---------- Antworten ---------- */
+function initAnswers(){
+  Array.prototype.forEach.call(document.querySelectorAll('.q[data-key]'),function(q){
+    var key=q.getAttribute('data-key'),box=document.createElement('div');box.className='chips';
+    q.getAttribute('data-opts').split('|').forEach(function(opt){
+      var b=document.createElement('button');b.type='button';b.textContent=opt;
+      if(S.answers[key]===opt)b.classList.add('on');
+      b.addEventListener('click',function(){
+        S.answers[key]=(S.answers[key]===opt)?'':opt;save();
+        Array.prototype.forEach.call(box.children,function(x){x.classList.toggle('on',S.answers[key]===x.textContent)});
+      });
+      box.appendChild(b);
+    });
+    q.appendChild(box);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('select[data-key],textarea[data-key]'),function(el){
+    var key=el.getAttribute('data-key');
+    if(S.answers[key])el.value=S.answers[key];
+    el.addEventListener('change',function(){S.answers[key]=el.value;save()});
+    el.addEventListener('input',function(){S.answers[key]=el.value;save()});
+  });
+}
+
+/* ---------- Ergebnis ---------- */
+function summary(){
+  var L=[];
+  L.push('TAKT iPhone-Test, Ergebnis vom '+new Date().toLocaleString('de-DE'));
+  L.push('');
+  infoRows().forEach(function(r){L.push(r[0]+': '+r[1])});
+  L.push('Gewählte Stimme: '+($('voice').value||'Standard'));
+  L.push('Bildschirm-an Status: '+(S.auto.wakeLock||'nicht getestet')+(S.auto.wakeLockReleased?' (freigegeben: '+S.auto.wakeLockReleased+'x)':''));
+  if(S.auto.timer){var t=S.auto.timer;L.push('Timer-Messung: im Hintergrund '+t.hiddenSec+' s, längste Timer-Pause '+t.maxGapSec+' s, Töne im Hintergrund ausgelöst '+t.beepsHidden+', neu geladen '+(t.reloaded?'ja':'nein'))}
+  var section='';
+  Array.prototype.forEach.call(document.querySelectorAll('[data-key]'),function(el){
+    var sec=el.closest('section'),title=sec?sec.getAttribute('data-title'):'';
+    if(title!==section){section=title;L.push('');L.push('['+title+']')}
+    L.push('- '+el.getAttribute('data-label')+': '+(S.answers[el.getAttribute('data-key')]||'-'));
+  });
+  L.push('');L.push('[Protokoll]');
+  S.log.slice(-30).forEach(function(l){L.push(l)});
+  return L.join('\n');
+}
+function copy(){
+  var txt=summary(),out=$('out'),st=$('copyStatus');
+  out.value=txt;out.style.display='block';st.style.display='block';
+  function done(){st.textContent='Kopiert. Jetzt im Chat einfügen.';st.className='status ok'}
+  function fallback(){
+    out.focus();out.select();out.setSelectionRange(0,txt.length);
+    var ok=false;try{ok=document.execCommand('copy')}catch(e){}
+    if(ok)done();else{st.textContent='Bitte den Text unten markieren und kopieren.';st.className='status warn'}
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,fallback)}
+  else fallback();
+}
+function reset(){
+  if(!confirm('Alle Antworten löschen?'))return;
+  try{localStorage.removeItem(KEY);localStorage.removeItem(TKEY)}catch(e){}
+  location.reload();
+}
+
+/* ---------- Start ---------- */
+$('btnSpeak').addEventListener('click',function(){speak(SPEECH_TEXT)});
+$('btnSpeak2').addEventListener('click',function(){speak(SPEECH_TEXT)});
+$('btnBeep').addEventListener('click',countdown);
+$('voice').addEventListener('change',function(){S.voice=this.value;save();speak(SPEECH_TEXT)});
+$('btnWake').addEventListener('click',wakeOn);
+$('btnTStart').addEventListener('click',tStart);
+$('btnTStop').addEventListener('click',tStop);
+$('btnCopy').addEventListener('click',copy);
+$('btnReset').addEventListener('click',reset);
+
+initModes();
+initAnswers();
+loadVoices();
+if('speechSynthesis' in window){
+  if(speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',loadVoices);
+  setTimeout(loadVoices,400);setTimeout(loadVoices,1500);setTimeout(loadVoices,4000);
+}
+renderInfo();
+restoreTimer();
+if(S.mode)setMode(S.mode);
+$('log').textContent=S.log.slice(-25).join('\n');
+setInterval(tick,250);
+log('Seite geladen ('+(standalone()?'Homescreen-App':'Safari-Tab')+')');
+})();
+</script>
+</body>
+</html>
