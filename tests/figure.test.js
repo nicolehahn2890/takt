@@ -54,3 +54,26 @@ test('figure bounds: Kopf oben eingerechnet', function () {
   ok(Math.abs(b.minY - 24) < 0.01, 'minY ' + b.minY);
   ok(b.maxY >= 166, 'Fuss am Boden');
 });
+
+test('figure svg: Massstab wickelt die Figur ein, Matte bleibt', function () {
+  var s = Takt.figure.svg(Takt.figure.frameAt(standPose(), 0), 0.8);
+  ok(s.indexOf('scale(0.8)') > 0, 'scale fehlt');
+  ok(s.indexOf('<rect x="14" y="166"') === 0, 'Matte zuerst und unskaliert');
+});
+
+test('figure bounds: Massstab um die Bodenmitte', function () {
+  var b = Takt.figure.bounds(Takt.figure.frameAt(standPose(), 0), 0.5);
+  ok(Math.abs(b.minY - 95) < 0.01, 'minY ' + b.minY);
+});
+
+test('figure svg: bow zeichnet den Rumpf als Kurve', function () {
+  var f = Takt.figure.frameAt(standPose(), 0);
+  f.bow = 10;
+  var s = Takt.figure.svg(f);
+  eq([s.split('<line').length - 1, s.split('<path').length - 1], [10, 1]);
+});
+
+test('figure svg: Hilfsmittel werden gezeichnet', function () {
+  var s = Takt.figure.svg(Takt.figure.frameAt(standPose(), 0), 1, [{ type: 'stuhl', x: 80, y: 122 }, { type: 'wand', x: 40 }]);
+  ok(s.indexOf('data-prop="stuhl"') > 0 && s.indexOf('data-prop="wand"') > 0, 'Hilfsmittel fehlen');
+});

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Takt · Figuren-Galerie</title>
+<style>
+body{margin:0;background:#1a1418;color:#f6edf1;font-family:system-ui,sans-serif;padding:14px}
+h1{font-size:20px;margin:0 0 4px}
+p{color:#a8949f;font-size:13px;margin:0 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chips a{color:#f6edf1;text-decoration:none;border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:5px 10px;font-size:13px}
+.chips a.on{background:#B88CC0;color:#1a1418;border-color:#B88CC0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.card{background:#241b21;border:1px solid rgba(255,255,255,.09);border-radius:14px;overflow:hidden}
+.card svg{display:block;width:100%;aspect-ratio:216/160;background:#1f171c}
+.card .t{padding:6px 10px 8px;font-size:13px;font-weight:600}
+.card .t small{display:block;color:#a8949f;font-weight:400;font-size:11px}
+.atem{display:grid;place-items:center;aspect-ratio:216/160;color:#B88CC0;font-size:13px;background:#1f171c}
+</style>
+</head>
+<body>
+<h1>Takt · Figuren-Galerie</h1>
+<p>Alle Übungen mit ihrer Figur. Zum Prüfen: <code>?tag=core</code> filtert, <code>?t=1500</code> friert alle Figuren bei 1,5 s ein.</p>
+<div class="chips" id="chips"></div>
+<div class="grid" id="grid"></div>
+<script src="../data/exercises.js"></script>
+<script src="../data/poses.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/figure.js"></script>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var tag = q.get('tag') || '';
+  var t = q.get('t');
+  var tags = ['', 'vacuum', 'atmung', 'core', 'bauch', 'ruecken', 'beine-po', 'dehnen', 'yoga', 'ganzkoerper', 'oberkoerper'];
+  document.getElementById('chips').innerHTML = tags.map(function (x) {
+    var u = '?tag=' + x + (t ? '&t=' + t : '');
+    return '<a href="' + u + '" class="' + (x === tag ? 'on' : '') + '">' + (x || 'alle') + '</a>';
+  }).join('');
+  var ids = (q.get('ids') || '').split(',').filter(Boolean);
+  var list = Takt.EXERCISES.filter(function (e) { return (!tag || e.tags.indexOf(tag) >= 0) && (!ids.length || ids.indexOf(e.id) >= 0); });
+  if (q.get('frames')) {
+    // jede Haltung einzeln nebeneinander
+    var g = document.getElementById('grid');
+    list.forEach(function (e) {
+      var p = (Takt.POSES || {})[e.id];
+      if (!p) return;
+      var seg = ((p.hold != null ? p.hold : 0.6) + (p.move != null ? p.move : 0.9)) * 1000;
+      p.frames.forEach(function (f, i) {
+        var c = document.createElement('div');
+        c.className = 'card';
+        c.innerHTML = '<svg viewBox="' + Takt.figure.VIEWBOX + '">' + Takt.figure.draw(p, i * seg) + '</svg><div class="t">' + Takt.esc(e.name) + '<small>Haltung ' + (i + 1) + ' von ' + p.frames.length + '</small></div>';
+        g.appendChild(c);
+      });
+    });
+    return;
+  }
+  var grid = document.getElementById('grid');
+  list.forEach(function (e) {
+    var card = document.createElement('div');
+    card.className = 'card';
+    var p = (Takt.POSES || {})[e.id];
+    var n = p ? p.frames.length : 0;
+    card.innerHTML = (p ? '<svg></svg>' : '<div class="atem">Atem ' + (e.atem ? [e.atem.ein, e.atem.halten, e.atem.aus, e.atem.haltenLeer].join('-') : '') + '</div>') +
+      '<div class="t">' + Takt.esc(e.name) + '<small>' + e.id + ' · ' + n + ' Haltung(en)' + (e.beidseitig ? ' · beidseitig' : '') + '</small></div>';
+    grid.appendChild(card);
+    if (p) {
+      var svg = card.querySelector('svg');
+      if (t !== null) { svg.setAttribute('viewBox', Takt.figure.VIEWBOX); svg.innerHTML = Takt.figure.draw(p, Number(t)); }
+      else Takt.figure.mount(svg, p);
+    }
+  });
+})();
+</script>
+</body>
+</html>

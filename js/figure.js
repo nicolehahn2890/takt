@@ -5,7 +5,8 @@ window.Takt = window.Takt || {};
   'use strict';
 
   var SEG = { thigh: 40, shin: 40, upper: 30, fore: 28, neck: 6, head: 10 };
-  var COL = { near: '#E3A3BF', far: '#9A6B8C', head: '#F0C4D6', mat: 'rgba(255,255,255,.07)' };
+  var COL = { near: '#E3A3BF', far: '#9A6B8C', head: '#F0C4D6', mat: 'rgba(255,255,255,.07)', prop: '#4a3a44' };
+  var DEFAULT_SCALE = 0.85;
   var WID = { torso: 17, thigh: 11, shin: 10, upper: 9, fore: 8, foot: 7, girdle: 9 };
   var FOOT = 9;
   var VIEWBOX = '12 18 216 160';
@@ -113,23 +114,64 @@ window.Takt = window.Takt || {};
       '" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round"/>';
   }
 
-  function svg(F) {
+  /* Hilfsmittel (Stuhl, Wand, Sofa, Tisch, Stufe) hinter der Figur */
+  function rect(x, y, w, h, type) {
+    return '<rect data-prop="' + type + '" x="' + n1(x) + '" y="' + n1(y) + '" width="' + n1(w) + '" height="' + n1(h) +
+      '" rx="2" fill="' + COL.prop + '"/>';
+  }
+  function propSvg(p) {
+    var x = p.x || 0, y = p.y || 120, w = p.w || 44;
+    if (p.type === 'wand') return rect(x - 3, 18, 6, 148, 'wand');
+    if (p.type === 'stuhl') {
+      var back = p.back === 'right' ? x + w / 2 - 5 : x - w / 2;
+      return rect(x - w / 2, y, w, 5, 'stuhl') + rect(back, y - 36, 5, 36, 'stuhl') +
+        rect(x - w / 2 + 2, y + 5, 4, 166 - y - 5, 'stuhl') + rect(x + w / 2 - 6, y + 5, 4, 166 - y - 5, 'stuhl');
+    }
+    if (p.type === 'tisch') {
+      return rect(x, y, w, 5, 'tisch') + rect(x + 3, y + 5, 4, 166 - y - 5, 'tisch') + rect(x + w - 7, y + 5, 4, 166 - y - 5, 'tisch');
+    }
+    if (p.type === 'sofa') return rect(x, y, w, 166 - y, 'sofa') + rect(x, y - 22, 10, 22, 'sofa');
+    if (p.type === 'stufe') return rect(x, y, w, 166 - y, 'stufe');
+    return '';
+  }
+
+  function torso(g, F, w, c) {
+    if (!F.bow) return line(g.hip, g.sh, w, c);
+    var dx = g.sh[0] - g.hip[0], dy = g.sh[1] - g.hip[1], len = Math.hypot(dx, dy) || 1;
+    var cx = (g.hip[0] + g.sh[0]) / 2 - dy / len * F.bow, cy = (g.hip[1] + g.sh[1]) / 2 + dx / len * F.bow;
+    return '<path d="M' + n1(g.hip[0]) + ' ' + n1(g.hip[1]) + ' Q' + n1(cx) + ' ' + n1(cy) + ' ' + n1(g.sh[0]) + ' ' + n1(g.sh[1]) +
+      '" fill="none" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round"/>';
+  }
+
+  function svg(F, scale, props) {
     if (!F) return '';
     var g = geometry(F);
-    var h = '<rect x="14" y="166" width="212" height="6" rx="3" fill="' + COL.mat + '"/>';
+    var mat = '<rect x="14" y="166" width="212" height="6" rx="3" fill="' + COL.mat + '"/>';
+    var h = (props || []).map(propSvg).join('');
     h += line(g.shF, g.armF.mid, WID.upper, COL.far) + line(g.armF.mid, g.armF.end, WID.fore, COL.far);
     h += line(g.hipF, g.legF.mid, WID.thigh, COL.far) + line(g.legF.mid, g.legF.end, WID.shin, COL.far) +
       line(g.legF.end, g.toeF, WID.foot, COL.far);
-    h += line(g.hip, g.sh, WID.torso, COL.near);
+    h += torso(g, F, WID.torso, COL.near);
     if (g.girdle) h += line(g.shN, g.shF, WID.girdle, COL.near) + line(g.hipN, g.hipF, WID.thigh, COL.near);
     h += line(g.hipN, g.legN.mid, WID.thigh, COL.near) + line(g.legN.mid, g.legN.end, WID.shin, COL.near) +
       line(g.legN.end, g.toeN, WID.foot, COL.near);
     h += line(g.shN, g.armN.mid, WID.upper, COL.near) + line(g.armN.mid, g.armN.end, WID.fore, COL.near);
     h += '<circle cx="' + n1(g.head[0]) + '" cy="' + n1(g.head[1]) + '" r="' + SEG.head + '" fill="' + COL.head + '"/>';
-    return h;
+    if (scale && scale !== 1) {
+      h = '<g transform="translate(120 166) scale(' + scale + ') translate(-120 -166)">' + h + '</g>';
+    }
+    return mat + h;
   }
 
-  function bounds(F) {
+  function bounds(F, scale) {
+    var b = rawBounds(F), s = scale || 1;
+    return {
+      minX: 120 + (b.minX - 120) * s, maxX: 120 + (b.maxX - 120) * s,
+      minY: 166 + (b.minY - 166) * s, maxY: 166 + (b.maxY - 166) * s
+    };
+  }
+
+  function rawBounds(F) {
     var g = geometry(F);
     var pts = [g.hip, g.sh, g.hipN, g.hipF, g.shN, g.shF, g.legN.mid, g.legN.end, g.legF.mid, g.legF.end,
       g.armN.mid, g.armN.end, g.armF.mid, g.armF.end, g.toeN, g.toeF];
@@ -152,8 +194,12 @@ window.Takt = window.Takt || {};
   function loop() {
     var t = now();
     mounted = mounted.filter(function (m) { return m.el.isConnected !== false; });
-    mounted.forEach(function (m) { m.el.innerHTML = svg(frameAt(m.pose, t - m.start)); });
+    mounted.forEach(function (m) { m.el.innerHTML = draw(m.pose, t - m.start); });
     raf = mounted.length ? requestAnimationFrame(loop) : null;
+  }
+
+  function draw(pose, ms) {
+    return svg(frameAt(pose, ms), pose.scale || DEFAULT_SCALE, pose.props);
   }
 
   function prepare(el) {
@@ -164,6 +210,8 @@ window.Takt = window.Takt || {};
   T.figure = {
     SEG: SEG,
     VIEWBOX: VIEWBOX,
+    DEFAULT_SCALE: DEFAULT_SCALE,
+    draw: draw,
     ik: ik,
     frameAt: frameAt,
     svg: svg,
@@ -172,14 +220,14 @@ window.Takt = window.Takt || {};
     /* Stehendes Bild (erster Frame), z. B. fuer Listen */
     still: function (el, pose) {
       prepare(el);
-      el.innerHTML = svg(frameAt(pose, 0));
+      el.innerHTML = draw(pose, 0);
     },
 
     mount: function (el, pose) {
       T.figure.unmount(el);
       prepare(el);
       mounted.push({ el: el, pose: pose, start: now() });
-      el.innerHTML = svg(frameAt(pose, 0));
+      el.innerHTML = draw(pose, 0);
       if (!raf && typeof requestAnimationFrame === 'function') raf = requestAnimationFrame(loop);
     },
 
