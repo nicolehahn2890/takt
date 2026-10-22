@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Takt · Bildproben</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a1418;--bg2:#2e1a28;--card:#241b21;--line:rgba(255,255,255,.09);--pink:#C8729A;--lila:#B88CC0;--text:#f6edf1;--muted:#a8949f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;padding:22px 16px 40px;max-width:1100px;margin:0 auto}
+h1{font-size:24px}
+.sub{color:var(--muted);font-size:14px;margin:6px 0 4px;line-height:1.45}
+h2{font-size:17px;margin:26px 0 4px;display:flex;gap:10px;align-items:center}
+h2 b{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--pink);color:var(--bg);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.card .pic{aspect-ratio:4/3;background:#1f171c;display:grid;place-items:center;overflow:hidden}
+.card .pic img{width:100%;height:100%;object-fit:cover}
+.card .pic svg{width:100%;height:100%}
+.card p{padding:10px 14px;font-size:14px;font-weight:600}
+.card p small{display:block;color:var(--muted);font-weight:400;font-size:12px;margin-top:2px}
+.note{color:var(--muted);font-size:13px;margin-top:8px;line-height:1.45}
+.pending{color:var(--muted);font-size:13px;padding:20px;text-align:center}
+</style>
+</head>
+<body>
+<h1>Takt · Bildproben für die Übungen</h1>
+<p class="sub">Drei Wege im Vergleich, jeweils dieselben Übungen: Glute Bridge, Kniebeuge, Dead Bug.</p>
+
+<h2><b>A</b> Animierte Figur, von Claude gezeichnet</h2>
+<p class="note">Wird im Browser live gezeichnet und bewegt sich (kein Video, winzig, offline, einheitlich in Peach-Farben). Jede Übung = zwei Haltungen, die App bewegt zwischen ihnen. Vorderes Bein/Arm hell, hinteres dunkel.</p>
+<div class="grid">
+  <div class="card"><div class="pic"><svg id="fig-bridge" viewBox="12 18 216 160"></svg></div><p>Glute Bridge<small>Hüfte hoch und runter</small></p></div>
+  <div class="card"><div class="pic"><svg id="fig-squat" viewBox="12 18 216 160"></svg></div><p>Kniebeuge<small>runter und hoch</small></p></div>
+  <div class="card"><div class="pic"><svg id="fig-deadbug" viewBox="12 18 216 160"></svg></div><p>Dead Bug<small>Arm und Gegenbein strecken</small></p></div>
+</div>
+
+<h2><b>B</b> KI-Bilder (Pollinations, kostenlos)</h2>
+<p class="note">Gleicher Prompt-Stil für alle drei. Ergebnis: alle drei Haltungen falsch (sitzt statt Brücke, hockt statt Kniebeuge, liegt auf der Seite statt Dead Bug), Logo im Bild, kostenlos nur 1 Bild alle 45 Sekunden.</p>
+<div class="grid">
+  <div class="card"><div class="pic"><img src="ki-glute-bridge.jpg" alt="KI Glute Bridge"></div><p>Glute Bridge</p></div>
+  <div class="card"><div class="pic" id="ki-kniebeuge"><img src="ki-kniebeuge.jpg" alt="KI Kniebeuge" onerror="this.parentNode.innerHTML='<div class=pending>noch nicht fertig</div>'"></div><p>Kniebeuge</p></div>
+  <div class="card"><div class="pic"><img src="ki-dead-bug.jpg" alt="KI Dead Bug" onerror="this.parentNode.innerHTML='<div class=pending>noch nicht fertig</div>'"></div><p>Dead Bug</p></div>
+</div>
+
+<h2><b>C</b> Fotos aus der freien Datenbank</h2>
+<p class="note">Für etwa die Hälfte der Übungen vorhanden. Verschiedene Models und Studios.</p>
+<div class="grid">
+  <div class="card"><div class="pic"><img src="https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Butt_Lift_Bridge/1.jpg" alt="Foto Glute Bridge"></div><p>Glute Bridge</p></div>
+  <div class="card"><div class="pic"><img src="https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Squat/1.jpg" alt="Foto Kniebeuge"></div><p>Kniebeuge</p></div>
+  <div class="card"><div class="pic"><img src="https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dead_Bug/0.jpg" alt="Foto Dead Bug"></div><p>Dead Bug</p></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var SEG = { thigh: 40, shin: 40, upper: 30, fore: 28, neck: 6, head: 10 };
+  var COL = { near: '#E3A3BF', far: '#9A6B8C', torso: '#E3A3BF', head: '#F0C4D6', mat: 'rgba(255,255,255,.07)' };
+
+  // Zweigelenk-Kette: Mittelgelenk (Knie/Ellbogen) zwischen a und Ziel c
+  function ik(a, c, l1, l2, bend) {
+    var dx = c[0] - a[0], dy = c[1] - a[1];
+    var d = Math.hypot(dx, dy);
+    d = Math.max(Math.abs(l1 - l2) + 0.01, Math.min(d, l1 + l2 - 0.01));
+    var ang = Math.atan2(dy, dx);
+    var cosA = (l1 * l1 + d * d - l2 * l2) / (2 * l1 * d);
+    var A = Math.acos(Math.max(-1, Math.min(1, cosA)));
+    var t = ang + bend * A;
+    var mid = [a[0] + l1 * Math.cos(t), a[1] + l1 * Math.sin(t)];
+    var t2 = Math.atan2(c[1] - mid[1], c[0] - mid[0]);
+    return { mid: mid, end: [mid[0] + l2 * Math.cos(t2), mid[1] + l2 * Math.sin(t2)] };
+  }
+
+  function lerp(a, b, k) { return a + (b - a) * k; }
+  function lerpPt(p, q, k) { return [lerp(p[0], q[0], k), lerp(p[1], q[1], k)]; }
+  function mix(A, B, k) {
+    var o = {};
+    Object.keys(A).forEach(function (key) {
+      var v = A[key], w = B[key] === undefined ? v : B[key];
+      o[key] = Array.isArray(v) ? lerpPt(v, w, k) : (typeof v === 'number' ? lerp(v, w, k) : v);
+    });
+    return o;
+  }
+
+  function line(p, q, w, c) {
+    return '<line x1="' + p[0].toFixed(1) + '" y1="' + p[1].toFixed(1) + '" x2="' + q[0].toFixed(1) + '" y2="' + q[1].toFixed(1) +
+      '" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round"/>';
+  }
+
+  function foot(p, deg, c) {
+    var r = (deg || 0) * Math.PI / 180;
+    return line(p, [p[0] + 9 * Math.cos(r), p[1] + 9 * Math.sin(r)], 7, c);
+  }
+
+  function draw(svg, P) {
+    var legN = ik(P.hip, P.footN, SEG.thigh, SEG.shin, P.kneeN);
+    var legF = ik(P.hip, P.footF, SEG.thigh, SEG.shin, P.kneeF);
+    var armN = ik(P.sh, P.handN, SEG.upper, SEG.fore, P.elbowN);
+    var armF = ik(P.sh, P.handF, SEG.upper, SEG.fore, P.elbowF);
+    var dir = P.headDir || (function () {
+      var dx = P.sh[0] - P.hip[0], dy = P.sh[1] - P.hip[1], d = Math.hypot(dx, dy) || 1;
+      return [dx / d, dy / d];
+    })();
+    var head = [P.sh[0] + dir[0] * (SEG.neck + SEG.head), P.sh[1] + dir[1] * (SEG.neck + SEG.head)];
+    var h = '<rect x="14" y="166" width="212" height="6" rx="3" fill="' + COL.mat + '"/>';
+    h += line(P.sh, armF.mid, 9, COL.far) + line(armF.mid, armF.end, 8, COL.far);
+    h += line(P.hip, legF.mid, 11, COL.far) + line(legF.mid, legF.end, 10, COL.far) + foot(legF.end, P.footDirF, COL.far);
+    h += line(P.hip, P.sh, 17, COL.torso);
+    h += line(P.hip, legN.mid, 11, COL.near) + line(legN.mid, legN.end, 10, COL.near) + foot(legN.end, P.footDirN, COL.near);
+    h += line(P.sh, armN.mid, 9, COL.near) + line(armN.mid, armN.end, 8, COL.near);
+    h += '<circle cx="' + head[0].toFixed(1) + '" cy="' + head[1].toFixed(1) + '" r="' + SEG.head + '" fill="' + COL.head + '"/>';
+    svg.innerHTML = h;
+  }
+
+  // Haltungen: Huefte, Schulter, Ziele fuer Haende/Fuesse, Beugerichtung der Gelenke
+  var LIE = [-1, 0.05];
+  var EX = {
+    'fig-bridge': {
+      A: { hip: [112, 160], sh: [62, 160], footN: [166, 166], footF: [170, 166], handN: [104, 166], handF: [108, 166],
+           kneeN: -1, kneeF: -1, elbowN: -1, elbowF: -1, headDir: LIE, footDirN: 0, footDirF: 0 },
+      B: { hip: [102, 116], footN: [166, 166], footF: [170, 166] }
+    },
+    'fig-squat': {
+      A: { hip: [120, 87], sh: [121, 37], footN: [122, 166], footF: [126, 166], handN: [176, 50], handF: [178, 52],
+           kneeN: -1, kneeF: -1, elbowN: 1, elbowF: 1, footDirN: 0, footDirF: 0 },
+      B: { hip: [94, 128], sh: [120, 86], handN: [174, 88], handF: [176, 90] }
+    },
+    'fig-deadbug': {
+      A: { hip: [120, 158], sh: [70, 158], footN: [158, 118], footF: [161, 121], handN: [73, 100], handF: [76, 102],
+           kneeN: -1, kneeF: -1, elbowN: 1, elbowF: 1, headDir: LIE, footDirN: -90, footDirF: -90 },
+      B: { handN: [14, 152], footF: [198, 152], footDirF: -80 }
+    }
+  };
+
+  // Bewegungsablauf: halten, hin, halten, zurueck (weich)
+  function phase(t) {
+    var T = 3.2, x = (t / 1000) % T;
+    function ease(u) { return u * u * (3 - 2 * u); }
+    if (x < 0.5) return 0;
+    if (x < 1.4) return ease((x - 0.5) / 0.9);
+    if (x < 2.1) return 1;
+    if (x < 3.0) return 1 - ease((x - 2.1) / 0.9);
+    return 0;
+  }
+
+  function frame(t) {
+    var k = phase(t);
+    Object.keys(EX).forEach(function (id) {
+      var e = EX[id], svg = document.getElementById(id);
+      var full = {};
+      Object.keys(e.A).forEach(function (key) { full[key] = e.A[key]; });
+      draw(svg, mix(e.A, Object.assign({}, e.A, e.B), k));
+    });
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
