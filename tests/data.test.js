@@ -65,8 +65,9 @@ test('data: jede Haltung bleibt im Bild und ueber dem Boden', function () {
   Object.keys(Takt.POSES).forEach(function (id) {
     var p = Takt.POSES[id], n = p.frames.length;
     var hold = p.hold != null ? p.hold : 0.6, move = p.move != null ? p.move : 0.9, seg = hold + move;
-    var times = [];
-    for (var i = 0; i < n; i++) { times.push(i * seg * 1000); if (n > 1) times.push((i * seg + hold + move / 2) * 1000); }
+    // ganzer Zyklus im 50-ms-Raster, damit auch Zwischenstellungen geprueft werden
+    var times = [], cycle = n > 1 ? seg * n * 1000 : 4000;
+    for (var t0 = 0; t0 <= cycle; t0 += 50) times.push(t0);
     times.forEach(function (t) {
       var f = Takt.figure.frameAt(p, t);
       var b = Takt.figure.bounds(f, p.scale || Takt.figure.DEFAULT_SCALE);

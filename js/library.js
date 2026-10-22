@@ -12,6 +12,8 @@ window.Takt = window.Takt || {};
   var pendingPhoto = null;
   var selectedTags = [];
   var noteTimer = null;
+  var listScroll = 0;       // Scroll-Position der Liste fuer das Zurueck aus dem Detail
+  var SAVE_FAIL = 'Speichern hat nicht geklappt. Ist der Speicher voll oder der private Modus an?';
 
   var CHIPS = [
     ['alle', 'Alle', null], ['core', 'Core', ['core']], ['bauch', 'Bauch', ['bauch']], ['ruecken', 'R\u00fccken', ['ruecken']],
@@ -76,11 +78,13 @@ window.Takt = window.Takt || {};
     box.appendChild(frag);
   }
 
-  function openLib() {
+  /* keepScroll: beim Zurueck aus dem Detail an dieselbe Stelle der Liste */
+  function openLib(keepScroll) {
     stopDetail();
     renderChips();
     renderList();
     api.show('lib');
+    window.scrollTo(0, keepScroll === true ? listScroll : 0);
   }
 
   /* ---------- Detail ---------- */
@@ -89,6 +93,7 @@ window.Takt = window.Takt || {};
   function openEx(id) {
     var e = byId(id);
     if (!e) { openLib(); return; }
+    if (!$('screen-lib').hidden) listScroll = window.scrollY;
     current = e;
     $('ex-title').textContent = e.name;
     $('ex-alias').textContent = (e.alias || []).join(' \u00b7 ');
@@ -141,7 +146,7 @@ window.Takt = window.Takt || {};
       d.notes = d.notes || {};
       var v = $('ex-note').value.trim();
       if (v) d.notes[current.id] = v; else delete d.notes[current.id];
-      api.save();
+      if (!api.save()) api.toast(SAVE_FAIL);
     }, 400);
   }
 
@@ -156,10 +161,16 @@ window.Takt = window.Takt || {};
     if (!current || current.quelle !== 'eigen') return;
     if (!window.confirm('\u00dcbung \u201e' + current.name + '\u201c l\u00f6schen?')) return;
     var d = api.data(), gone = current;
-    d.exercisesOwn = (d.exercisesOwn || []).filter(function (x) { return x.id !== gone.id; });
+    var beforeList = d.exercisesOwn || [], beforeNote = d.notes ? d.notes[gone.id] : undefined;
+    d.exercisesOwn = beforeList.filter(function (x) { return x.id !== gone.id; });
     if (d.notes) delete d.notes[gone.id];
+    if (!api.save()) {
+      d.exercisesOwn = beforeList;
+      if (beforeNote !== undefined) d.notes[gone.id] = beforeNote;
+      api.toast(SAVE_FAIL);
+      return;
+    }
     if (gone.photoId) T.photos.remove(gone.photoId);
-    api.save();
     api.reindex();
     current = null;
     openLib();
@@ -221,21 +232,26 @@ window.Takt = window.Takt || {};
     var btn = $('own-save');
     btn.disabled = true;
     var oldPhoto = editing ? editing.photoId : null;
+    var isNew = !!(pendingPhoto && pendingPhoto !== 'remove');
     var photo;
-    if (pendingPhoto && pendingPhoto !== 'remove') {
-      photo = T.photos.save(pendingPhoto).then(function (id) { if (oldPhoto) T.photos.remove(oldPhoto); return id; });
-    } else if (pendingPhoto === 'remove') {
-      if (oldPhoto) T.photos.remove(oldPhoto);
-      photo = Promise.resolve(null);
-    } else {
-      photo = Promise.resolve(oldPhoto);
-    }
+    if (isNew) photo = T.photos.save(pendingPhoto);
+    else if (pendingPhoto === 'remove') photo = Promise.resolve(null);
+    else photo = Promise.resolve(oldPhoto);
     photo.then(function (photoId) {
       var ex = r.exercise;
       ex.photoId = photoId || null;
       var d = api.data();
-      d.exercisesOwn = (d.exercisesOwn || []).filter(function (x) { return x.id !== ex.id; }).concat([ex]);
-      api.save();
+      var before = d.exercisesOwn || [];
+      d.exercisesOwn = before.filter(function (x) { return x.id !== ex.id; }).concat([ex]);
+      if (!api.save()) {
+        // nichts gespeichert: alten Stand behalten, neues Foto wieder entfernen
+        d.exercisesOwn = before;
+        if (isNew && photoId) T.photos.remove(photoId);
+        btn.disabled = false;
+        api.toast(SAVE_FAIL);
+        return;
+      }
+      if (oldPhoto && oldPhoto !== photoId) T.photos.remove(oldPhoto);
       api.reindex();
       btn.disabled = false;
       openEx(ex.id);
@@ -262,7 +278,7 @@ window.Takt = window.Takt || {};
       var b = e.target.closest('[data-ex]');
       if (b) openEx(b.getAttribute('data-ex'));
     });
-    $('ex-back').addEventListener('click', openLib);
+    $('ex-back').addEventListener('click', function () { openLib(true); });
     $('ex-listen').addEventListener('click', listen);
     $('ex-note').addEventListener('input', saveNote);
     $('ex-edit').addEventListener('click', function () { if (current) openOwn(current); });

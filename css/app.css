@@ -57,7 +57,7 @@ body:has(.start:not([hidden])) { background: linear-gradient(160deg, var(--bg2),
 .dots .bar b { display: block; height: 100%; width: 0; background: var(--pink); }
 
 .t-mid { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 4px 16px; cursor: pointer; }
-.ring { position: relative; width: min(60vw, 31vh, 290px); aspect-ratio: 1; flex: none; }
+.ring { position: relative; width: min(60vw, 31vh, 290px); width: min(60vw, 31dvh, 290px); aspect-ratio: 1; flex: none; }
 .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
 .ring circle { fill: none; stroke-width: 11; stroke-linecap: round; }
 .ring .track { stroke: rgba(255,255,255,.08); }
@@ -66,13 +66,14 @@ body:has(.start:not([hidden])) { background: linear-gradient(160deg, var(--bg2),
 .ring-in { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .phase { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--lila); min-height: 14px; margin-bottom: 4px; }
 .is-paused .phase { color: var(--pink); }
-.time { font-size: clamp(48px, 10.5vh, 76px); font-weight: 700; letter-spacing: -2px; line-height: 1; font-variant-numeric: tabular-nums; }
+.time { font-size: clamp(48px, 10.5vh, 76px); font-size: clamp(44px, 10.5dvh, 76px); font-weight: 700; letter-spacing: -2px; line-height: 1; font-variant-numeric: tabular-nums; }
 .is-paused .time { opacity: .5; }
 .of { color: var(--muted); font-size: 13px; margin-top: 6px; }
 .ex { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; max-width: 380px; }
-.ex-fig-train { width: min(40vw, 15vh, 170px); aspect-ratio: 216 / 160; border-radius: 14px; background: rgba(255,255,255,.04); overflow: hidden; }
+.ex-fig-train { width: min(40vw, 15vh, 170px); width: min(40vw, 15dvh, 170px); aspect-ratio: 216 / 160; border-radius: 14px; background: rgba(255,255,255,.04); overflow: hidden; }
 .ex-fig-train svg, .ex-fig-train img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.ex h1 { font-size: clamp(22px, 4.2vh, 30px); font-weight: 700; line-height: 1.1; }
+.ex h1 { font-size: clamp(20px, 4.2vh, 30px); font-size: clamp(20px, 4.2dvh, 30px); font-weight: 700; line-height: 1.1;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .ex p { color: var(--muted); font-size: 14px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 .t-next { margin: 0 16px; background: rgba(255,255,255,.06); border-radius: 16px; padding: 10px 14px; display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 10px; }
@@ -179,3 +180,13 @@ body:has(.start:not([hidden])) { background: linear-gradient(160deg, var(--bg2),
 .preview { display: block; max-width: 100%; max-height: 220px; border-radius: 14px; margin-top: 8px; }
 .card.nav { width: 100%; text-align: left; color: var(--text); }
 .chev { font-size: 28px; color: var(--muted); }
+
+/* Sehr wenig Hoehe (iPhone SE im Safari-Browser): Beschreibung einzeilig */
+@media (max-height: 600px) {
+  .ex p { -webkit-line-clamp: 1; }
+}
+
+/* Breite Bildschirme (Maus): Filter umbrechen statt seitlich scrollen */
+@media (min-width: 700px) {
+  .chips { flex-wrap: wrap; overflow: visible; }
+}

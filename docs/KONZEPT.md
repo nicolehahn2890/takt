@@ -246,7 +246,7 @@ Projekt Homeworkout/
 | 0a | Mockup des Training-Screens (statisches HTML, 2 Varianten) im Browser zeigen | Erledigt: Variante A (Ring) | ~40k |
 | 0b | Spike auf Nicoles iPhone (Pflicht, Hauptgerät): Mini-Seite mit Sprachansage, Ton, Bildschirm-an, Spotify nebenbei, Stummschalter, App-Wechsel | Erledigt: Test 1 und 2, Ergebnis in 3.1 und 3.2 | ~30k |
 | 1 | Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Sprachdateien für feste Sätze (gewählte Stimme), Training-Screen (Ring) mit einem Test-Workout, Test-Hilfe Uhrzeit (Repo + Pages gibt es schon) | Erledigt 2026-10-22 (live, 52 Tests grün, Code-Review ohne kritische Funde, iPhone-Test bestanden, siehe 3.3) | ~220k |
-| 2 | Bibliothek (100 Übungen, Bilder, Sprachdateien für alle Namen), Übungs-Screens, eigene Übungen mit Foto/Video | Übungen durchsuchbar, eigene anlegen | ~270k |
+| 2 | Bibliothek (110 Übungen mit animierter Figur statt Bildern, Katja-Ansagen), Übungs-Screens, eigene Übungen mit Foto/Video | Erledigt 2026-10-22 (live, 81 Tests grün, zwei Prüfungen ohne kritische Funde). iPhone-Test durch Nicole steht aus | ~450k |
 | 3 | Workout-Editor, Start-Screen, 12 Vorlagen, Zeit-Budget, Intensität, Mix-Modus | Eigenes Workout bauen und starten | ~250k |
 | 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Teilen, Export/Import | Alle Extras nutzbar | ~220k |
 | 5 | PWA (Manifest, Service Worker, Icons), Querformat, Feinschliff, Installations-Hinweis beim ersten Start, Abschlusstest auf dem iPhone | Installierbar, offline, auf dem Homescreen | ~120k |
@@ -265,6 +265,19 @@ Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzu
 - Stille-Beschnitt der Sprachdateien (Rand 0,03 s) könnte leise Wortanfänge kappen → beim iPhone-Test hören.
 - Ring springt sekundenweise statt flüssig.
 - Testlücken: `adjust` in der Pause, Wiederherstellen eines pausierten Stands, `prev` in der Vorbereitung, `load` mit falschen Datentypen.
+
+### 8.2 Offene Kleinigkeiten aus Schritt 2 (bewusst zurückgestellt)
+
+- Atem-Vorschau in der Bibliothek zeigt winzigen Text; Figur zeichnet 60× pro Sekunde neu, auch in der Pause (Akku); `prefers-reduced-motion` fehlt.
+- Animations-Takt bleibt nach einem Fehler stehen; spät ankommendes Foto kann die aktuelle Figur überschreiben; Vorschau-Adressen werden nicht freigegeben.
+- Fotospeicher: Fehler werden für die Sitzung „eingefroren“, englische Rohmeldung, kein Timeout.
+- „Ansage anhören“ ohne Rückmeldung bei Stummschalter oder Ladefehler.
+- Touch-Ziele der Filter und „+ Eigene“ unter 44 px; Klasse `.bar` kollidiert mit dem Fortschrittsbalken ab 25 Übungen (wichtig für Schritt 3).
+- Eigene Übung: führendes „ · eigene“ in der Liste, Hochformat-Fotos werden beschnitten, fehlendes Foto zeigt leere Kachel, gleiche Datei erneut wählen wirkt nicht, Notiz bei sofortigem Zurück evtl. nicht gespeichert.
+- Video-Feld ohne `autocapitalize/autocorrect=off`; Suchfeld schließt die Tastatur nicht.
+- Bei einigen Übungen kippt ein fast gestrecktes Knie oder ein Ellbogen kurz die Richtung (z. B. Bird Dog, Kickback).
+- Hinweis für Schritt 4/5: Safari löscht Daten und Fotos einer Website nach 7 Tagen ohne Nutzung; die Homescreen-App hat eigenen Speicher. Beim Import `exercisesOwn` durch `validateOwn` prüfen.
+- Hinweis für Schritt 3: Beim Einfügen eigener Übungen in Workouts den Namen mitspeichern, damit nach dem Löschen nicht nur „Übung“ dasteht.
 
 ## 9. Verifikation
 

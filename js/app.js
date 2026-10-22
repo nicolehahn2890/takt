@@ -358,7 +358,7 @@ window.Takt = window.Takt || {};
     if (T.library) {
       T.library.init({
         data: function () { return data; },
-        save: function () { T.store.save(data); },
+        save: function () { return T.store.save(data); },
         reindex: reindex,
         show: show,
         toast: toast,
