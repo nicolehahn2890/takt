@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Takt">
 <title>Takt</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=2">
+<link rel="stylesheet" href="css/app.css?v=3">
 </head>
 <body>
 
@@ -21,6 +21,11 @@
   </header>
   <h2>Vorlagen</h2>
   <div id="start-list"></div>
+  <h2>Bibliothek</h2>
+  <button class="card nav" id="go-lib" style="--theme:#B88CC0">
+    <div class="card-main"><h3>Übungen</h3><p id="lib-sub">110 Übungen mit Figur und Ansage</p></div>
+    <span class="chev" aria-hidden="true">&#8250;</span>
+  </button>
   <p class="hint">Vor dem Start: Schalter am iPhone auf Klingeln stellen und Musik in Spotify starten. Danach Takt vorne lassen.</p>
 </section>
 
@@ -61,19 +66,85 @@
   </div>
 </section>
 
+<section id="screen-lib" class="screen page" hidden>
+  <header class="bar">
+    <button class="back" id="lib-back" aria-label="Zurück">&#8249;</button>
+    <h2>Übungen</h2>
+    <button class="pill" id="lib-add">+ Eigene</button>
+  </header>
+  <input class="search" id="lib-search" type="search" placeholder="Suchen, z. B. Plank oder Brücke" autocomplete="off">
+  <div class="chips" id="lib-chips"></div>
+  <p class="count" id="lib-count"></p>
+  <div class="lib-list" id="lib-list"></div>
+</section>
+
+<section id="screen-ex" class="screen page" hidden>
+  <header class="bar">
+    <button class="back" id="ex-back" aria-label="Zurück">&#8249;</button>
+    <h2 id="ex-title"></h2>
+  </header>
+  <div class="ex-fig"><svg id="ex-svg" aria-hidden="true"></svg><img id="ex-photo" alt="" hidden></div>
+  <p class="ex-alias" id="ex-alias"></p>
+  <div class="badges" id="ex-badges"></div>
+  <p class="ex-desc" id="ex-desc"></p>
+  <p class="ex-hint" id="ex-hint"></p>
+  <p class="ex-rhythm" id="ex-rhythm" hidden></p>
+  <div class="row">
+    <button class="btn" id="ex-listen">Ansage anhören</button>
+    <a class="btn" id="ex-video" target="_blank" rel="noopener" hidden>Video öffnen</a>
+  </div>
+  <label class="field">Meine Notiz<textarea id="ex-note" rows="3" placeholder="z. B. Knie leicht gebeugt lassen"></textarea></label>
+  <div class="row" id="ex-own" hidden>
+    <button class="btn" id="ex-edit">Bearbeiten</button>
+    <button class="btn danger" id="ex-delete">Löschen</button>
+  </div>
+</section>
+
+<section id="screen-own" class="screen page" hidden>
+  <header class="bar">
+    <button class="back" id="own-back" aria-label="Zurück">&#8249;</button>
+    <h2 id="own-title">Eigene Übung</h2>
+  </header>
+  <label class="field">Name<input id="own-name" maxlength="60" autocomplete="off"></label>
+  <p class="err" id="own-err-name"></p>
+  <label class="field">Beschreibung<textarea id="own-desc" rows="3" maxlength="320"></textarea></label>
+  <p class="err" id="own-err-beschreibung"></p>
+  <p class="lbl">Themen</p>
+  <div class="chips" id="own-tags"></div>
+  <p class="err" id="own-err-tags"></p>
+  <label class="check"><input type="checkbox" id="own-bilateral"> Beidseitig (Seitenwechsel)</label>
+  <p class="lbl">Foto</p>
+  <img id="own-preview" class="preview" alt="" hidden>
+  <div class="row">
+    <label class="btn">Foto wählen<input type="file" id="own-photo" accept="image/*" hidden></label>
+    <button class="btn" id="own-photo-remove" hidden>Foto entfernen</button>
+  </div>
+  <p class="err" id="own-err-photo"></p>
+  <label class="field">Video-Link<input id="own-video" inputmode="url" autocomplete="off" placeholder="https://youtu.be/..."></label>
+  <p class="err" id="own-err-videoUrl"></p>
+  <div class="row">
+    <button class="btn main" id="own-save">Speichern</button>
+    <button class="btn" id="own-cancel">Abbrechen</button>
+  </div>
+</section>
+
 <div id="toast" class="toast" hidden></div>
 
-<script src="data/strings.js?v=2"></script>
-<script src="data/exercises.js?v=2"></script>
-<script src="data/templates.js?v=2"></script>
-<script src="data/voice-manifest.js?v=2"></script>
-<script src="js/core.js?v=2"></script>
-<script src="js/store.js?v=2"></script>
-<script src="js/plan.js?v=2"></script>
-<script src="js/engine.js?v=2"></script>
-<script src="js/announce.js?v=2"></script>
-<script src="js/audio.js?v=2"></script>
-<script src="js/wake.js?v=2"></script>
-<script src="js/app.js?v=2"></script>
+<script src="data/strings.js?v=3"></script>
+<script src="data/exercises.js?v=3"></script>
+<script src="data/templates.js?v=3"></script>
+<script src="data/poses.js?v=3"></script>
+<script src="data/voice-manifest.js?v=3"></script>
+<script src="js/core.js?v=3"></script>
+<script src="js/store.js?v=3"></script>
+<script src="js/plan.js?v=3"></script>
+<script src="js/engine.js?v=3"></script>
+<script src="js/announce.js?v=3"></script>
+<script src="js/audio.js?v=3"></script>
+<script src="js/wake.js?v=3"></script>
+<script src="js/figure.js?v=3"></script>
+<script src="js/photos.js?v=3"></script>
+<script src="js/app.js?v=3"></script>
+<script src="js/library.js?v=3"></script>
 </body>
 </html>

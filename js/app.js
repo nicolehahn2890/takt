@@ -29,7 +29,7 @@ window.Takt = window.Takt || {};
 
   /* ---------- Hilfen ---------- */
   function show(name) {
-    ['start', 'train', 'done'].forEach(function (n) { $('screen-' + n).hidden = n !== name; });
+    ['start', 'train', 'done', 'lib', 'ex', 'own'].forEach(function (n) { $('screen-' + n).hidden = n !== name; });
   }
   function toast(msg) {
     var t = $('toast');
@@ -64,6 +64,8 @@ window.Takt = window.Takt || {};
   /* ---------- Start ---------- */
   function renderStart() {
     $('brand-logo').innerHTML = peachSvg();
+    var own = (data.exercisesOwn || []).length;
+    $('lib-sub').textContent = (T.EXERCISES || []).length + ' \u00dcbungen mit Figur und Ansage' + (own ? ' \u00b7 ' + own + ' eigene' : '');
     $('start-list').innerHTML = allWorkouts().map(function (w) {
       var steps = stepsFor(w);
       return '<article class="card" style="--theme:' + themeColor(w.theme) + '">' +
@@ -327,8 +329,23 @@ window.Takt = window.Takt || {};
   }
 
   /* ---------- Start der App ---------- */
+  function reindex() {
+    exIndex = T.indexExercises((T.EXERCISES || []).concat(data.exercisesOwn || []));
+  }
+
   function init() {
     bind();
+    if (T.library) {
+      T.library.init({
+        data: function () { return data; },
+        save: function () { T.store.save(data); },
+        reindex: reindex,
+        show: show,
+        toast: toast,
+        home: function () { renderStart(); show('start'); }
+      });
+      $('go-lib').addEventListener('click', function () { T.library.open(); });
+    }
     renderStart();
     // Laenger als 30 Minuten liegengebliebene Trainings werden nicht fortgesetzt
     var saved = T.store.loadRun(null, { maxAgeMs: 30 * 60 * 1000 });

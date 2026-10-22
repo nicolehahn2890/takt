@@ -134,3 +134,49 @@ body:has(.start:not([hidden])) { background: linear-gradient(160deg, var(--bg2),
   .t-ctrl { padding-top: 6px; }
   .t-ctrl button { min-height: 44px; padding: 4px 0; }
 }
+
+/* ---------- Bibliothek, Detail, eigene Uebung ---------- */
+.page { max-width: 560px; margin: 0 auto; min-height: 100%; padding: calc(12px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom)); }
+.bar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.bar h2 { flex: 1; font-size: 20px; font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.back { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,.08); font-size: 26px; line-height: 1; flex: none; }
+.pill { background: var(--lila); color: var(--bg); font-weight: 700; border-radius: 999px; padding: 10px 14px; font-size: 14px; flex: none; }
+.search { width: 100%; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; font: inherit; font-size: 16px; }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 4px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; font-size: 14px; color: var(--text); white-space: nowrap; }
+.chip.on { background: var(--lila); border-color: var(--lila); color: var(--bg); font-weight: 700; }
+#own-tags { flex-wrap: wrap; overflow: visible; }
+.count { color: var(--muted); font-size: 13px; margin: 6px 2px 8px; }
+.lib-list { display: flex; flex-direction: column; gap: 8px; }
+.lib-item { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 8px 12px 8px 8px; }
+.lib-thumb { width: 84px; height: 62px; flex: none; border-radius: 12px; background: #1f171c; overflow: hidden; display: grid; place-items: center; }
+.lib-thumb svg { width: 100%; height: 100%; }
+.lib-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.lib-text { min-width: 0; }
+.lib-text b { display: block; font-size: 16px; }
+.lib-text small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.empty { color: var(--muted); text-align: center; padding: 30px 0; }
+.ex-fig { background: #1f171c; border-radius: 20px; overflow: hidden; aspect-ratio: 216 / 160; display: grid; place-items: center; }
+.ex-fig svg { width: 100%; height: 100%; }
+.ex-fig img { width: 100%; height: 100%; object-fit: cover; }
+.ex-alias { color: var(--muted); font-size: 14px; margin: 12px 2px 0; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.badge { font-size: 12px; border-radius: 999px; padding: 4px 10px; background: rgba(184,140,192,.18); color: var(--text); }
+.ex-desc { font-size: 16px; line-height: 1.5; margin: 6px 2px; }
+.ex-hint { color: var(--muted); font-size: 14px; line-height: 1.45; margin: 6px 2px; padding-left: 10px; border-left: 3px solid var(--pink); }
+.ex-rhythm { font-size: 14px; color: var(--lila); margin: 8px 2px; }
+.page .row { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+.btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; color: var(--text); min-height: 44px; }
+.btn.danger { background: rgba(216,104,104,.18); color: #f0b4b4; }
+.btn[disabled] { opacity: .6; }
+.field { display: block; color: var(--muted); font-size: 14px; margin-top: 14px; }
+.field input, .field textarea { display: block; width: 100%; margin-top: 6px; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font: inherit; font-size: 16px; }
+.lbl { color: var(--muted); font-size: 14px; margin-top: 14px; }
+.check { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-size: 15px; }
+.check input { width: 22px; height: 22px; accent-color: var(--lila); }
+.err { color: #f0b4b4; font-size: 13px; min-height: 0; margin-top: 4px; }
+.err:empty { display: none; }
+.preview { display: block; max-width: 100%; max-height: 220px; border-radius: 14px; margin-top: 8px; }
+.card.nav { width: 100%; text-align: left; color: var(--text); }
+.chev { font-size: 28px; color: var(--muted); }

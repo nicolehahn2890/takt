@@ -58,6 +58,9 @@ window.Takt = window.Takt || {};
   var CHAIR = { type: 'stuhl', x: 104, y: 126 };
   var HANDS_HEAD = { headDir: [-1, 0.05], handN: [50, 150], handF: [52, 151], elbowN: 1, elbowF: 1 };
 
+  /* Standardfigur fuer eigene Uebungen ohne Foto */
+  T.POSE_DEFAULT = P([S()]);
+
   T.POSES = {
     /* ---------- Vacuum ---------- */
     'vacuum-stehend': P([FR({ handN: [134, 84], handF: [106, 84] })]),

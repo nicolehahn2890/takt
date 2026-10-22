@@ -197,7 +197,7 @@ window.Takt = window.Takt || {};
     X('bulgarian-split-squat', 'Bulgarian Split Squat', ['Ausfallschritt am Stuhl'], ['beine-po'], true, ['stuhl'], 'beine',
       'Den hinteren Fuß auf einen Stuhl legen. Mit dem vorderen Bein tief in die Knie gehen und wieder hochdrücken.',
       'Oberkörper leicht nach vorne trifft den Po mehr.'),
-    X('glute-bridge', 'Glute Bridge', ['Beckenheben'], ['beine-po', 'core'], false, ['matte'], 'beine',
+    X('glute-bridge', 'Glute Bridge', ['Beckenheben', 'Brücke'], ['beine-po', 'core'], false, ['matte'], 'beine',
       'Rückenlage, Füße hüftbreit aufgestellt. Die Hüfte anheben, bis Knie, Hüfte und Schultern eine Linie bilden, oben den Po anspannen.',
       'Über die Fersen drücken.'),
     X('glute-bridge-einbeinig', 'Glute Bridge einbeinig', ['Single-Leg Bridge'], ['beine-po'], true, ['matte'], 'beine',

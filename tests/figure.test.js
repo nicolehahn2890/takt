@@ -77,3 +77,19 @@ test('figure svg: Hilfsmittel werden gezeichnet', function () {
   var s = Takt.figure.svg(Takt.figure.frameAt(standPose(), 0), 1, [{ type: 'stuhl', x: 80, y: 122 }, { type: 'wand', x: 40 }]);
   ok(s.indexOf('data-prop="stuhl"') > 0 && s.indexOf('data-prop="wand"') > 0, 'Hilfsmittel fehlen');
 });
+
+test('figure breathAt: Phasen, Restsekunden und Groesse', function () {
+  var a = { ein: 4, halten: 2, aus: 6, haltenLeer: 0 };
+  var b0 = Takt.figure.breathAt(a, 0);
+  eq([b0.phase, b0.left, b0.k], ['ein', 4, 0]);
+  var b1 = Takt.figure.breathAt(a, 2000);
+  ok(b1.phase === 'ein' && b1.k > 0.3 && b1.k < 0.7, 'Mitte Einatmen');
+  eq([Takt.figure.breathAt(a, 4500).phase, Takt.figure.breathAt(a, 4500).k], ['halten', 1]);
+  eq(Takt.figure.breathAt(a, 6000).phase, 'aus');
+  eq(Takt.figure.breathAt(a, 12000).phase, 'ein');
+});
+
+test('figure draw: Atem-Kreis mit Beschriftung', function () {
+  var s = Takt.figure.draw({ breath: { ein: 4, halten: 0, aus: 6, haltenLeer: 0 } }, 0);
+  ok(s.indexOf('<circle') >= 0 && s.indexOf('Einatmen') >= 0, 'Kreis und Text');
+});

@@ -198,7 +198,36 @@ window.Takt = window.Takt || {};
     raf = mounted.length ? requestAnimationFrame(loop) : null;
   }
 
+  /* Atem-Kreis: Phase, Restsekunden und Groesse (k 0..1) zu einer Zeit */
+  var BREATH_LABEL = { ein: 'Einatmen', halten: 'Halten', aus: 'Ausatmen', leer: 'Halten' };
+  function breathAt(a, ms) {
+    var parts = [['ein', a.ein || 0], ['halten', a.halten || 0], ['aus', a.aus || 0], ['leer', a.haltenLeer || 0]]
+      .filter(function (p) { return p[1] > 0; });
+    var total = parts.reduce(function (sum, p) { return sum + p[1]; }, 0) || 1;
+    var t = (Math.max(0, ms) / 1000) % total;
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i];
+      if (t < p[1]) {
+        var u = t / p[1];
+        var k = p[0] === 'ein' ? ease(u) : (p[0] === 'halten' ? 1 : (p[0] === 'aus' ? 1 - ease(u) : 0));
+        return { phase: p[0], label: BREATH_LABEL[p[0]], left: Math.ceil(p[1] - t - 1e-9), k: k };
+      }
+      t -= p[1];
+    }
+    return { phase: 'ein', label: BREATH_LABEL.ein, left: a.ein || 0, k: 0 };
+  }
+
+  function breathSvg(a, ms) {
+    var b = breathAt(a, ms);
+    var r = 28 + 44 * b.k;
+    return '<circle cx="120" cy="96" r="74" fill="none" stroke="rgba(184,140,192,.18)" stroke-width="2"/>' +
+      '<circle cx="120" cy="96" r="' + n1(r) + '" fill="rgba(184,140,192,.32)" stroke="#B88CC0" stroke-width="3"/>' +
+      '<text x="120" y="92" text-anchor="middle" fill="#f6edf1" font-size="15" font-weight="700">' + b.label + '</text>' +
+      '<text x="120" y="114" text-anchor="middle" fill="#f6edf1" font-size="19" font-weight="700">' + b.left + '</text>';
+  }
+
   function draw(pose, ms) {
+    if (pose.breath) return breathSvg(pose.breath, ms);
     return svg(frameAt(pose, ms), pose.scale || DEFAULT_SCALE, pose.props);
   }
 
@@ -212,6 +241,7 @@ window.Takt = window.Takt || {};
     VIEWBOX: VIEWBOX,
     DEFAULT_SCALE: DEFAULT_SCALE,
     draw: draw,
+    breathAt: breathAt,
     ik: ik,
     frameAt: frameAt,
     svg: svg,
