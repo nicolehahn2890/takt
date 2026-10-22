@@ -5,12 +5,6 @@ window.Takt = window.Takt || {};
   var $ = function (id) { return document.getElementById(id); };
   var THEMES = { core: '#C0BEA0', bauch: '#C8729A', dehnen: '#A8C4A0', yoga: '#B88CC0', beine: '#C4A882', ruecken: '#8AB4C4' };
   var RING_C = 2 * Math.PI * 138;
-  var ICONS = {
-    ganz: '<svg viewBox="0 0 48 48"><circle cx="24" cy="8" r="4"/><path d="M24 13v14M24 17l-10-8M24 17l10-8M24 27l-8 14M24 27l8 14"/></svg>',
-    core: '<svg viewBox="0 0 48 48"><circle cx="9" cy="19" r="4"/><path d="M13 22l28 8M16 23l-1 10h6M41 30l1 5"/></svg>',
-    beine: '<svg viewBox="0 0 48 48"><circle cx="8" cy="33" r="4"/><path d="M12 34l14-10 8 7v9M12 38h7"/></svg>',
-    dehnen: '<svg viewBox="0 0 48 48"><circle cx="11" cy="31" r="4"/><path d="M15 33c6-9 15-10 22 3H26M4 37h10"/></svg>'
-  };
   var PEACH = [
     '......gg....', '.....g......', '..pppp.ppp..', '.pplppppppp.',
     'pplppppppppd', 'plpppppppppd', 'pppppppppppd', 'pppppppppppd',
@@ -26,6 +20,7 @@ window.Takt = window.Takt || {};
   var lastIndex = -2;
   var needTap = false;
   var wakeWarned = false;
+  var enteredAt = 0;       // Zeitpunkt, an dem der Training-Screen erschien
 
   /* ---------- Hilfen ---------- */
   function show(name) {
@@ -113,6 +108,7 @@ window.Takt = window.Takt || {};
 
   /* ---------- Training ---------- */
   function enterTraining() {
+    enteredAt = Date.now();
     $('screen-train').style.setProperty('--theme', themeColor(run.workout.theme));
     $('t-name').textContent = run.workout.name;
     buildDots();
@@ -167,8 +163,8 @@ window.Takt = window.Takt || {};
   function showExercise(v) {
     var s = v.step;
     var target = s.kind === 'rest' ? v.nextWork : s;
-    var ex = target && target.exId ? exIndex[target.exId] : null;
-    $('t-icon').innerHTML = ICONS[(ex && ex.icon) || 'ganz'] || ICONS.ganz;
+    var ex = target ? T.exerciseFor(target.exId, exIndex, target.name) : null;
+    showFigure(ex);
     if (s.kind === 'rest') {
       $('t-ex').textContent = 'Durchatmen';
       $('t-desc').textContent = target ? 'Gleich: ' + target.name : '';
@@ -181,6 +177,28 @@ window.Takt = window.Takt || {};
     $('t-next-dur').textContent = nw ? T.fmt(nw.duration) : '';
     $('t-next-sub').textContent = (s.kind !== 'rest' && v.next && v.next.kind === 'rest') ?
       'nach ' + T.fmt(v.next.duration) + ' Pause' : '';
+  }
+
+  /* Figur der Uebung: eigenes Foto, Atem-Kreis, Haltung oder Standardfigur */
+  function showFigure(ex) {
+    var fig = $('t-fig'), img = $('t-photo');
+    T.figure.unmount(fig);
+    if (ex && ex.photoId) {
+      fig.style.display = 'none';
+      img.hidden = false;
+      img.removeAttribute('src');
+      T.photos.load(ex.photoId).then(function (u) {
+        if (u) { img.src = u; return; }
+        img.hidden = true;
+        fig.style.display = '';
+        T.figure.mount(fig, T.POSE_DEFAULT);
+      });
+      return;
+    }
+    img.hidden = true;
+    fig.style.display = '';
+    var pose = (ex && ex.typ === 'atem' && ex.atem) ? { breath: ex.atem } : ((ex && (T.POSES || {})[ex.id]) || T.POSE_DEFAULT);
+    T.figure.mount(fig, pose);
   }
 
   function phaseText(v) {
@@ -249,6 +267,7 @@ window.Takt = window.Takt || {};
   function stopTimer() {
     if (timer) clearInterval(timer);
     timer = null;
+    T.figure.unmount($('t-fig'));
   }
 
   function finish() {
@@ -309,7 +328,8 @@ window.Takt = window.Takt || {};
       var b = e.target.closest ? e.target.closest('[data-start]') : null;
       if (b && !b.disabled) startWorkout(b.getAttribute('data-start'));
     });
-    $('t-mid').addEventListener('click', togglePause);
+    // Mitte tippen = Pause; kurz nach dem Start ignorieren (zweiter Tipp auf Start)
+    $('t-mid').addEventListener('click', function () { if (Date.now() - enteredAt > 700) togglePause(); });
     $('b-toggle').addEventListener('click', togglePause);
     $('b-prev').addEventListener('click', function () { if (run) act(run.engine.prev()); });
     $('b-next').addEventListener('click', function () { if (run) act(run.engine.next()); });
