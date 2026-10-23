@@ -361,10 +361,6 @@ window.Takt = window.Takt || {};
       { handN: [178, 34] }, { handN: [144, 36] }, { handF: [176, 36] }], { hold: 0.1, move: 0.25 }),
     'seilspringen': P([S({ handN: [138, 94], handF: [134, 94] }),
       { hip: [120, 70], sh: [120, 20], footN: [121, 148], footF: [125, 148], footDirN: 60, footDirF: 60,
-        handN: [142, 86], handF: [138, 86] }], { hold: 0.05, move: 0.25 }),
-    'skater': P([{ hip: [140, 92], sh: [132, 46], hipW: 8, shW: 13, footN: [150, 162], footF: [150, 134], kneeN: -1, kneeF: 1,
-      lenF: 0.85, footDirN: 0, footDirF: 0, handN: [104, 74], handF: [90, 66], elbowN: 1, elbowF: 1 },
-      { hip: [100, 92], sh: [108, 46], footF: [90, 162], footN: [90, 134], lenF: 1, lenN: 0.85, footDirN: 180, footDirF: 180,
-        handN: [150, 66], handF: [136, 74], elbowN: -1, elbowF: -1 }], { hold: 0.2, move: 0.35 })
+        handN: [142, 86], handF: [138, 86] }], { hold: 0.05, move: 0.25 })
   };
 })(window.Takt);

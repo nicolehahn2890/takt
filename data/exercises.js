@@ -390,10 +390,10 @@ window.Takt = window.Takt || {};
     X('sonnengruss', 'Sonnengruß', ['Sun Salutation'], ['yoga', 'aufwaermen'], false, ['matte'], 'dehnen',
       'Fließender Ablauf: Arme hoch, vorbeugen, in den Stütz, Kobra, herabschauender Hund und zurück nach vorne. Im Atemrhythmus bewegen.',
       'Lieber langsam und ruhig als schnell.'),
-    X('krieger-1', 'Krieger I', ['Warrior I'], ['yoga'], true, ['matte'], 'dehnen',
+    X('krieger-1', 'Krieger mit Armen oben', ['Krieger I', 'Warrior I'], ['yoga'], true, ['matte'], 'dehnen',
       'Großer Schritt, vorderes Knie gebeugt, hinteres Bein gestreckt. Arme nach oben strecken, Blick nach vorne.',
       'Das vordere Knie bleibt über der Ferse.'),
-    X('krieger-2', 'Krieger II', ['Warrior II'], ['yoga'], true, ['matte'], 'dehnen',
+    X('krieger-2', 'Krieger mit Armen seitlich', ['Krieger II', 'Warrior II'], ['yoga'], true, ['matte'], 'dehnen',
       'Breiter Stand, vorderes Knie gebeugt. Arme seitlich auf Schulterhöhe ausstrecken, Blick über die vordere Hand.',
       'Schultern locker, der Oberkörper bleibt mittig.'),
     X('baum', 'Baum', ['Tree Pose'], ['yoga'], true, [], 'dehnen',
@@ -418,7 +418,7 @@ window.Takt = window.Takt || {};
       'Entspannt auf dem Rücken liegen, Arme leicht vom Körper weg, Handflächen nach oben. Augen schließen und ruhig atmen.',
       'Der perfekte Abschluss jedes Trainings.'),
 
-    X('krieger-3', 'Krieger III', ['Warrior III'], ['yoga', 'beine-po'], true, [], 'dehnen',
+    X('krieger-3', 'Krieger auf einem Bein', ['Krieger III', 'Warrior III'], ['yoga', 'beine-po'], true, [], 'dehnen',
       'Auf einem Bein stehen, Oberkörper und das andere Bein waagerecht nach vorne und hinten strecken. Die Arme zeigen lang nach vorne.',
       'Hüfte bleibt waagerecht, nicht aufdrehen.'),
     X('boot', 'Boot', ['Navasana'], ['yoga', 'bauch'], false, ['matte'], 'core',
@@ -463,13 +463,10 @@ window.Takt = window.Takt || {};
       'Die Bewegung kommt aus der Hüfte, Knie locker lassen.'),
     X('seilspringen', 'Seilspringen ohne Seil', ['Jump Rope'], ['ganzkoerper', 'aufwaermen'], false, [], 'ganz',
       'Auf den Fußballen locker auf der Stelle hüpfen, die Hände kreisen neben der Hüfte, als hättest du ein Seil.',
-      'Klein und leicht springen, leise landen.'),
-    X('skater', 'Eisschnellläufer', ['Skater Jumps'], ['ganzkoerper', 'beine-po'], false, [], 'ganz',
-      'Seitlich auf ein Bein springen, das andere Bein schwingt hinter dem Standbein vorbei. Dann zur anderen Seite springen.',
-      'Weich in den Knien landen, ohne Sprung geht es leiser.')
+      'Klein und leicht springen, leise landen.')
   ];
 
   // Ansagetexte, wo Katja den Namen anders sprechen soll
-  var ANSAGE = { 'huefte-90-90': 'Neunzig neunzig Hüfte', 'krieger-1': 'Krieger eins', 'krieger-2': 'Krieger zwei', 'krieger-3': 'Krieger drei' };
+  var ANSAGE = { 'huefte-90-90': 'Neunzig neunzig Hüfte' };
   T.EXERCISES.forEach(function (e) { if (ANSAGE[e.id]) e.ansage = ANSAGE[e.id]; });
 })(window.Takt);

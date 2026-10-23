@@ -255,15 +255,15 @@ Takt.VOICE_FILES = {
  },
  "ex_krieger-1": {
   "src": "assets/voice/ex_krieger-1.mp3",
-  "text": "Krieger eins"
+  "text": "Krieger mit Armen oben"
  },
  "ex_krieger-2": {
   "src": "assets/voice/ex_krieger-2.mp3",
-  "text": "Krieger zwei"
+  "text": "Krieger mit Armen seitlich"
  },
  "ex_krieger-3": {
   "src": "assets/voice/ex_krieger-3.mp3",
-  "text": "Krieger drei"
+  "text": "Krieger auf einem Bein"
  },
  "ex_lange-ausatmung": {
   "src": "assets/voice/ex_lange-ausatmung.mp3",
@@ -408,10 +408,6 @@ Takt.VOICE_FILES = {
  "ex_sit-up": {
   "src": "assets/voice/ex_sit-up.mp3",
   "text": "Sit-up"
- },
- "ex_skater": {
-  "src": "assets/voice/ex_skater.mp3",
-  "text": "Eisschnellläufer"
  },
  "ex_snow-angels": {
   "src": "assets/voice/ex_snow-angels.mp3",

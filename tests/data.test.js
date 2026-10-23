@@ -3,9 +3,9 @@ var D_HILF = ['band', 'stuhl', 'tisch', 'sofa', 'wand', 'matte'];
 var D_ICONS = ['core', 'dehnen', 'beine', 'ganz'];
 function dSubset(arr, allowed) { return Array.isArray(arr) && arr.every(function (x) { return allowed.indexOf(x) >= 0; }); }
 
-test('data: genau 146 Uebungen mit eindeutigen Ids', function () {
+test('data: genau 145 Uebungen mit eindeutigen Ids', function () {
   var ids = Takt.EXERCISES.map(function (e) { return e.id; });
-  eq(ids.length, 146);
+  eq(ids.length, 145);
   var dup = ids.filter(function (id, i) { return ids.indexOf(id) !== i; });
   eq(dup, []);
   var bad = ids.filter(function (id) { return !/^[a-z0-9-]+$/.test(id); });
@@ -105,14 +105,20 @@ test('data: jede Vacuum-Uebung zeigt einen Pfeil zum Bauch', function () {
   eq(missing, []);
 });
 
-test('data: die 36 neuen Uebungen vom 2026-10-23 sind da', function () {
+test('data: die 35 neuen Uebungen vom 2026-10-23 sind da', function () {
   var neu = ['vacuum-vorgebeugt', 'vacuum-kniend', 'vacuum-schneidersitz', 'vacuum-kindhaltung', 'vacuum-unterarmstuetz', 'vacuum-baerenstand',
     'vacuum-glute-bridge', 'vacuum-beckenkippen', 'vacuum-marschieren', 'vacuum-arme-oben', 'vacuum-gehen', 'hypopressive-atmung',
     'plank-knie', 'plank-beinheben', 'reverse-plank', 'knee-tucks', 'tabletop-crunch', 'seitstuetz-knie',
     'glute-bridge-marsch', 'standwaage', 'abduktion-stehend', 'kickback-stehend', 'innenschenkel', 'squat-pulses',
     'knie-zur-brust', 'vorbeuge-stehend', 'waden-dehnung', 'schulter-dehnung', 'brust-dehnung', 'faden-einfaedeln',
-    'krieger-3', 'boot', 'sphinx', 'schattenboxen', 'seilspringen', 'skater'];
+    'krieger-3', 'boot', 'sphinx', 'schattenboxen', 'seilspringen'];
   var ids = Takt.EXERCISES.map(function (e) { return e.id; });
   eq(neu.filter(function (id) { return ids.indexOf(id) < 0; }), []);
   eq(Takt.EXERCISES.filter(function (e) { return e.id === 'hypopressive-atmung'; })[0].typ, 'atem');
+});
+
+test('data: Eisschnelllaeufer ist entfernt und Krieger heissen ohne Zahlen', function () {
+  eq(Takt.EXERCISES.filter(function (e) { return e.id === 'skater'; }).length, 0);
+  eq(Takt.POSES.skater, undefined);
+  eq(Takt.EXERCISES.filter(function (e) { return /I{1,3}$/.test(e.name); }).map(function (e) { return e.name; }), []);
 });
