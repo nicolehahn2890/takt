@@ -310,6 +310,18 @@ Zurückgestellt:
 - Hinweis-Toasts erscheinen im Training über der Zeile „Als Nächstes“ (nur kurz).
 - Langer Workout-Name im Training bricht neben dem ✕ um (aus der Design-Grundlage, Training war nicht Teil der Umgestaltung).
 
+### 8.5 Teil B: Leiste unten und Statistik (2026-10-23) – umgesetzt und bewusst zurückgestellt
+
+Leiste unten (Home, Bibliothek, Statistik), Statistik-Seite (Woche/Monat/Jahr, Ring als Vergleich mit gleich vielen Tagen der Vorperiode, Balken, häufigster Bereich), Trainingszeit ohne Pausieren (live v=30). iPhone-Korrekturen dabei: Überschriften 40 px unter den Glas-Bereich von iOS 26 (`--glass-top`), Kopfleisten nicht mehr fixiert, ausgegraute Hauptknöpfe gedämpft rosa. Plan mit allen Entscheidungen: `docs/superpowers/plans/2026-10-23-teil-b-leiste-statistik.md`.
+
+Zurückgestellt:
+- Umschalter Woche/Monat/Jahr für VoiceOver nicht als Auswahl ausgezeichnet.
+- Vergleichstext nennt am 31. „(bis zum 31.)“, obwohl der kürzere Vormonat schon am 28./30. endet (gerechnet wird richtig).
+- Bereich-Sekunden können wegen Rundung je Übung ein paar Sekunden über der Trainingszeit liegen (nach Minuten unsichtbar).
+- Ein Training, das genau während des Updates lief, zählt die Zeit der Übungen vor dem Update nicht (einmalig).
+- Ungenutzter Zurück-Knopf der Bibliothek im Code.
+- Auf dem iPhone prüfen: Leiste unten beim Tippen in der Suche über der Tastatur.
+
 ## 9. Verifikation
 
 - Pro Schritt: `node --check` auf alle JS-Dateien; Agent `html-app-tester` (statische Prüfung); Vorschau im eingebauten Browser (`python -m http.server` im Projektordner, Handy-Viewport emuliert). Auf dem iPhone immer über die Live-URL (HTTPS), nie über die lokale IP.
