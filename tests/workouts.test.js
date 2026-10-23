@@ -302,3 +302,10 @@ test('mix Name passt immer in 40 Zeichen und laesst sich speichern', function ()
   }
   eq(Takt.makeMix({ themes: ['core', 'bauch'], minutes: 10, seed: 1 }, Takt.EXERCISES).name, 'Mix: Core, Bauch');
 });
+
+/* ---------- Design v2 ---------- */
+test('THEMES nach Design v2', function () {
+  var c = {};
+  Object.keys(Takt.THEMES).forEach(function (k) { c[k] = Takt.THEMES[k].color.toUpperCase(); });
+  eq(c, { core: '#C6C5A6', bauch: '#BE7B9D', dehnen: '#A8C4A0', yoga: '#B794C5', beine: '#C4A882', ruecken: '#8AB4C4' });
+});

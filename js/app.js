@@ -4,12 +4,6 @@ window.Takt = window.Takt || {};
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var RING_C = 2 * Math.PI * 138;
-  var PEACH = [
-    '......gg....', '.....g......', '..pppp.ppp..', '.pplppppppp.',
-    'pplppppppppd', 'plpppppppppd', 'pppppppppppd', 'pppppppppppd',
-    '.pppppppppd.', '.ppppppppdd.', '..pppppddd..', '....dddd....'
-  ];
-  var PEACH_COLORS = { p: '#C8729A', l: '#E8A6C2', d: '#9A5576', g: '#A8C4A0' };
 
   var data = T.store.load();
   var exIndex = T.indexExercises((T.EXERCISES || []).concat(data.exercisesOwn || []));
@@ -44,20 +38,10 @@ window.Takt = window.Takt || {};
     });
     return keys;
   }
-  function peachSvg() {
-    var r = '';
-    PEACH.forEach(function (row, y) {
-      for (var x = 0; x < row.length; x++) {
-        var c = PEACH_COLORS[row[x]];
-        if (c) r += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="' + c + '"/>';
-      }
-    });
-    return '<svg viewBox="0 0 12 12" aria-hidden="true">' + r + '</svg>';
-  }
 
   /* ---------- Start ---------- */
   function renderStart() {
-    $('brand-logo').innerHTML = peachSvg();
+    $('brand-logo').innerHTML = '<img src="assets/takt-mark.svg" alt="">';
     var own = (data.exercisesOwn || []).length;
     $('lib-sub').textContent = (T.EXERCISES || []).length + ' \u00dcbungen mit Figur und Ansage' + (own ? ' \u00b7 ' + own + ' eigene' : '');
     if (T.home) T.home.render();

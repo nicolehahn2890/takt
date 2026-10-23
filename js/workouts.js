@@ -138,10 +138,10 @@ window.Takt = window.Takt || {};
   /* ---------- Themen und Wochen-Minuten ---------- */
   T.WORKOUT_THEMES = ['core', 'bauch', 'dehnen', 'yoga', 'beine', 'ruecken'];
   T.THEMES = {
-    core: { label: 'Vacuum & Core', color: '#C0BEA0' },
-    bauch: { label: 'Bauch', color: '#C8729A' },
+    core: { label: 'Vacuum & Core', color: '#C6C5A6' },
+    bauch: { label: 'Bauch', color: '#BE7B9D' },
     dehnen: { label: 'Dehnen & R\u00fccken', color: '#A8C4A0' },
-    yoga: { label: 'Yoga & Atmung', color: '#B88CC0' },
+    yoga: { label: 'Yoga & Atmung', color: '#B794C5' },
     beine: { label: 'Beine & Po', color: '#C4A882' },
     ruecken: { label: 'Starker R\u00fccken', color: '#8AB4C4' }
   };

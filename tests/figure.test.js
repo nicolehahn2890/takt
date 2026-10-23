@@ -117,3 +117,13 @@ test('figure geometry: Beine lassen sich verkuerzen (Bein zeigt zum Betrachter)'
   ok(Math.abs(Math.hypot(g.legF.mid[0] - f.hip[0], g.legF.mid[1] - f.hip[1]) - 40) < 0.01, 'Oberschenkel hinten 40');
   ok(Math.abs(Math.hypot(g.legF.end[0] - g.legF.mid[0], g.legF.end[1] - g.legF.mid[1]) - 20) < 0.01, 'Unterschenkel hinten 20');
 });
+
+test('Figur-Farben Design v2', function () {
+  var withArrow = Takt.POSES['vacuum-stehend'];
+  ok(withArrow.props.some(function (p) { return p.type === 'pfeil'; }), 'Testhaltung ohne Pfeil');
+  var svg = Takt.figure.draw(withArrow, 0);
+  ok(svg.indexOf('#BE7B9D') >= 0, 'Pfeil nicht Rose');
+  var breath = Takt.figure.draw({ breath: { ein: 4, halten: 0, aus: 4, haltenLeer: 0 } }, 0);
+  ok(breath.indexOf('#B794C5') >= 0 && breath.indexOf('rgba(183,148,197,') >= 0, 'Atemkreis nicht Lavendel');
+  ok(breath.indexOf('#B88CC0') < 0 && breath.indexOf('184,140,192') < 0, 'alte Lila-Farbe im Atemkreis');
+});

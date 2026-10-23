@@ -5,7 +5,7 @@ window.Takt = window.Takt || {};
   'use strict';
 
   var SEG = { thigh: 40, shin: 40, upper: 30, fore: 28, neck: 6, head: 10 };
-  var COL = { near: '#E3A3BF', far: '#9A6B8C', head: '#F0C4D6', mat: 'rgba(255,255,255,.07)', prop: '#4a3a44', arrow: '#C8729A', wall: 'rgba(255,255,255,.05)' };
+  var COL = { near: '#E3A3BF', far: '#9A6B8C', head: '#F0C4D6', mat: 'rgba(255,255,255,.07)', prop: '#4a3a44', arrow: '#BE7B9D', wall: 'rgba(255,255,255,.05)' };
   var DEFAULT_SCALE = 0.85;
   var WID = { torso: 17, thigh: 11, shin: 10, upper: 9, fore: 8, foot: 7, girdle: 9 };
   var FOOT = 9;
@@ -246,8 +246,8 @@ window.Takt = window.Takt || {};
   function breathSvg(a, ms) {
     var b = breathAt(a, ms);
     var r = 28 + 44 * b.k;
-    return '<circle cx="120" cy="96" r="74" fill="none" stroke="rgba(184,140,192,.18)" stroke-width="2"/>' +
-      '<circle cx="120" cy="96" r="' + n1(r) + '" fill="rgba(184,140,192,.32)" stroke="#B88CC0" stroke-width="3"/>' +
+    return '<circle cx="120" cy="96" r="74" fill="none" stroke="rgba(183,148,197,.18)" stroke-width="2"/>' +
+      '<circle cx="120" cy="96" r="' + n1(r) + '" fill="rgba(183,148,197,.32)" stroke="#B794C5" stroke-width="3"/>' +
       '<text x="120" y="92" text-anchor="middle" fill="#f6edf1" font-size="15" font-weight="700">' + b.label + '</text>' +
       '<text x="120" y="114" text-anchor="middle" fill="#f6edf1" font-size="19" font-weight="700">' + b.left + '</text>';
   }
