@@ -313,6 +313,7 @@ Zurückgestellt:
 ### 8.5 Teil B: Leiste unten und Statistik (2026-10-23) – umgesetzt und bewusst zurückgestellt
 
 Leiste unten (Home, Bibliothek, Statistik), Statistik-Seite (Woche/Monat/Jahr, Ring als Vergleich mit gleich vielen Tagen der Vorperiode, Balken, häufigster Bereich), Trainingszeit ohne Pausieren (live v=30). iPhone-Korrekturen dabei: Überschriften 40 px unter den Glas-Bereich von iOS 26 (`--glass-top`), Kopfleisten nicht mehr fixiert, ausgegraute Hauptknöpfe gedämpft rosa. Plan mit allen Entscheidungen: `docs/superpowers/plans/2026-10-23-teil-b-leiste-statistik.md`.
+iPhone-Test von Nicole am 2026-10-23 bestanden (Leiste, Statistik, Trainingszeit ohne Pausieren, Überschriften scharf).
 
 Zurückgestellt:
 - Umschalter Woche/Monat/Jahr für VoiceOver nicht als Auswahl ausgezeichnet.
