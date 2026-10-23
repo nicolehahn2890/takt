@@ -1,0 +1,12 @@
+import { ReactNode, CSSProperties } from 'react';
+/** "Als Nächstes" preview strip on the training screen. */
+export interface NextUpProps {
+  name: ReactNode;
+  /** e.g. "nach 0:15 Pause" */
+  sub?: ReactNode;
+  /** e.g. "0:40" */
+  duration?: ReactNode;
+  label?: string;
+  style?: CSSProperties;
+}
+export declare function NextUp(props: NextUpProps): JSX.Element;

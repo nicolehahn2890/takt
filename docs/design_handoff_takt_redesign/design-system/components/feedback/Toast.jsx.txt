@@ -1,0 +1,4 @@
+import React from 'react';
+export function Toast({ children, style }) {
+  return <div role="status" style={{ width: 'max-content', maxWidth: '88%', background: 'var(--text)', color: 'var(--text-on-accent)', padding: '10px 16px', borderRadius: 12, fontSize: 14, fontWeight: 500, textAlign: 'center', boxShadow: 'var(--shadow-toast)', ...style }}>{children}</div>;
+}

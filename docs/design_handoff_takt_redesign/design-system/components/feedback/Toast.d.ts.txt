@@ -1,0 +1,7 @@
+import { ReactNode, CSSProperties } from 'react';
+/** Short confirmation message, light on dark. Position it yourself (bottom centre, above the footer). */
+export interface ToastProps {
+  children?: ReactNode;
+  style?: CSSProperties;
+}
+export declare function Toast(props: ToastProps): JSX.Element;

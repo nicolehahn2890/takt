@@ -1,0 +1,24 @@
+import { CSSProperties, MouseEventHandler } from 'react';
+/**
+ * Workout card for "Meine Workouts" and template grids. Theme colour shows as dot, figure tray tint and Start fill — never as a border strip.
+ */
+export interface WorkoutCardProps {
+  /** e.g. "Mein Morgen-Core" or "Kurz" inside a theme group */
+  name: string;
+  /** e.g. "7 Min. · 8 Übungen" */
+  meta?: string;
+  /** theme colour token, e.g. 'var(--theme-bauch)' */
+  theme?: string;
+  /** optional theme name before meta, e.g. "Vacuum & Core" */
+  themeLabel?: string;
+  /** 2–4 exercise ids shown as figure strip */
+  exIds?: string[];
+  onStart?: MouseEventHandler<HTMLButtonElement>;
+  /** shows the "Anpassen" link when set */
+  onAdjust?: MouseEventHandler<HTMLButtonElement>;
+  /** whole-card tap → preview/editor */
+  onOpen?: MouseEventHandler<HTMLElement>;
+  startLabel?: string;
+  style?: CSSProperties;
+}
+export declare function WorkoutCard(props: WorkoutCardProps): JSX.Element;

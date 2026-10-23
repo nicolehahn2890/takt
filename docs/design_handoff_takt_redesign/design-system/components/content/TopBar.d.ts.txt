@@ -1,0 +1,14 @@
+import { ReactNode, CSSProperties, MouseEventHandler } from 'react';
+/** Header of sub-pages: back chevron, title (+ subtitle), optional action. */
+export interface TopBarProps {
+  title: ReactNode;
+  /** e.g. "19:30 Min. · 14 Übungen" */
+  subtitle?: ReactNode;
+  onBack?: MouseEventHandler<HTMLButtonElement>;
+  /** right-side element, e.g. <Button variant="pill" size="sm">+ Eigene</Button> */
+  action?: ReactNode;
+  /** sticky with blurred translucent plum background */
+  sticky?: boolean;
+  style?: CSSProperties;
+}
+export declare function TopBar(props: TopBarProps): JSX.Element;

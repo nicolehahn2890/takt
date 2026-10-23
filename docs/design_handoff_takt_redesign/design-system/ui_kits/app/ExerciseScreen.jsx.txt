@@ -1,0 +1,21 @@
+
+const TAG = { vacuum: 'Vacuum', atmung: 'Atmung', core: 'Core', bauch: 'Bauch', ruecken: 'Rücken', 'beine-po': 'Beine & Po', dehnen: 'Dehnen', yoga: 'Yoga', ganzkoerper: 'Ganzkörper', oberkoerper: 'Oberkörper', aufwaermen: 'Aufwärmen' };
+function ExerciseScreen({ e, back, go }) {
+  const { TopBar, ExerciseFigure, Badge, Hint, Button, TextField } = window.TaktDesignSystem_26f8eb;
+  const badges = (e.tags || []).map(t => TAG[t] || t).concat(e.beidseitig ? ['beidseitig'] : []).concat((e.hilfsmittel || []).map(h => HILF[h]));
+  const a = e.atem;
+  return <div style={{ paddingBottom: 28 }}>
+    <TopBar sticky title={e.name} onBack={back} />
+    <div style={{ padding: '4px 16px 0' }}>
+      <ExerciseFigure exId={e.id} animate width="100%" height="auto" radius={20} style={{ aspectRatio: '216 / 160' }} />
+      {e.alias && e.alias.length ? <p style={{ color: 'var(--text-muted)', fontSize: 14, margin: '14px 2px 0' }}>{e.alias.join(' · ')}</p> : null}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, margin: '10px 0' }}>{badges.map(b => <Badge key={b}>{b}</Badge>)}</div>
+      <p style={{ fontSize: 18, lineHeight: 1.5, margin: '6px 2px' }}>{e.beschreibung}</p>
+      {e.hinweis ? <Hint label="Tipp" style={{ margin: '10px 2px' }}>{e.hinweis}</Hint> : null}
+      {a ? <p style={{ fontSize: 14, color: 'var(--lila)', margin: '8px 2px' }}>Rhythmus: {[a.ein + ' s ein', a.halten ? a.halten + ' s halten' : null, a.aus + ' s aus', a.haltenLeer ? a.haltenLeer + ' s halten' : null].filter(Boolean).join(' · ')}</p> : null}
+      <div style={{ display: 'flex', gap: 10, margin: '16px 0' }}><Button variant="secondary" onClick={() => go('toast', '„' + e.name + '“ – Ansage von Katja')}>Ansage anhören</Button></div>
+      <TextField label="Meine Notiz" multiline placeholder="z. B. Knie leicht gebeugt lassen" />
+    </div>
+  </div>;
+}
+window.ExerciseScreen = ExerciseScreen;

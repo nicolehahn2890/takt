@@ -1,0 +1,13 @@
+import { ReactNode, CSSProperties } from 'react';
+/** Sentence-case section heading ("Vorlagen", "Meine Workouts") or theme heading with colour dot. */
+export interface SectionTitleProps {
+  children?: ReactNode;
+  /** theme colour → shows a dot (theme group heading) */
+  dot?: string;
+  /** right-aligned muted text, e.g. "12" or "2 Vorlagen" */
+  aside?: ReactNode;
+  /** md = section (24px), sm = group/block (17px) */
+  size?: 'md' | 'sm';
+  style?: CSSProperties;
+}
+export declare function SectionTitle(props: SectionTitleProps): JSX.Element;

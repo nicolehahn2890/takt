@@ -1,0 +1,14 @@
+
+function DoneScreen({ r, go }) {
+  const { Button, ExerciseFigure } = window.TaktDesignSystem_26f8eb;
+  return <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '24px 16px', textAlign: 'center', background: 'linear-gradient(160deg, var(--plum-650), var(--plum-900) 60%)' }}>
+    <ExerciseFigure exId="kindhaltung" animate width={220} height={163} radius={20} tint={THEMES[r.w.theme][1]} style={{ marginBottom: 14 }} />
+    <div style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 600, letterSpacing: '-.5px' }}>Geschafft!</div>
+    <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 15, fontVariantNumeric: 'tabular-nums' }}>{fmt(r.secs)} trainiert · {r.count} Übungen</p>
+    <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
+      <Button variant="primary" onClick={() => go('train', r.w)}>Nochmal</Button>
+      <Button variant="secondary" onClick={() => go('home')}>Zur Startseite</Button>
+    </div>
+  </div>;
+}
+window.DoneScreen = DoneScreen;

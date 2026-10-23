@@ -1,0 +1,10 @@
+import React from 'react';
+export function QuickTile({ title, subtitle, color = 'var(--lila)', onClick, style }) {
+  const [press, setPress] = React.useState(false);
+  return <button type="button" onClick={onClick} onPointerDown={() => setPress(true)} onPointerUp={() => setPress(false)} onPointerLeave={() => setPress(false)}
+    style={{ borderRadius: 18, padding: '16px 16px 14px', textAlign: 'left', border: 0, cursor: 'pointer', font: 'inherit', minHeight: 84, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', gap: 2,
+      background: color, color: 'var(--text-on-accent)', transform: press ? 'scale(.98)' : 'none', transition: 'transform var(--dur-fast) var(--ease-standard)', ...style }}>
+    <b style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 600, letterSpacing: '-.3px' }}>{title}</b>
+    {subtitle ? <small style={{ fontSize: 13, fontWeight: 500, opacity: .78 }}>{subtitle}</small> : null}
+  </button>;
+}

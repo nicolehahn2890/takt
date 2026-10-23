@@ -1,0 +1,22 @@
+import { CSSProperties } from 'react';
+/**
+ * Takt's stick figure (or photo) for an exercise. Requires assets/figure/{figure,poses,exercises}.js
+ * loaded on the page (window.Takt.figure / POSES / EXERCISES).
+ */
+export interface ExerciseFigureProps {
+  /** exercise id from assets/figure/exercises.js, e.g. 'plank', 'katze-kuh' */
+  exId?: string;
+  /** explicit pose object (overrides exId) */
+  pose?: object;
+  /** animate the figure (training / detail) instead of a still frame (lists) */
+  animate?: boolean;
+  /** user photo URL — replaces the figure */
+  photo?: string;
+  width?: number | string;
+  height?: number | string;
+  radius?: number;
+  /** theme colour to tint the tray behind the figure */
+  tint?: string;
+  style?: CSSProperties;
+}
+export declare function ExerciseFigure(props: ExerciseFigureProps): JSX.Element;

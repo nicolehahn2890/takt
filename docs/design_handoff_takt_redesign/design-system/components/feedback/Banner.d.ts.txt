@@ -1,0 +1,8 @@
+import { ReactNode, CSSProperties, MouseEventHandler } from 'react';
+/** Warm-yellow attention banner (e.g. iOS sound needs a tap). */
+export interface BannerProps {
+  children?: ReactNode;
+  onClick?: MouseEventHandler<HTMLDivElement>;
+  style?: CSSProperties;
+}
+export declare function Banner(props: BannerProps): JSX.Element;

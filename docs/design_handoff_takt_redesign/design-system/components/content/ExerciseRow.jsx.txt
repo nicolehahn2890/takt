@@ -1,0 +1,17 @@
+import React from 'react';
+import { ExerciseFigure } from './ExerciseFigure.jsx';
+export function ExerciseRow({ exId, name, sub, duration, bilateral = false, photo, variant = 'card', selected, onClick, style }) {
+  const card = variant === 'card';
+  const Tag = onClick ? 'button' : 'div';
+  return <Tag type={onClick ? 'button' : undefined} onClick={onClick} style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left', font: 'inherit', color: 'var(--text)', border: 0, cursor: onClick ? 'pointer' : 'default',
+    background: card ? (selected ? 'color-mix(in oklab, var(--lila) 18%, var(--surface-card))' : 'var(--surface-card)') : 'transparent', borderRadius: card ? 16 : 0, padding: card ? '8px 12px 8px 8px' : '5px 0', ...style }}>
+    <ExerciseFigure exId={exId} photo={photo} width={card ? 84 : 64} height={card ? 62 : 48} radius={card ? 12 : 10} />
+    <span style={{ flex: 1, minWidth: 0 }}>
+      <b style={{ display: card ? 'block' : 'inline', fontSize: card ? 16 : 16, fontWeight: card ? 700 : 500 }}>{name}</b>
+      {bilateral && !card ? <em style={{ fontStyle: 'normal', color: 'var(--text-muted)', fontSize: 13, marginLeft: 8 }}>beidseitig</em> : null}
+      {sub ? <small style={{ display: 'block', color: 'var(--text-muted)', fontSize: 12, marginTop: 2 }}>{sub}</small> : null}
+    </span>
+    {duration != null ? <span style={{ color: 'var(--text-muted)', fontSize: 14, fontVariantNumeric: 'tabular-nums', flex: 'none' }}>{duration}</span> : null}
+    {selected != null ? <span style={{ width: 28, height: 28, borderRadius: '50%', flex: 'none', display: 'grid', placeItems: 'center', fontSize: 13, fontWeight: 700, background: selected ? 'var(--lila)' : 'var(--surface-ghost-strong)', color: 'var(--text-on-accent)' }}>{typeof selected === 'number' ? selected : ''}</span> : null}
+  </Tag>;
+}

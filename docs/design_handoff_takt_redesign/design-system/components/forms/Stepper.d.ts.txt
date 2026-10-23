@@ -1,0 +1,12 @@
+import { ReactNode, CSSProperties, MouseEventHandler } from 'react';
+/** − value + stepper for durations, pauses and rounds. */
+export interface StepperProps {
+  /** e.g. "40 s" or "3×" */
+  value: ReactNode;
+  /** small caption under the value, e.g. "Dauer", "Pause danach", "Runden" */
+  label: string;
+  onMinus?: MouseEventHandler<HTMLButtonElement>;
+  onPlus?: MouseEventHandler<HTMLButtonElement>;
+  style?: CSSProperties;
+}
+export declare function Stepper(props: StepperProps): JSX.Element;

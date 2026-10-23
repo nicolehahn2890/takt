@@ -1,0 +1,17 @@
+import React from 'react';
+function Ctl({ ic, label, main, theme, onClick }) {
+  const [p, setP] = React.useState(false);
+  return <button type="button" onClick={onClick} onPointerDown={() => setP(true)} onPointerUp={() => setP(false)} onPointerLeave={() => setP(false)}
+    style={{ borderRadius: 16, border: 0, cursor: 'pointer', font: 'inherit', minHeight: 58, padding: '10px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2,
+      background: main ? theme : 'var(--surface-ghost)', color: main ? 'var(--text-on-accent)' : 'var(--text)', fontWeight: 600, fontSize: main ? 16 : 14, transform: p ? 'scale(.96)' : 'none', transition: 'transform .15s' }}>
+    <span>{ic}</span><small style={{ fontSize: 10, fontWeight: 500, color: main ? 'rgba(26,20,24,.7)' : 'var(--text-muted)' }}>{label}</small></button>;
+}
+export function TrainingControls({ paused = false, theme = 'var(--theme)', onPrev, onMinus, onToggle, onPlus, onNext, style }) {
+  return <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.4fr 1fr 1fr', gap: 8, ...style }}>
+    <Ctl ic={'\u25C0\uFE0E'} label="Zurück" onClick={onPrev} />
+    <Ctl ic={'\u221215'} label="Sek." onClick={onMinus} />
+    <Ctl ic={paused ? '\u25B6\uFE0E' : '\u275A\u275A'} label={paused ? 'Weiter' : 'Pause'} main theme={theme} onClick={onToggle} />
+    <Ctl ic="+15" label="Sek." onClick={onPlus} />
+    <Ctl ic={'\u25B6\uFE0E'} label="Nächste" onClick={onNext} />
+  </div>;
+}

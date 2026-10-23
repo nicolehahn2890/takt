@@ -1,0 +1,24 @@
+
+const INT = { leicht: 0.8, normal: 1, hart: 1.2 };
+const NOTE = { leicht: 'Übungen kürzer, Pausen länger', normal: 'wie geplant', hart: 'Übungen länger, Pausen kürzer' };
+function AdjustSheet({ w, onClose, onStart }) {
+  const { Sheet, RangeField, Segmented, Button } = window.TaktDesignSystem_26f8eb;
+  const full = secsOf(w), maxM = Math.max(5, Math.ceil(full / 60));
+  const [m, setM] = React.useState(maxM);
+  const [lvl, setLvl] = React.useState('normal');
+  let secs = Math.round(full * INT[lvl]); if (m < maxM) secs = Math.min(secs, m * 60);
+  const lab = { fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', margin: '18px 2px 6px' };
+  return <Sheet title="Anpassen" contained onClose={onClose}>
+    <p style={{ margin: '2px 0 4px', color: 'var(--text-muted)', fontSize: 14, lineHeight: 1.45 }}><b style={{ color: 'var(--text)' }}>{w.name}</b><br />Geplant: {fmt(full)} Min.</p>
+    <div style={lab}>Wie viel Zeit hast du?</div>
+    <RangeField min={5} max={maxM} value={m} onChange={setM} valueLabel={m >= maxM ? 'Volle Länge' : m + ' Min.'} />
+    <div style={lab}>Intensität</div>
+    <Segmented options={['leicht', 'normal', 'hart']} value={lvl} onChange={setLvl} />
+    <small style={{ display: 'block', color: 'var(--text-muted)', fontSize: 13, margin: '6px 2px 0' }}>{NOTE[lvl]}</small>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', margin: '18px 2px 14px' }}>
+      <span style={{ color: 'var(--text-muted)', fontSize: 14 }}>Neue Dauer</span>
+      <b style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 600, letterSpacing: '-.5px', fontVariantNumeric: 'tabular-nums' }}>{fmt(secs)} Min.</b></div>
+    <Button variant="primary" size="lg" block onClick={() => onStart(w, INT[lvl])}>Starten</Button>
+  </Sheet>;
+}
+window.AdjustSheet = AdjustSheet;

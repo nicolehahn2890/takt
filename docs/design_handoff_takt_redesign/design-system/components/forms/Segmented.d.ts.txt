@@ -1,0 +1,11 @@
+import { CSSProperties } from 'react';
+/** Segmented control for 2–4 mutually exclusive options. */
+export interface SegmentedProps {
+  options: Array<string | { value: string; label: string }>;
+  value?: string;
+  onChange?: (value: string) => void;
+  /** fill of the selected segment, default lila */
+  color?: string;
+  style?: CSSProperties;
+}
+export declare function Segmented(props: SegmentedProps): JSX.Element;

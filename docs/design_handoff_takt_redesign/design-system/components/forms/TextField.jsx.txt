@@ -1,0 +1,10 @@
+import React from 'react';
+export function TextField({ label, value, defaultValue, placeholder, multiline = false, rows = 3, type = 'text', error, onChange, style }) {
+  const [focus, setFocus] = React.useState(false);
+  const Tag = multiline ? 'textarea' : 'input';
+  const field = { display: 'block', width: '100%', marginTop: label ? 6 : 0, background: 'var(--surface-card)', color: 'var(--text)', border: '1px solid', borderColor: error ? 'var(--danger)' : focus ? 'var(--lila)' : 'transparent',
+    borderRadius: type === 'search' ? 14 : 12, padding: type === 'search' ? '12px 14px' : 12, font: 'inherit', fontSize: 16, outline: 'none', resize: multiline ? 'vertical' : undefined, transition: 'border-color var(--dur-fast)' };
+  return <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: 14, ...style }}>{label}
+    <Tag type={multiline ? undefined : type} rows={multiline ? rows : undefined} value={value} defaultValue={defaultValue} placeholder={placeholder} onChange={onChange} onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} style={field} />
+    {error ? <span style={{ display: 'block', color: 'var(--danger)', fontSize: 13, marginTop: 6 }}>{error}</span> : null}</label>;
+}

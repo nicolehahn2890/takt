@@ -1,0 +1,13 @@
+:root{
+  --shadow-toast:0 8px 24px rgba(0,0,0,.4);--shadow-sheet:0 -12px 40px rgba(0,0,0,.35);--shadow-device:0 30px 60px rgba(0,0,0,.5);
+  --blur-bar:blur(8px); /* @kind other */
+ 
+  --bg-page:linear-gradient(160deg,var(--plum-650),var(--plum-900) 360px) no-repeat,var(--plum-900);
+  --bg-training:linear-gradient(160deg,var(--plum-650),var(--plum-900) 55%);
+  --ease-standard:cubic-bezier(.2,.7,.2,1); /* @kind other */
+  --dur-fast:.15s; /* @kind other */
+  --dur-ring:.25s; /* @kind other */
+  --dur-color:.4s; /* @kind other */
+  --press-scale:.96; /* @kind other */
+
+}

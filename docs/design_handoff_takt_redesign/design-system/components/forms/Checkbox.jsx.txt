@@ -1,0 +1,6 @@
+import React from 'react';
+export function Checkbox({ label, checked = false, onChange, style }) {
+  return <label style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 15, cursor: 'pointer', color: 'var(--text)', ...style }}>
+    <input type="checkbox" checked={checked} onChange={e => onChange && onChange(e.target.checked)} style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }} />
+    <span aria-hidden="true" style={{ width: 24, height: 24, borderRadius: 8, flex: 'none', display: 'grid', placeItems: 'center', background: checked ? 'var(--lila)' : 'var(--surface-ghost-strong)', color: 'var(--text-on-accent)', fontSize: 14, fontWeight: 700, transition: 'background var(--dur-fast)' }}>{checked ? '\u2713' : ''}</span>{label}</label>;
+}

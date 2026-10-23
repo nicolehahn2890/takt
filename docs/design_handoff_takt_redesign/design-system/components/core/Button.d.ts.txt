@@ -1,0 +1,19 @@
+import { ReactNode, CSSProperties, MouseEventHandler } from 'react';
+/**
+ * Takt action button. primary = filled with the workout's theme colour.
+ */
+export interface ButtonProps {
+  /** primary (Salbei fill, or the workout's theme colour via `theme`) · secondary (soft ghost fill) · ghost · danger · pill (lila, header action) · link (underlined muted text, e.g. "Anpassen") */
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'pill' | 'link';
+  /** sm 44px (header pill) · md 52px (default) · lg 58px (sheet / footer CTA) */
+  size?: 'sm' | 'md' | 'lg';
+  /** full width */
+  block?: boolean;
+  /** CSS colour for primary fill, e.g. 'var(--theme-dehnen)' */
+  theme?: string;
+  disabled?: boolean;
+  children?: ReactNode;
+  style?: CSSProperties;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+}
+export declare function Button(props: ButtonProps): JSX.Element;

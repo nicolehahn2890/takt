@@ -1,0 +1,6 @@
+import React from 'react';
+export function ProgressDots({ total = 8, done = 0, current = true, theme = 'var(--theme)', style }) {
+  if (total > 24) return <div style={{ height: 4, borderRadius: 2, background: 'rgba(255,255,255,.12)', overflow: 'hidden', ...style }}><b style={{ display: 'block', height: '100%', width: (100 * done / total) + '%', background: 'var(--pink)' }}></b></div>;
+  return <div style={{ display: 'flex', gap: 4, ...style }}>{Array.from({ length: total }, (_, i) =>
+    <i key={i} style={{ flex: 1, height: 4, borderRadius: 2, background: i < done ? 'var(--pink)' : i === done ? (current ? theme : 'rgba(184,140,192,.55)') : 'rgba(255,255,255,.12)', transition: 'background .3s' }}></i>)}</div>;
+}

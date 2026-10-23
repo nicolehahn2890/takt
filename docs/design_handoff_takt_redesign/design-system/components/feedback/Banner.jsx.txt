@@ -1,0 +1,4 @@
+import React from 'react';
+export function Banner({ children, onClick, style }) {
+  return <div role="alert" onClick={onClick} style={{ background: 'var(--warning)', color: 'var(--text-on-accent)', fontWeight: 700, fontSize: 14, padding: '12px 14px', borderRadius: 14, textAlign: 'center', cursor: onClick ? 'pointer' : 'default', ...style }}>{children}</div>;
+}

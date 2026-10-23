@@ -1,0 +1,17 @@
+import React from 'react';
+const R = 138, CIRC = 2 * Math.PI * R;
+const fmt = s => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); };
+export function TimerRing({ remaining = 0, duration = 0, phase, size = 280, theme = 'var(--theme)', rest = false, paused = false, showOf = true, style }) {
+  const off = CIRC * (1 - (duration ? remaining / duration : 0));
+  return <div style={{ position: 'relative', width: size, aspectRatio: '1', flex: 'none', ...style }}>
+    <svg viewBox="0 0 300 300" aria-hidden="true" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)', display: 'block' }}>
+      <circle cx="150" cy="150" r={R} fill="none" strokeWidth="11" stroke="rgba(255,255,255,.08)"></circle>
+      <circle cx="150" cy="150" r={R} fill="none" strokeWidth="11" strokeLinecap="round" stroke={rest ? 'var(--lila)' : theme} strokeDasharray={CIRC} strokeDashoffset={off} style={{ transition: 'stroke-dashoffset .25s linear, stroke .4s' }}></circle>
+    </svg>
+    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ fontSize: 13, fontWeight: 600, color: paused ? 'var(--pink)' : 'var(--lila)', minHeight: 17, marginBottom: 4 }}>{paused ? 'Pausiert' : phase}</div>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: Math.round(size * 0.27), fontWeight: 600, letterSpacing: '-1.5px', lineHeight: 1, fontVariantNumeric: 'tabular-nums', opacity: paused ? .5 : 1 }}>{fmt(remaining)}</div>
+      {showOf ? <div style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 6, fontVariantNumeric: 'tabular-nums' }}>von {fmt(duration)}</div> : null}
+    </div>
+  </div>;
+}

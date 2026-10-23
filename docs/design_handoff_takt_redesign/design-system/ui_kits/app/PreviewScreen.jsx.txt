@@ -1,0 +1,23 @@
+
+function PreviewScreen({ w, go }) {
+  const { TopBar, Button, ExerciseRow, SectionTitle, Hint } = window.TaktDesignSystem_26f8eb;
+  const th = THEMES[w.theme][1];
+  return <div style={{ paddingBottom: 96 }}>
+    <TopBar sticky title={w.name} subtitle={fmt(secsOf(w)) + ' Min. · ' + countOf(w) + ' Übungen'} onBack={() => go('home')} />
+    <div style={{ padding: '6px 16px 0' }}>
+      <div style={{ display: 'flex', gap: 10, marginBottom: 6 }}>
+        <Button variant="primary" theme={th} size="lg" style={{ flex: 1 }} onClick={() => go('train', w)}>Start</Button>
+        <Button variant="secondary" size="lg" style={{ flex: 1 }} onClick={() => go('adjust', w)}>Anpassen</Button>
+      </div>
+      {w.blocks.map((b, bi) => <div key={bi}>
+        <SectionTitle size="sm" aside={b.repeat > 1 ? b.repeat + ' Runden' : null} style={{ margin: '20px 2px 6px' }}>{b.label || 'Block ' + (bi + 1)}</SectionTitle>
+        {b.items.map((it, i) => { const ex = exById(it.exId); return <ExerciseRow key={i} variant="plain" exId={it.exId} name={ex.name} bilateral={ex.beidseitig} duration={it.duration + ' s'} onClick={() => go('ex', ex)} />; })}
+      </div>)}
+      <Hint style={{ margin: '16px 2px 0', fontSize: 13 }}>Vorlagen bleiben, wie sie sind. „Bearbeiten“ legt eine Kopie unter „Meine Workouts“ an, die du frei ändern kannst.</Hint>
+    </div>
+    <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '10px 16px 24px', background: 'linear-gradient(rgba(23,18,23,0), var(--plum-900) 30%)' }}>
+      <Button variant="primary" theme="var(--rose)" size="lg" block onClick={() => go('toast', 'Kopie unter „Meine Workouts“ angelegt.')}>Bearbeiten (als Kopie)</Button>
+    </div>
+  </div>;
+}
+window.PreviewScreen = PreviewScreen;

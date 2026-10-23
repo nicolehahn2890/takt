@@ -1,0 +1,12 @@
+import { ReactNode, CSSProperties } from 'react';
+/** Bottom sheet over a dark scrim (Anpassen, Mix). */
+export interface SheetProps {
+  open?: boolean;
+  title: ReactNode;
+  onClose?: () => void;
+  children?: ReactNode;
+  /** position: absolute instead of fixed — for use inside a device frame */
+  contained?: boolean;
+  style?: CSSProperties;
+}
+export declare function Sheet(props: SheetProps): JSX.Element;

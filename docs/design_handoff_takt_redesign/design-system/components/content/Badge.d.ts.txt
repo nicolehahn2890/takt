@@ -1,0 +1,8 @@
+import { ReactNode, CSSProperties } from 'react';
+/** Small read-only tag (topics, Hilfsmittel, "beidseitig"). */
+export interface BadgeProps {
+  children?: ReactNode;
+  tone?: 'lila' | 'pink' | 'neutral';
+  style?: CSSProperties;
+}
+export declare function Badge(props: BadgeProps): JSX.Element;

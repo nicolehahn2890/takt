@@ -1,0 +1,20 @@
+import { ReactNode, CSSProperties } from 'react';
+/** Countdown ring — the centre of the training screen. */
+export interface TimerRingProps {
+  /** seconds left */
+  remaining: number;
+  /** seconds of this step */
+  duration: number;
+  /** label above the time: "Runde 1 von 2", "Pause", "Gleich geht’s los" */
+  phase?: ReactNode;
+  /** px, default 280 (max 290 portrait, 360 landscape) */
+  size?: number;
+  theme?: string;
+  /** rest step → ring turns lila */
+  rest?: boolean;
+  /** paused → label "Pausiert" in pink, time at 50% */
+  paused?: boolean;
+  showOf?: boolean;
+  style?: CSSProperties;
+}
+export declare function TimerRing(props: TimerRingProps): JSX.Element;

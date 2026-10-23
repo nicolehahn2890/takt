@@ -1,0 +1,12 @@
+import { ReactNode, CSSProperties } from 'react';
+/** Slider with value readout on the right. */
+export interface RangeFieldProps {
+  min?: number; max?: number; step?: number;
+  value: number;
+  onChange?: (value: number) => void;
+  /** e.g. "12 Min." or "Volle Länge" */
+  valueLabel?: ReactNode;
+  color?: string;
+  style?: CSSProperties;
+}
+export declare function RangeField(props: RangeFieldProps): JSX.Element;

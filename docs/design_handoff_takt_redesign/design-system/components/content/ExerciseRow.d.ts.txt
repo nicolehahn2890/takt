@@ -1,0 +1,20 @@
+import { ReactNode, CSSProperties, MouseEventHandler } from 'react';
+/** One exercise in a list: figure thumb + name + meta. */
+export interface ExerciseRowProps {
+  exId?: string;
+  name: ReactNode;
+  /** muted second line (aliases · "braucht Stuhl") */
+  sub?: ReactNode;
+  /** right-aligned duration, e.g. "40 s" */
+  duration?: ReactNode;
+  /** inline "beidseitig" note (plain variant) */
+  bilateral?: boolean;
+  photo?: string;
+  /** card = library row on a surface; plain = compact row in a workout preview */
+  variant?: 'card' | 'plain';
+  /** picker: false = empty circle, true/number = filled lila (number shows pick order) */
+  selected?: boolean | number;
+  onClick?: MouseEventHandler<HTMLElement>;
+  style?: CSSProperties;
+}
+export declare function ExerciseRow(props: ExerciseRowProps): JSX.Element;

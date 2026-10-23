@@ -1,0 +1,16 @@
+import { CSSProperties, MouseEventHandler } from 'react';
+/**
+ * Five-button transport bar of the training screen.
+ */
+export interface TrainingControlsProps {
+  paused?: boolean;
+  /** fill of the centre Pause/Weiter button */
+  theme?: string;
+  onPrev?: MouseEventHandler<HTMLButtonElement>;
+  onMinus?: MouseEventHandler<HTMLButtonElement>;
+  onToggle?: MouseEventHandler<HTMLButtonElement>;
+  onPlus?: MouseEventHandler<HTMLButtonElement>;
+  onNext?: MouseEventHandler<HTMLButtonElement>;
+  style?: CSSProperties;
+}
+export declare function TrainingControls(props: TrainingControlsProps): JSX.Element;

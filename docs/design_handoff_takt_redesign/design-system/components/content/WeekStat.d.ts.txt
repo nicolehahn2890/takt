@@ -1,0 +1,9 @@
+import { CSSProperties } from 'react';
+/** Weekly summary: big minutes figure + muted context. */
+export interface WeekStatProps {
+  minutes: number;
+  trainings: number;
+  label?: string;
+  style?: CSSProperties;
+}
+export declare function WeekStat(props: WeekStatProps): JSX.Element;

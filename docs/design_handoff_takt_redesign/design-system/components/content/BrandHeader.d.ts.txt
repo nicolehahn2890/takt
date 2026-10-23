@@ -1,0 +1,10 @@
+import { CSSProperties } from 'react';
+/** App wordmark row on the start screen: optional figure mark + "Takt" + tagline. */
+export interface BrandHeaderProps {
+  title?: string;
+  tagline?: string;
+  /** path to assets/takt-mark.svg (figure mark) (relative to the page) */
+  logoSrc?: string;
+  style?: CSSProperties;
+}
+export declare function BrandHeader(props: BrandHeaderProps): JSX.Element;

@@ -1,0 +1,23 @@
+:root{
+  /* Base – night plum (from css/app.css) */
+  /* Palette v2 (user spec): Background #171217 · Surface #241B23 · Elevated #30232D */
+  --plum-950:#100c10;--plum-900:#171217;--plum-850:#1d161c;--plum-800:#201820;--plum-750:#241B23;--plum-700:#30232D;--plum-650:#2a1c27;--plum-600:#4a3a44;
+  --rose-50:#f6edf1;--rose-300:#a8949f;
+  /* Brand */
+  --pink:#BE7B9D;--pink-light:#E2A9C4;--pink-deep:#965A78;--lila:#B794C5;--salbei:#C6C5A6;--leaf:#A8C4A0;
+  /* German names from the palette spec */
+  --rose:var(--pink);--lavendel:var(--lila);
+  /* Theme colours – one per workout theme (THEMES in js/app.js) */
+  --theme-core:#C0BEA0;--theme-bauch:#C8729A;--theme-dehnen:#A8C4A0;--theme-yoga:#B88CC0;--theme-beine:#C4A882;--theme-ruecken:#8AB4C4;
+  /* Figure (js/figure.js) */
+  --figure-near:#E3A3BF;--figure-far:#9A6B8C;--figure-head:#F0C4D6;
+  /* Semantic */
+  --bg:var(--plum-900);--bg-glow:var(--plum-650);--surface-card:var(--plum-750);--surface-raised:var(--plum-700);--surface-elevated:var(--plum-700);--surface-sheet:var(--plum-750);--surface-sunken:var(--plum-850);
+  --surface-ghost:rgba(255,255,255,.07);--surface-ghost-strong:rgba(255,255,255,.10);
+  --line:rgba(255,255,255,.07);--line-strong:rgba(255,255,255,.14);
+  --text:var(--rose-50);--text-muted:var(--rose-300);--text-on-accent:var(--plum-900);
+  --accent:var(--salbei);--accent-rose:var(--pink);--accent-2:var(--lila);--theme:var(--pink);
+  --tint-lila:rgba(184,140,192,.16);--tint-pink:rgba(200,114,154,.16);
+  --danger:#f0b4b4;--danger-surface:rgba(216,104,104,.18);--warning:#e8b860;
+  --scrim:rgba(0,0,0,.55);--topbar:rgba(23,18,23,.94);
+}

@@ -1,0 +1,9 @@
+import { ReactNode, CSSProperties, MouseEventHandler } from 'react';
+/** Full-width navigation row card (e.g. to the exercise library). */
+export interface NavCardProps {
+  title: ReactNode;
+  subtitle?: ReactNode;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  style?: CSSProperties;
+}
+export declare function NavCard(props: NavCardProps): JSX.Element;

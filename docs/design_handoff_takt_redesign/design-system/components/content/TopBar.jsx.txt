@@ -1,0 +1,12 @@
+import React from 'react';
+import { IconButton } from '../core/IconButton.jsx';
+export function TopBar({ title, subtitle, onBack, action, sticky = false, style }) {
+  return <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px 8px 6px', ...(sticky ? { position: 'sticky', top: 0, zIndex: 5, background: 'var(--topbar)', backdropFilter: 'var(--blur-bar)', WebkitBackdropFilter: 'var(--blur-bar)' } : null), ...style }}>
+    {onBack ? <IconButton icon="back" label="Zurück" filled={false} onClick={onBack} style={{ color: 'var(--text)', fontSize: 30 }} /> : null}
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <h2 style={{ margin: 0, fontFamily: 'var(--font-display)', fontSize: subtitle ? 18 : 24, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</h2>
+      {subtitle ? <small style={{ color: 'var(--text-muted)', fontSize: 13, fontVariantNumeric: 'tabular-nums' }}>{subtitle}</small> : null}
+    </div>
+    {action}
+  </div>;
+}

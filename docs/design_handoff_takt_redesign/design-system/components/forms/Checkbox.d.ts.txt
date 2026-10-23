@@ -1,0 +1,9 @@
+import { ReactNode, CSSProperties } from 'react';
+/** Checkbox with inline label. */
+export interface CheckboxProps {
+  label?: ReactNode;
+  checked?: boolean;
+  onChange?: (checked: boolean) => void;
+  style?: CSSProperties;
+}
+export declare function Checkbox(props: CheckboxProps): JSX.Element;

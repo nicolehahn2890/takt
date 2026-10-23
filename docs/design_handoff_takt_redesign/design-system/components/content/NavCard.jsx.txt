@@ -1,0 +1,7 @@
+import React from 'react';
+export function NavCard({ title, subtitle, onClick, style }) {
+  return <button type="button" onClick={onClick} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, textAlign: 'left', background: 'var(--surface-card)', border: 0, borderRadius: 18, padding: '16px 14px 16px 16px', color: 'var(--text)', font: 'inherit', cursor: 'pointer', ...style }}>
+    <span style={{ flex: 1, minWidth: 0 }}><b style={{ display: 'block', fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 600 }}>{title}</b>{subtitle ? <small style={{ color: 'var(--text-muted)', fontSize: 13 }}>{subtitle}</small> : null}</span>
+    <span aria-hidden="true" style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--surface-ghost)', display: 'grid', placeItems: 'center', fontSize: 22, color: 'var(--text-muted)', paddingBottom: 2 }}>{'\u203A'}</span>
+  </button>;
+}

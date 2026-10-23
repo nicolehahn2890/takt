@@ -1,0 +1,24 @@
+
+function StartScreen({ go }) {
+  const { BrandHeader, WeekStat, QuickTile, SectionTitle, WorkoutCard, NavCard, Hint } = window.TaktDesignSystem_26f8eb;
+  return <div style={{ padding: '22px 16px 32px', display: 'flex', flexDirection: 'column', gap: 0 }}>
+    <BrandHeader logoSrc="../../assets/takt-mark.svg" />
+    <WeekStat minutes={47} trainings={3} style={{ margin: '24px 2px 24px' }} />
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 10 }}>
+      <QuickTile title="Mix" subtitle="Zufall aus deinen Themen" onClick={() => go('toast', 'Mix: Themen wählen, Takt stellt den Rest zusammen.')} />
+      <QuickTile title="+ Neu" subtitle="eigenes Workout bauen" color="var(--pink)" onClick={() => go('toast', 'Hier öffnet sich der Editor.')} />
+    </div>
+    <SectionTitle aside={MY.length} style={{ margin: '32px 2px 12px' }}>Meine Workouts</SectionTitle>
+    {MY.map(w => <WorkoutCard key={w.id} name={w.name} themeLabel={THEMES[w.theme][0]} meta={mins(secsOf(w)) + ' · ' + countOf(w) + ' Übungen'} theme={THEMES[w.theme][1]} exIds={cardIds(w, 4)} onStart={() => go('train', w)} onAdjust={() => go('adjust', w)} />)}
+    <SectionTitle aside={TEMPLATES.length} style={{ margin: '32px 2px 4px' }}>Vorlagen</SectionTitle>
+    {Object.keys(THEMES).map(k => <div key={k} style={{ marginTop: 24 }}>
+      <SectionTitle size="sm" dot={THEMES[k][1]} style={{ marginBottom: 8 }}>{THEMES[k][0]}</SectionTitle>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 10 }}>
+        {TEMPLATES.filter(w => w.theme === k).map(w => <WorkoutCard key={w.id} name={w.level === 'kurz' ? 'Kurz' : 'Lang'} meta={mins(secsOf(w))} theme={THEMES[k][1]} exIds={cardIds(w, 3)} style={{ padding: 10, gap: 10 }} onOpen={() => go('preview', w)} onStart={() => go('train', w)} onAdjust={() => go('adjust', w)} />)}
+      </div></div>)}
+    <SectionTitle style={{ margin: '32px 2px 12px' }}>Bibliothek</SectionTitle>
+    <NavCard title="Übungen" subtitle={(window.Takt.EXERCISES || []).length + ' Übungen mit Figur und Ansage'} onClick={() => go('lib')} />
+    <Hint label="Vor dem Start" style={{ margin: '18px 4px 0', fontSize: 13 }}>Schalter am iPhone auf Klingeln stellen und Musik in Spotify starten. Danach Takt vorne lassen.</Hint>
+  </div>;
+}
+window.StartScreen = StartScreen;

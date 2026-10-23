@@ -1,0 +1,6 @@
+import React from 'react';
+export function Badge({ children, tone = 'lila', style }) {
+  const tones = { lila: ['var(--tint-lila)', 'var(--text)'], pink: ['var(--tint-pink)', 'var(--text)'], neutral: ['var(--surface-ghost)', 'var(--text-muted)'] };
+  const t = tones[tone] || tones.lila;
+  return <span style={{ display: 'inline-flex', alignItems: 'center', fontSize: 12, fontWeight: 500, borderRadius: 999, padding: '4px 10px', background: t[0], color: t[1], ...style }}>{children}</span>;
+}

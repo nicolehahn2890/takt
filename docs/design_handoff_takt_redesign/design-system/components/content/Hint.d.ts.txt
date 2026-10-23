@@ -1,0 +1,9 @@
+import { ReactNode, CSSProperties } from 'react';
+/** Muted helper paragraph, optionally led by a short pink label ("Tipp"). */
+export interface HintProps {
+  children?: ReactNode;
+  /** short lead-in, e.g. "Tipp" or "Vor dem Start" */
+  label?: string;
+  style?: CSSProperties;
+}
+export declare function Hint(props: HintProps): JSX.Element;

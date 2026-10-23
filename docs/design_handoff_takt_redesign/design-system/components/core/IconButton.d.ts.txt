@@ -1,0 +1,14 @@
+import { CSSProperties, MouseEventHandler } from 'react';
+/** Round icon-only button. Takt uses Unicode glyphs, not an icon font. */
+export interface IconButtonProps {
+  icon?: 'back' | 'close' | 'chevron' | 'plus' | 'minus' | 'up' | 'down';
+  /** aria-label, German, e.g. "Zurück" */
+  label: string;
+  /** px, default 44 (38 for the training close button) */
+  size?: number;
+  /** soft circle background (default) or bare glyph */
+  filled?: boolean;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  style?: CSSProperties;
+}
+export declare function IconButton(props: IconButtonProps): JSX.Element;

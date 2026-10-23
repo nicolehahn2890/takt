@@ -1,0 +1,26 @@
+import React from 'react';
+function poseFor(T, exId) {
+  const ex = (T.EXERCISES || []).find(e => e.id === exId);
+  if (ex && ex.typ === 'atem' && ex.atem) return { breath: ex.atem };
+  return (T.POSES || {})[exId] || T.POSE_DEFAULT;
+}
+export function ExerciseFigure({ exId, pose, animate = false, photo, width = '100%', height = '100%', radius = 10, tint, style }) {
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    let tries = 0, timer = null, el = ref.current, mounted = false;
+    const go = () => {
+      const T = window.Takt;
+      if (!el) return;
+      if (!T || !T.figure || !(T.POSES || T.POSE_DEFAULT)) { if (tries++ < 40) timer = setTimeout(go, 100); return; }
+      const p = pose || poseFor(T, exId);
+      if (!p) return;
+      if (animate) { T.figure.mount(el, p); mounted = true; } else T.figure.still(el, p);
+    };
+    go();
+    return () => { clearTimeout(timer); if (mounted && window.Takt) window.Takt.figure.unmount(el); };
+  }, [exId, animate, pose, photo]);
+  const bg = tint ? 'color-mix(in oklab, ' + tint + ' 13%, var(--surface-sunken))' : 'var(--surface-sunken)';
+  return <span style={{ display: 'block', width, height, borderRadius: radius, overflow: 'hidden', background: bg, flex: 'none', ...style }}>
+    {photo ? <img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : <svg ref={ref} aria-hidden="true" style={{ display: 'block', width: '100%', height: '100%' }}></svg>}
+  </span>;
+}

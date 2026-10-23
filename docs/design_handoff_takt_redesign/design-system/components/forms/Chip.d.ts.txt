@@ -1,0 +1,11 @@
+import { ReactNode, CSSProperties, MouseEventHandler } from 'react';
+/** Filter / tag toggle chip. */
+export interface ChipProps {
+  children?: ReactNode;
+  selected?: boolean;
+  /** theme colour — shows a dot and fills with it when selected (theme picker). Omit for lila filter chips. */
+  color?: string;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  style?: CSSProperties;
+}
+export declare function Chip(props: ChipProps): JSX.Element;

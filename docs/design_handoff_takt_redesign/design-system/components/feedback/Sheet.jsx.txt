@@ -1,0 +1,15 @@
+import React from 'react';
+import { IconButton } from '../core/IconButton.jsx';
+export function Sheet({ open = true, title, onClose, children, contained = false, style }) {
+  if (!open) return null;
+  return <div onClick={e => { if (e.target === e.currentTarget && onClose) onClose(); }} style={{ position: contained ? 'absolute' : 'fixed', inset: 0, zIndex: 20, background: 'var(--scrim)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+    <div role="dialog" aria-modal="true" style={{ width: '100%', maxWidth: 560, maxHeight: '90%', overflow: 'auto', background: 'var(--surface-sheet)', borderRadius: '22px 22px 0 0', padding: '10px 16px 20px', boxShadow: 'var(--shadow-sheet)', ...style }}>
+      <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--line-strong)', margin: '0 auto 10px' }}></div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+        <h3 style={{ margin: 0, flex: 1, fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 600 }}>{title}</h3>
+        {onClose ? <IconButton icon="close" label="Schließen" size={40} onClick={onClose} /> : null}
+      </div>
+      {children}
+    </div>
+  </div>;
+}

@@ -1,0 +1,7 @@
+import React from 'react';
+const GLYPH = { back: '\u2039', close: '\u2715', chevron: '\u203A', plus: '+', minus: '\u2212', up: '\u2191', down: '\u2193' };
+export function IconButton({ icon = 'back', label, size = 44, filled = true, onClick, style }) {
+  const big = icon === 'back' || icon === 'chevron';
+  return <button type="button" aria-label={label} onClick={onClick} style={{ width: size, height: size, borderRadius: '50%', border: 0, cursor: 'pointer', flex: 'none', display: 'grid', placeItems: 'center',
+    background: filled ? 'var(--surface-ghost)' : 'transparent', color: filled ? 'var(--text)' : 'var(--text-muted)', font: 'inherit', fontSize: big ? 28 : 16, lineHeight: 1, paddingBottom: big ? 3 : 0, ...style }}>{GLYPH[icon] || icon}</button>;
+}

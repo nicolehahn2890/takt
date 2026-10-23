@@ -1,0 +1,17 @@
+import { CSSProperties, ChangeEventHandler } from 'react';
+/** Labelled text input / textarea / search field. */
+export interface TextFieldProps {
+  /** sentence-case label above the field, e.g. "Meine Notiz" */
+  label?: string;
+  value?: string;
+  defaultValue?: string;
+  placeholder?: string;
+  multiline?: boolean;
+  rows?: number;
+  type?: 'text' | 'search' | 'url';
+  /** German error message shown below in danger red */
+  error?: string;
+  onChange?: ChangeEventHandler<any>;
+  style?: CSSProperties;
+}
+export declare function TextField(props: TextFieldProps): JSX.Element;

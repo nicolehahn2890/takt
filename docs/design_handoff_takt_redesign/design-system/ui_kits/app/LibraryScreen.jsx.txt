@@ -1,0 +1,24 @@
+
+const CHIPS = [['alle', 'Alle', null], ['core', 'Core', ['core']], ['bauch', 'Bauch', ['bauch']], ['ruecken', 'Rücken', ['ruecken']], ['beine-po', 'Beine & Po', ['beine-po']], ['dehnen', 'Dehnen', ['dehnen']], ['yoga', 'Yoga', ['yoga']], ['atmung', 'Atmung & Vacuum', ['atmung', 'vacuum']], ['ganz', 'Ganzkörper', ['ganzkoerper', 'oberkoerper']]];
+const HILF = { band: 'Band', stuhl: 'Stuhl', tisch: 'Tisch', sofa: 'Sofa', wand: 'Wand', matte: 'Matte' };
+const norm = s => String(s || '').toLowerCase().replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, ' ').trim();
+function LibraryScreen({ go }) {
+  const { TopBar, Button, TextField, Chip, ExerciseRow } = window.TaktDesignSystem_26f8eb;
+  const [f, setF] = React.useState('alle'); const [q, setQ] = React.useState('');
+  const chip = CHIPS.find(c => c[0] === f);
+  const list = (window.Takt.EXERCISES || []).filter(e => (!chip[2] || e.tags.some(t => chip[2].indexOf(t) >= 0)) && norm(q).split(' ').filter(Boolean).every(w => norm([e.name].concat(e.alias || []).join(' ')).indexOf(w) >= 0));
+  return <div style={{ paddingBottom: 28 }}>
+    <TopBar sticky title="Übungen" onBack={() => go('home')} action={<Button variant="pill" size="sm" onClick={() => go('toast', 'Eigene Übung anlegen')}>+ Eigene</Button>} />
+    <div style={{ padding: '4px 16px 0' }}>
+      <TextField type="search" placeholder="Suchen, z. B. Plank oder Brücke" value={q} onChange={e => setQ(e.target.value)} />
+      <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '10px 0 4px', scrollbarWidth: 'none', margin: '0 -16px', paddingLeft: 16, paddingRight: 16 }}>{CHIPS.map(c => <Chip key={c[0]} selected={f === c[0]} onClick={() => setF(c[0])}>{c[1]}</Chip>)}</div>
+      <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: '8px 2px 10px' }}>{list.length === 1 ? '1 Übung' : list.length + ' Übungen'}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {list.length ? list.slice(0, 30).map(e => { const hil = (e.hilfsmittel || []).filter(h => h !== 'matte').map(h => HILF[h]).join(', ');
+          return <ExerciseRow key={e.id} exId={e.id} name={e.name} sub={(e.alias || []).join(' · ') + (hil ? ' · braucht ' + hil : '')} onClick={() => go('ex', e)} />; })
+          : <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '30px 0' }}>Keine Übung gefunden.</p>}
+      </div>
+    </div>
+  </div>;
+}
+window.LibraryScreen = LibraryScreen;

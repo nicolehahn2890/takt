@@ -1,0 +1,11 @@
+import { ReactNode, CSSProperties, MouseEventHandler } from 'react';
+/** Large solid shortcut tile (Mix, + Neu). */
+export interface QuickTileProps {
+  title: ReactNode;
+  subtitle?: ReactNode;
+  /** solid fill, default lila; use var(--pink) for "+ Neu" */
+  color?: string;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  style?: CSSProperties;
+}
+export declare function QuickTile(props: QuickTileProps): JSX.Element;

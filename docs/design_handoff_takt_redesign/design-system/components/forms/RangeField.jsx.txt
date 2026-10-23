@@ -1,0 +1,13 @@
+import React from 'react';
+export function RangeField({ min = 0, max = 100, step = 1, value, onChange, valueLabel, color = 'var(--pink)', style }) {
+  const pct = max > min ? ((value - min) / (max - min)) * 100 : 0;
+  return <div style={{ display: 'flex', alignItems: 'center', gap: 14, ...style }}>
+    <div style={{ position: 'relative', flex: 1, height: 40, display: 'flex', alignItems: 'center' }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, height: 6, borderRadius: 3, background: 'var(--surface-ghost-strong)' }}></div>
+      <div style={{ position: 'absolute', left: 0, width: pct + '%', height: 6, borderRadius: 3, background: color }}></div>
+      <div style={{ position: 'absolute', left: 'calc(' + pct + '% - 11px)', width: 22, height: 22, borderRadius: '50%', background: 'var(--text)', boxShadow: '0 2px 8px rgba(0,0,0,.35)' }}></div>
+      <input type="range" min={min} max={max} step={step} value={value} onChange={e => onChange && onChange(+e.target.value)} style={{ position: 'absolute', inset: 0, width: '100%', opacity: 0, cursor: 'pointer', margin: 0 }} />
+    </div>
+    {valueLabel != null ? <b style={{ minWidth: 92, textAlign: 'right', fontSize: 16, fontVariantNumeric: 'tabular-nums' }}>{valueLabel}</b> : null}
+  </div>;
+}

@@ -1,0 +1,38 @@
+
+function TrainingScreen({ w, k = 1, go }) {
+  const { TimerRing, ProgressDots, NextUp, TrainingControls, ExerciseFigure, IconButton } = window.TaktDesignSystem_26f8eb;
+  const steps = React.useMemo(() => buildSteps(w, k), [w, k]);
+  const [i, setI] = React.useState(0);
+  const [left, setLeft] = React.useState(steps[0].duration);
+  const [paused, setPaused] = React.useState(false);
+  const s = steps[i];
+  React.useEffect(() => { if (paused) return; const t = setInterval(() => setLeft(l => l - 1), 1000); return () => clearInterval(t); }, [paused, i]);
+  React.useEffect(() => { if (left <= 0) jump(1); }, [left]);
+  function jump(d) { const n = i + d; if (n >= steps.length) return go('done', { w, secs: steps.reduce((a, x) => a + x.duration, 0), count: steps.filter(x => x.kind === 'work').length }); const j = Math.max(0, n); setI(j); setLeft(steps[j].duration); }
+  const works = steps.filter(x => x.kind === 'work'), workPos = steps.slice(0, i + 1).filter(x => x.kind === 'work').length;
+  const nextWork = steps.slice(i + 1).find(x => x.kind === 'work');
+  const target = s.kind === 'work' ? s : nextWork;
+  const ex = target ? exById(target.exId) : null;
+  const th = THEMES[w.theme][1];
+  const remainingTotal = left + steps.slice(i + 1).reduce((a, x) => a + x.duration, 0);
+  const phase = s.kind === 'prep' ? 'Gleich geht’s los' : s.kind === 'rest' ? 'Pause' : s.rounds > 1 ? 'Runde ' + s.round + ' von ' + s.rounds : '';
+  const dur = s.duration;
+  return <div onClick={e => { if (e.target.closest('[data-mid]')) setPaused(p => !p); }} style={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'var(--bg-training)', userSelect: 'none' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '14px 16px 8px' }}>
+      <div><div style={{ fontWeight: 700, fontSize: 15 }}>{w.name}</div><div style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 2, fontVariantNumeric: 'tabular-nums' }}>Übung {Math.max(1, workPos)} von {works.length} · noch {fmt(remainingTotal)}</div></div>
+      <IconButton icon="close" label="Training beenden" size={38} style={{ color: 'var(--text-muted)' }} onClick={() => go('home')} />
+    </div>
+    <ProgressDots total={works.length} done={s.kind === 'work' ? workPos - 1 : workPos} current={s.kind === 'work'} theme={th} style={{ padding: '0 16px 4px' }} />
+    <div data-mid="1" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: '4px 16px', cursor: 'pointer' }}>
+      <TimerRing remaining={left} duration={dur} phase={phase} size={250} theme={th} rest={s.kind === 'rest'} paused={paused} />
+      <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, maxWidth: 340 }}>
+        <ExerciseFigure key={target ? target.exId : 'x'} exId={target && target.exId} animate width={190} height={141} radius={16} tint={th} />
+        <h1 style={{ margin: '4px 0 0', fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 600, lineHeight: 1.1 }}>{s.kind === 'rest' ? 'Durchatmen' : s.kind === 'prep' ? (ex ? ex.name : '') : s.name}</h1>
+        <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 14, lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{s.kind === 'rest' ? (target ? 'Gleich: ' + target.name : '') : (ex ? ex.beschreibung : '')}</p>
+      </div>
+    </div>
+    <NextUp name={nextWork ? nextWork.name : 'Geschafft!'} duration={nextWork ? fmt(nextWork.duration) : ''} sub={s.kind === 'work' && steps[i + 1] && steps[i + 1].kind === 'rest' ? 'nach ' + fmt(steps[i + 1].duration) + ' Pause' : null} style={{ margin: '0 16px' }} />
+    <TrainingControls paused={paused} theme={th} style={{ padding: '12px 16px 26px' }} onToggle={() => setPaused(p => !p)} onPrev={() => jump(-1)} onNext={() => jump(1)} onMinus={() => setLeft(l => Math.max(1, l - 15))} onPlus={() => setLeft(l => l + 15)} />
+  </div>;
+}
+window.TrainingScreen = TrainingScreen;

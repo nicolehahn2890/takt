@@ -1,0 +1,20 @@
+import React from 'react';
+import { Button } from '../core/Button.jsx';
+import { ExerciseFigure } from './ExerciseFigure.jsx';
+export function WorkoutCard({ name, meta, theme = 'var(--theme-core)', themeLabel, exIds = [], onStart, onAdjust, onOpen, startLabel = 'Start', style }) {
+  return <article onClick={onOpen} style={{ background: 'var(--surface-card)', borderRadius: 18, padding: 16, display: 'flex', flexDirection: 'column', gap: 12, cursor: onOpen ? 'pointer' : 'default', ...style }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <h3 style={{ margin: 0, fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</h3>
+        <p style={{ margin: '3px 0 0', color: 'var(--text-muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6, fontVariantNumeric: 'tabular-nums' }}>
+          <i style={{ width: 8, height: 8, borderRadius: '50%', background: theme, flex: 'none' }}></i>{themeLabel ? themeLabel + ' · ' : ''}{meta}</p>
+      </div>
+    </div>
+    {exIds.length ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(' + exIds.length + ', minmax(0,1fr))', gap: 4 }}>
+      {exIds.map((id, i) => <ExerciseFigure key={id + i} exId={id} height={44} radius={i === 0 ? '10px 4px 4px 10px' : i === exIds.length - 1 ? '4px 10px 10px 4px' : 4} tint={theme} />)}</div> : null}
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }} onClick={e => e.stopPropagation()}>
+      <Button variant="primary" theme={theme} onClick={onStart} style={{ flex: 1, minWidth: 0, padding: '0 12px' }}>{startLabel}</Button>
+      {onAdjust ? <Button variant="link" onClick={onAdjust} style={{ padding: '0 6px', flex: 'none' }}>Anpassen</Button> : null}
+    </div>
+  </article>;
+}

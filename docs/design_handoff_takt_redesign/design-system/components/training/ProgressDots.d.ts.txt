@@ -1,0 +1,12 @@
+import { CSSProperties } from 'react';
+/** Segmented progress across all exercises (bar when > 24). */
+export interface ProgressDotsProps {
+  total: number;
+  /** completed exercises */
+  done: number;
+  /** true = current exercise is running (theme colour); false = up next during rest (lila) */
+  current?: boolean;
+  theme?: string;
+  style?: CSSProperties;
+}
+export declare function ProgressDots(props: ProgressDotsProps): JSX.Element;

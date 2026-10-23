@@ -1,0 +1,9 @@
+:root{
+  /* Rhythm from the spec: 8 / 12 / 16 / 24 / 32 */
+  --space-xs:8px;--space-sm:12px;--space-md:16px;--space-lg:24px;--space-xl:32px;
+  --button-h:52px;--button-h-lg:58px;--button-h-max:60px;
+  --sp-2:2px;--sp-4:4px;--sp-6:6px;--sp-8:8px;--sp-10:10px;--sp-12:12px;--sp-14:14px;--sp-16:16px;--sp-18:18px;--sp-22:22px;--sp-24:24px;--sp-28:28px;--sp-32:32px;
+  --page-max:560px;--page-pad:16px;--tap-min:44px;
+  --r-8:8px;--r-10:10px;--r-12:12px;--r-14:14px;--r-16:16px;--r-18:18px;--r-20:20px;--r-22:22px;--r-pill:999px;
+  --radius-control:14px;--radius-card:18px;--radius-card-min:14px;--radius-card-max:20px;--radius-thumb:10px;--radius-sheet:22px;
+}
