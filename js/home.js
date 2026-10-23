@@ -49,33 +49,34 @@ window.Takt = window.Takt || {};
   }
 
   /* ---------- Startseite ---------- */
-  function ownCard(w) {
+  /* Karte wie WorkoutCard im Design: Titel, Meta mit Themenpunkt, Figuren-Streifen, Start + Anpassen */
+  function card(w, title, meta, n, attr) {
     var id = T.esc(w.id);
-    return '<article class="card wcard" style="--theme:' + theme(w.theme).color + '" data-open="' + id + '">' +
-      '<div class="card-main"><h3>' + T.esc(w.name) + '</h3><p>' + mins(secs(w)) + ' \u00b7 ' + plural(works(w)) + '</p>' +
-      '<div class="figs">' + cardIds(w, 4).map(fig).join('') + '</div></div>' +
+    return '<article class="wcard" style="--theme:' + theme(w.theme).color + '" ' + attr + '="' + id + '">' +
+      '<div><h3>' + T.esc(title) + '</h3><p class="wc-meta"><i></i><span>' + T.esc(meta) + '</span></p></div>' +
+      '<div class="strip">' + cardIds(w, n).map(fig).join('') + '</div>' +
       '<div class="wc-btns"><button class="btn-start" data-start="' + id + '">Start</button>' +
       '<button class="b-adj" data-adjust="' + id + '">Anpassen</button></div></article>';
   }
+  function ownCard(w) {
+    return card(w, w.name, theme(w.theme).label + ' \u00b7 ' + mins(secs(w)) + ' \u00b7 ' + plural(works(w)), 4, 'data-open');
+  }
   function tplCard(w) {
-    var id = T.esc(w.id);
-    return '<article class="tcard" data-preview="' + id + '"><div class="tt"><b>' + (w.level === 'lang' ? 'Lang' : 'Kurz') +
-      '</b><span>' + mins(secs(w)) + '</span></div><div class="figs">' + cardIds(w, 3).map(fig).join('') + '</div>' +
-      '<div class="tc-btns"><button class="btn-start" data-start="' + id + '">Start</button>' +
-      '<button class="b-adj" data-adjust="' + id + '">Anpassen</button></div></article>';
+    return card(w, w.level === 'lang' ? 'Lang' : 'Kurz', mins(secs(w)), 3, 'data-preview');
   }
   function render() {
     var d = api.data();
     var wk = T.weekStats(d.log);
-    $('week').innerHTML = wk.count ?
-      '<span>Diese Woche</span><b>' + Math.round(wk.seconds / 60) + ' Min.</b><span>\u00b7 ' + (wk.count === 1 ? '1 Training' : wk.count + ' Trainings') + '</span>' :
-      '<span>Diese Woche noch kein Training.</span>';
+    $('week').innerHTML = '<b>' + Math.round(wk.seconds / 60) + '<span>Min.</span></b><span>' + (wk.count ?
+      'Diese Woche \u00b7 ' + (wk.count === 1 ? '1 Training' : wk.count + ' Trainings') : 'Diese Woche noch kein Training.') + '</span>';
     var canEdit = !!T.editor, canMix = !!(T.home && T.home.mix);
     $('go-new').hidden = !canEdit;
     $('go-mix').hidden = !canMix;
     $('quick').hidden = !canEdit && !canMix;
     var own = d.workouts || [];
     $('my-sec').hidden = !own.length && !canEdit;
+    $('my-count').textContent = own.length ? String(own.length) : '';
+    $('tpl-count').textContent = String((T.TEMPLATES || []).length);
     $('my-list').innerHTML = own.length ? own.map(ownCard).join('') :
       '<p class="note-empty">Noch keine eigenen Workouts. Tippe auf \u201e+ Neu\u201c' + (canMix ? ' oder speichere einen Mix' : '') + '.</p>';
     $('tpl-list').innerHTML = T.WORKOUT_THEMES.map(function (k) {

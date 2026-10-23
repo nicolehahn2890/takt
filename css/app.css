@@ -38,7 +38,6 @@ body:has(.start:not([hidden])) { background: linear-gradient(160deg, var(--bg2),
 .brand p { color: var(--muted); font-size: 14px; }
 /* Section titles: sentence case, no tracking (was 12px uppercase + 2px tracking) */
 .start h2 { font-family: var(--font-display); font-size: 24px; letter-spacing: -.4px; color: var(--text); font-weight: 600; margin: var(--s5) 2px var(--s2); }
-.start h2:first-of-type { margin-top: 0; }
 /* Cards: no border, no coloured left strip – theme lives in a dot + the Start button */
 .card {
   display: flex; align-items: center; gap: 14px; margin-bottom: 10px;
@@ -221,35 +220,47 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
   .chips { flex-wrap: wrap; overflow: visible; }
 }
 
-/* ---------- Schritt 3: Startseite, Vorlagen-Ansicht, Fenster ---------- */
-.week { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; font-size: 14px; color: var(--muted); margin-bottom: 12px; }
-.week b { color: var(--text); font-size: 17px; }
-.quick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.qbtn { border-radius: 18px; padding: 14px; text-align: left; font-weight: 700; font-size: 19px; min-height: 74px; display: flex; flex-direction: column; justify-content: center; color: var(--bg); }
-.qbtn small { display: block; font-weight: 500; font-size: 13px; opacity: .85; margin-top: 2px; }
+/* ---------- Schritt 3 im Design v2: Startseite (StartScreen, WeekStat, QuickTile, WorkoutCard, SectionTitle) ---------- */
+.start h2 { display: flex; align-items: baseline; gap: 8px; }
+.start h2 .aside { margin-left: auto; font-family: var(--font-sans); font-size: 13px; font-weight: 400; letter-spacing: 0; color: var(--muted); font-variant-numeric: tabular-nums; }
+.start h2.sec-tpl { margin-bottom: 4px; }
+.week { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 0 2px var(--s4); }
+.week b { font-family: var(--font-display); font-size: 40px; font-weight: 600; letter-spacing: -1.2px; line-height: 1; font-variant-numeric: tabular-nums; }
+.week b span { font-size: 17px; font-weight: 600; letter-spacing: 0; margin-left: 4px; }
+.week > span { color: var(--muted); font-size: 14px; }
+.quick { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.qbtn { border-radius: 18px; padding: 16px 16px 14px; text-align: left; min-height: 84px; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px;
+  color: var(--bg); font-family: var(--font-display); font-size: 24px; font-weight: 600; letter-spacing: -.3px; line-height: 1.15; transition: transform .15s; }
+.qbtn:active { transform: scale(.98); }
+.qbtn small { font-family: var(--font-sans); font-size: 13px; font-weight: 500; letter-spacing: 0; opacity: .78; }
 .qbtn.mix { background: var(--lila); }
 .qbtn.new { background: var(--pink); }
 .qbtn:only-child { grid-column: 1 / -1; }
-.note-empty { color: var(--muted); font-size: 14px; padding: 2px 2px 10px; line-height: 1.45; }
-.wcard { cursor: pointer; padding: 12px 12px 12px 14px; }
-.wcard h3 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.figs { display: flex; gap: 4px; margin-top: 8px; }
-.figs svg { width: 46px; height: 34px; background: #1f171c; border-radius: 8px; display: block; }
-.wc-btns { display: flex; flex-direction: column; align-items: stretch; gap: 2px; flex: none; }
-.b-adj { color: var(--muted); font-size: 13px; min-height: 34px; padding: 0 4px; text-decoration: underline; text-underline-offset: 3px; }
-.tg { margin-bottom: 16px; }
-.tg h4 { display: flex; align-items: center; gap: 8px; font-size: 15px; margin: 0 2px 8px; }
-.tg h4 i { width: 10px; height: 10px; border-radius: 50%; background: var(--theme); }
-.tg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.tcard { background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--theme); border-radius: 16px; padding: 10px; cursor: pointer; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.tcard .tt { display: flex; justify-content: space-between; align-items: baseline; }
-.tcard .tt b { font-size: 16px; }
-.tcard .tt span { color: var(--muted); font-size: 13px; }
-.tcard .figs { margin-top: 0; }
-.tcard .figs svg { flex: 1; width: auto; min-width: 0; height: 32px; }
-.tc-btns { display: flex; gap: 4px; align-items: center; }
-.tc-btns .btn-start { flex: 1; min-width: 0; min-height: 42px; padding: 0 8px; }
+.note-empty { color: var(--muted); font-size: 14px; padding: 0 2px 8px; line-height: 1.5; }
+.wcard { background: var(--card); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 10px; cursor: pointer; min-width: 0; }
+.wcard h3 { font-family: var(--font-display); font-size: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wc-meta { color: var(--muted); font-size: 13px; margin-top: 3px; display: flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; min-width: 0; }
+.wc-meta i { width: 8px; height: 8px; border-radius: 50%; background: var(--theme); flex: none; }
+.wc-meta span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
+.strip svg { display: block; width: 100%; height: 44px; border-radius: 4px; background: color-mix(in oklab, var(--theme) 13%, var(--sunken)); }
+.strip svg:first-child { border-radius: 10px 4px 4px 10px; }
+.strip svg:last-child { border-radius: 4px 10px 10px 4px; }
+.strip svg:only-child { border-radius: 10px; }
+.wc-btns { display: flex; align-items: center; gap: 6px; }
+.wc-btns .btn-start { flex: 1; min-width: 0; padding: 0 12px; }
+.b-adj { flex: none; color: var(--muted); font-size: 13px; font-weight: 500; min-height: 44px; padding: 0 6px;
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,.14); }
+.tg { margin-top: var(--s4); }
+.tg h4 { display: flex; align-items: center; gap: 8px; margin: 0 2px 8px; font-family: var(--font-display); font-size: 17px; font-weight: 600; }
+.tg h4 i { width: 9px; height: 9px; border-radius: 50%; background: var(--theme); flex: none; }
+.tg-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.tg-row .wcard { padding: 10px; gap: 10px; margin-bottom: 0; }
+.card.nav { gap: 12px; padding: 16px 14px 16px 16px; }
+.start .hint { margin: 18px 4px 0; }
+.hint b { color: var(--pink-light); font-weight: 700; margin-right: 6px; }
 
+/* ---------- Schritt 3: Vorlagen-Ansicht und Fenster (Umgestaltung folgt) ---------- */
 .bar-t { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .bar-t h2 { font-size: 19px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bar-t small { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
