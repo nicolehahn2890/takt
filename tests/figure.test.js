@@ -93,3 +93,27 @@ test('figure draw: Atem-Kreis mit Beschriftung', function () {
   var s = Takt.figure.draw({ breath: { ein: 4, halten: 0, aus: 6, haltenLeer: 0 } }, 0);
   ok(s.indexOf('<circle') >= 0 && s.indexOf('Einatmen') >= 0, 'Kreis und Text');
 });
+
+test('figure svg: Vorderansicht hat beide Seiten in derselben Farbe', function () {
+  var front = Takt.figure.frameAt({ frames: [{ hip: [120, 82], sh: [120, 32], hipW: 8, shW: 13, footN: [130, 162], footF: [110, 162],
+    handN: [138, 90], handF: [102, 90], kneeN: -1, kneeF: 1, elbowN: -1, elbowF: 1 }] }, 0);
+  ok(Takt.figure.svg(front).indexOf('#9A6B8C') < 0, 'dunkle Farbe in Vorderansicht');
+  ok(Takt.figure.svg(Takt.figure.frameAt(standPose(), 0)).indexOf('#9A6B8C') >= 0, 'Seitenansicht braucht die dunkle Farbe');
+});
+
+test('figure draw: Pfeil liegt vor der Figur und bewegt sich', function () {
+  var p = standPose();
+  p.props = [{ type: 'pfeil', x: 150, y: 70, dir: 'links' }];
+  var a = Takt.figure.draw(p, 0), b = Takt.figure.draw(p, 1000);
+  ok(a.indexOf('data-prop="pfeil"') > a.lastIndexOf('<circle'), 'Pfeil nach dem Kopf gezeichnet');
+  ok(a.slice(a.indexOf('data-prop="pfeil"')) !== b.slice(b.indexOf('data-prop="pfeil"')), 'Pfeil bewegt sich nicht');
+});
+
+test('figure geometry: Beine lassen sich verkuerzen (Bein zeigt zum Betrachter)', function () {
+  var f = Takt.figure.frameAt(standPose(), 0);
+  f.lenN = 0.5; f.shinF = 0.5;
+  var g = Takt.figure.geometry(f);
+  ok(Math.abs(Math.hypot(g.legN.mid[0] - f.hip[0], g.legN.mid[1] - f.hip[1]) - 20) < 0.01, 'Oberschenkel vorne 20');
+  ok(Math.abs(Math.hypot(g.legF.mid[0] - f.hip[0], g.legF.mid[1] - f.hip[1]) - 40) < 0.01, 'Oberschenkel hinten 40');
+  ok(Math.abs(Math.hypot(g.legF.end[0] - g.legF.mid[0], g.legF.end[1] - g.legF.mid[1]) - 20) < 0.01, 'Unterschenkel hinten 20');
+});

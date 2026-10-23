@@ -5,7 +5,7 @@ window.Takt = window.Takt || {};
   'use strict';
 
   var SEG = { thigh: 40, shin: 40, upper: 30, fore: 28, neck: 6, head: 10 };
-  var COL = { near: '#E3A3BF', far: '#9A6B8C', head: '#F0C4D6', mat: 'rgba(255,255,255,.07)', prop: '#4a3a44' };
+  var COL = { near: '#E3A3BF', far: '#9A6B8C', head: '#F0C4D6', mat: 'rgba(255,255,255,.07)', prop: '#4a3a44', arrow: '#C8729A', wall: 'rgba(255,255,255,.05)' };
   var DEFAULT_SCALE = 0.85;
   var WID = { torso: 17, thigh: 11, shin: 10, upper: 9, fore: 8, foot: 7, girdle: 9 };
   var FOOT = 9;
@@ -89,8 +89,10 @@ window.Takt = window.Takt || {};
     var hipF = [F.hip[0] - perp[0] * hw, F.hip[1] - perp[1] * hw];
     var shN = [F.sh[0] + perp[0] * sw, F.sh[1] + perp[1] * sw];
     var shF = [F.sh[0] - perp[0] * sw, F.sh[1] - perp[1] * sw];
-    var legN = ik(hipN, F.footN, SEG.thigh, SEG.shin, F.kneeN || -1);
-    var legF = ik(hipF, F.footF, SEG.thigh, SEG.shin, F.kneeF || -1);
+    // lenN/lenF verkuerzen das ganze Bein, shinN/shinF nur den Unterschenkel (zeigt zum Betrachter)
+    var ln = F.lenN || 1, lf = F.lenF || 1;
+    var legN = ik(hipN, F.footN, SEG.thigh * ln, SEG.shin * ln * (F.shinN || 1), F.kneeN || -1);
+    var legF = ik(hipF, F.footF, SEG.thigh * lf, SEG.shin * lf * (F.shinF || 1), F.kneeF || -1);
     var armN = ik(shN, F.handN, SEG.upper, SEG.fore, F.elbowN || 1);
     var armF = ik(shF, F.handF, SEG.upper, SEG.fore, F.elbowF || 1);
     function tip(p, deg) {
@@ -132,7 +134,26 @@ window.Takt = window.Takt || {};
     }
     if (p.type === 'sofa') return rect(x, y, w, 166 - y, 'sofa') + rect(x, y - 22, 10, 22, 'sofa');
     if (p.type === 'stufe') return rect(x, y, w, 166 - y, 'stufe');
+    // Wand hinter einer frontal stehenden Figur
+    if (p.type === 'wandflaeche') return rect(x - w / 2, 22, w, 144, 'wandflaeche').replace('fill="' + COL.prop + '"', 'fill="' + COL.wall + '"');
     return '';
+  }
+
+  /* Pfeil zum Bauch (Vacuum): Spitze bei x/y, zeigt in dir, pendelt leicht zur Spitze hin */
+  var ARROW_DIR = { links: [-1, 0], rechts: [1, 0], oben: [0, -1], unten: [0, 1] };
+  function arrowSvg(p, ms) {
+    var d = ARROW_DIR[p.dir] || ARROW_DIR.links;
+    var k = 3 * (1 - Math.cos(2 * Math.PI * (ms || 0) / 1600)) / 2;
+    var tip = [p.x + d[0] * k, p.y + d[1] * k];
+    var tail = [tip[0] - d[0] * 18, tip[1] - d[1] * 18];
+    var side = [-d[1], d[0]];
+    var w1 = [tip[0] - d[0] * 7 + side[0] * 6, tip[1] - d[1] * 7 + side[1] * 6];
+    var w2 = [tip[0] - d[0] * 7 - side[0] * 6, tip[1] - d[1] * 7 - side[1] * 6];
+    function seg(a, b) {
+      return '<line data-prop="pfeil" x1="' + n1(a[0]) + '" y1="' + n1(a[1]) + '" x2="' + n1(b[0]) + '" y2="' + n1(b[1]) +
+        '" stroke="' + COL.arrow + '" stroke-width="3.5" stroke-linecap="round"/>';
+    }
+    return seg(tail, tip) + seg(w1, tip) + seg(w2, tip);
   }
 
   function torso(g, F, w, c) {
@@ -143,20 +164,25 @@ window.Takt = window.Takt || {};
       '" fill="none" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round"/>';
   }
 
-  function svg(F, scale, props) {
+  function svg(F, scale, props, ms) {
     if (!F) return '';
     var g = geometry(F);
     var mat = '<rect x="14" y="166" width="212" height="6" rx="3" fill="' + COL.mat + '"/>';
-    var h = (props || []).map(propSvg).join('');
-    h += line(g.shF, g.armF.mid, WID.upper, COL.far) + line(g.armF.mid, g.armF.end, WID.fore, COL.far);
-    h += line(g.hipF, g.legF.mid, WID.thigh, COL.far) + line(g.legF.mid, g.legF.end, WID.shin, COL.far) +
-      line(g.legF.end, g.toeF, WID.foot, COL.far);
+    var behind = (props || []).filter(function (p) { return p.type !== 'pfeil'; });
+    var front = (props || []).filter(function (p) { return p.type === 'pfeil'; });
+    // Vorderansicht: beide Seiten gleich nah, also gleiche Farbe
+    var far = g.girdle ? COL.near : COL.far;
+    var h = behind.map(propSvg).join('');
+    h += line(g.shF, g.armF.mid, WID.upper, far) + line(g.armF.mid, g.armF.end, WID.fore, far);
+    h += line(g.hipF, g.legF.mid, WID.thigh, far) + line(g.legF.mid, g.legF.end, WID.shin, far) +
+      line(g.legF.end, g.toeF, WID.foot, far);
     h += torso(g, F, WID.torso, COL.near);
     if (g.girdle) h += line(g.shN, g.shF, WID.girdle, COL.near) + line(g.hipN, g.hipF, WID.thigh, COL.near);
     h += line(g.hipN, g.legN.mid, WID.thigh, COL.near) + line(g.legN.mid, g.legN.end, WID.shin, COL.near) +
       line(g.legN.end, g.toeN, WID.foot, COL.near);
     h += line(g.shN, g.armN.mid, WID.upper, COL.near) + line(g.armN.mid, g.armN.end, WID.fore, COL.near);
     h += '<circle cx="' + n1(g.head[0]) + '" cy="' + n1(g.head[1]) + '" r="' + SEG.head + '" fill="' + COL.head + '"/>';
+    h += front.map(function (p) { return arrowSvg(p, ms); }).join('');
     if (scale && scale !== 1) {
       h = '<g transform="translate(120 166) scale(' + scale + ') translate(-120 -166)">' + h + '</g>';
     }
@@ -228,7 +254,7 @@ window.Takt = window.Takt || {};
 
   function draw(pose, ms) {
     if (pose.breath) return breathSvg(pose.breath, ms);
-    return svg(frameAt(pose, ms), pose.scale || DEFAULT_SCALE, pose.props);
+    return svg(frameAt(pose, ms), pose.scale || DEFAULT_SCALE, pose.props, ms);
   }
 
   function prepare(el) {
@@ -242,6 +268,7 @@ window.Takt = window.Takt || {};
     DEFAULT_SCALE: DEFAULT_SCALE,
     draw: draw,
     breathAt: breathAt,
+    geometry: geometry,
     ik: ik,
     frameAt: frameAt,
     svg: svg,

@@ -89,3 +89,18 @@ test('data: jede Uebung hat eine Katja-Ansage', function () {
   var missing = Takt.EXERCISES.filter(function (e) { return !(Takt.VOICE_FILES || {})['ex_' + e.id]; }).map(function (e) { return e.id; });
   eq(missing.length, 0, 'fehlend: ' + missing.slice(0, 5).join(', '));
 });
+
+test('data: Vacuum mit Fersentippen ersetzt Bauchnabel nach innen', function () {
+  var ids = Takt.EXERCISES.map(function (e) { return e.id; });
+  ok(ids.indexOf('transversus') < 0, 'transversus noch da');
+  var e = Takt.EXERCISES.filter(function (x) { return x.id === 'vacuum-fersentippen'; })[0];
+  ok(e && e.tags.indexOf('vacuum') >= 0, 'neue Uebung fehlt');
+  eq(Takt.POSES['vacuum-fersentippen'].frames.length > 1, true);
+});
+
+test('data: jede Vacuum-Uebung zeigt einen Pfeil zum Bauch', function () {
+  var missing = Takt.EXERCISES.filter(function (e) { return e.tags.indexOf('vacuum') >= 0 && e.typ === 'zeit'; })
+    .filter(function (e) { return !((Takt.POSES[e.id] || {}).props || []).some(function (p) { return p.type === 'pfeil'; }); })
+    .map(function (e) { return e.id; });
+  eq(missing, []);
+});

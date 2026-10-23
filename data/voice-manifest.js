@@ -397,13 +397,13 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_totenstellung.mp3",
   "text": "Totenstellung"
  },
- "ex_transversus": {
-  "src": "assets/voice/ex_transversus.mp3",
-  "text": "Bauchnabel nach innen"
- },
  "ex_v-ups": {
   "src": "assets/voice/ex_v-ups.mp3",
   "text": "V-Ups"
+ },
+ "ex_vacuum-fersentippen": {
+  "src": "assets/voice/ex_vacuum-fersentippen.mp3",
+  "text": "Vacuum mit Fersentippen"
  },
  "ex_vacuum-liegend": {
   "src": "assets/voice/ex_vacuum-liegend.mp3",

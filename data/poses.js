@@ -1,7 +1,8 @@
 /* Takt: Haltungen der animierten Figur je Übung (Atem-Übungen haben keine).
    Koordinaten im Bild 12..228 x 18..178, Boden bei y = 166 (vor dem Maßstab).
    Grundhaltungen: S stehen (Seite), FR stehen (vorne), SU Rückenlage, SB Rückenlage Knie gebeugt,
-   PR Bauchlage, Q Vierfüßler, PL Unterarm-Plank, HP hoher Stütz, SI Langsitz, SL Seitenlage, CS Stuhlsitz.
+   PR Bauchlage, Q Vierfüßler, PL Unterarm-Plank, HP hoher Stütz, SI Langsitz, SL Seitenlage (von vorne gesehen, Kopf auf dem unteren Arm), CS Stuhlsitz.
+   FR und SL sind Vorderansichten: beide Koerperseiten gleich hell. lenN/lenF/shinN/shinF verkuerzen Beine, die zum Betrachter zeigen.
    Spätere Frames erben fehlende Werte vom vorigen. Prüfen: tools/galerie.html */
 window.Takt = window.Takt || {};
 (function (T) {
@@ -36,8 +37,9 @@ window.Takt = window.Takt || {};
       kneeN: -1, kneeF: -1, elbowN: -1, elbowF: -1, footDirN: 100, footDirF: 100 },
     SI: { hip: [104, 156], sh: [96, 107], footN: [182, 158], footF: [184, 159], handN: [76, 161], handF: [80, 161],
       kneeN: -1, kneeF: -1, elbowN: 1, elbowF: 1, footDirN: -80, footDirF: -80 },
-    SL: { hip: [118, 152], sh: [68, 148], headDir: [-1, -0.25], footN: [196, 150], footF: [196, 156], handN: [104, 146], handF: [52, 136],
-      kneeN: -1, kneeF: 1, elbowN: -1, elbowF: 1, footDirN: 0, footDirF: 0 },
+    SL: { hip: [124, 148], sh: [74, 147], hipW: 5, shW: 5, headDir: [-1, -0.15],
+      footN: [206, 146], footF: [206, 156], handN: [110, 164], handF: [16, 155],
+      kneeN: -1, kneeF: -1, elbowN: -1, elbowF: 1, footDirN: 0, footDirF: 0 },
     CS: { hip: [110, 120], sh: [112, 72], footN: [150, 162], footF: [154, 162], handN: [140, 118], handF: [136, 118],
       kneeN: -1, kneeF: -1, elbowN: 1, elbowF: 1, footDirN: 0, footDirF: 0 }
   };
@@ -63,12 +65,13 @@ window.Takt = window.Takt || {};
 
   T.POSES = {
     /* ---------- Vacuum ---------- */
-    'vacuum-stehend': P([FR({ handN: [134, 84], handF: [106, 84] })]),
-    'vacuum-vierfuessler': P([Q()]),
-    'vacuum-liegend': P([SB()]),
-    'vacuum-sitzend': P([CS()], { props: [CHAIR] }),
-    'transversus': P([SB({ handN: [96, 150], handF: [98, 151] })]),
-
+    'vacuum-stehend': P([FR({ handN: [134, 84], handF: [106, 84] })], { props: [{ type: 'pfeil', x: 138, y: 64, dir: 'links' }] }),
+    'vacuum-vierfuessler': P([Q()], { props: [{ type: 'pfeil', x: 110, y: 128, dir: 'oben' }] }),
+    'vacuum-liegend': P([SB()], { props: [{ type: 'pfeil', x: 90, y: 146, dir: 'unten' }] }),
+    'vacuum-sitzend': P([CS({ handN: [106, 128], handF: [104, 128], elbowN: -1, elbowF: -1 })], { props: [CHAIR, { type: 'pfeil', x: 124, y: 100, dir: 'links' }] }),
+    'vacuum-fersentippen': P([SU({ footN: [150, 118], footF: [153, 121] }), { footF: [170, 160], footDirF: -20 },
+      { footF: [153, 121], footDirF: -90 }, { footN: [168, 160], footDirN: -20 }],
+      { hold: 0.3, move: 0.8, props: [{ type: 'pfeil', x: 88, y: 146, dir: 'unten' }] }),
     /* ---------- Core ---------- */
     'plank': P([PL()]),
     'high-plank': P([HP()]),
@@ -90,8 +93,11 @@ window.Takt = window.Takt || {};
       { footN: [212, 160], kneeN: -1, footDirN: 100, footF: [140, 156], kneeF: 1, footDirF: 30 }], { hold: 0.15, move: 0.35 }),
     'plank-jacks': P([HP(), { footN: [198, 160], footF: [226, 158] }], { hold: 0.2, move: 0.4 }),
     'pallof-press': P([S({ handN: [136, 70], handF: [134, 71] }), { handN: [176, 64], handF: [175, 65] }]),
-    'russian-twist': P([SI({ sh: [92, 112], hip: [110, 156], footN: [168, 134], footF: [170, 136], footDirN: -30, footDirF: -30,
-      handN: [124, 124], handF: [122, 126] }), { handN: [92, 140], handF: [94, 142] }], { hold: 0.3, move: 0.6 }),
+    'russian-twist': P([{ hip: [120, 154], sh: [120, 106], hipW: 8, shW: 13, footN: [134, 144], footF: [106, 144], kneeN: 1, kneeF: -1,
+      lenN: 0.73, lenF: 0.73, shinN: 0.55, shinF: 0.55, footDirN: 90, footDirF: 90,
+      handN: [122, 118], handF: [118, 118], elbowN: -1, elbowF: 1 },
+      { sh: [126, 107], handN: [152, 157], handF: [148, 157] }, { sh: [120, 106], handN: [122, 118], handF: [118, 118] },
+      { sh: [114, 107], handN: [92, 157], handF: [88, 157] }], { hold: 0.15, move: 0.5 }),
     'spiderman-plank': P([HP(), { footN: [118, 148], kneeN: 1, footDirN: 0 }]),
     'plank-rock': P([PL(), { sh: [66, 132], hip: [124, 146], footN: [202, 158], footF: [204, 159] }]),
 
@@ -132,7 +138,8 @@ window.Takt = window.Takt || {};
     'rueckenstrecker': P([PR({ handN: [56, 148], handF: [58, 149] }),
       { sh: [70, 140], headDir: [-0.94, -0.34], handN: [58, 128], handF: [60, 129] }]),
     'prone-cobra': P([PR({ sh: [70, 144], headDir: [-0.95, -0.3], handN: [124, 148], handF: [126, 149] })]),
-    'wall-angels': P([FR({ handN: [152, 26], handF: [88, 26] }), { handN: [164, -4], handF: [76, -4] }], { scale: 0.8 }),
+    'wall-angels': P([FR({ handN: [158, 8], handF: [82, 8], elbowN: 1, elbowF: -1 }), { handN: [156, -14], handF: [84, -14] }],
+      { scale: 0.78, props: [{ type: 'wandflaeche', x: 120, w: 110 }] }),
     'good-morning': P([S({ handN: [112, 22], handF: [114, 23], elbowN: -1, elbowF: -1 }),
       { hip: [104, 86], sh: [148, 66], handN: [150, 52], handF: [152, 53] }]),
     'band-rudern': P([SI({ handN: [152, 122], handF: [154, 123] }), { handN: [110, 124], handF: [112, 125] }]),
@@ -161,8 +168,8 @@ window.Takt = window.Takt || {};
       { props: [{ type: 'sofa', x: 18, y: 112, w: 52 }] }),
     'donkey-kicks': P([Q(), { footN: [182, 72], footDirN: -90 }]),
     'fire-hydrants': P([Q(), { footN: [176, 148], kneeN: -1 }]),
-    'clamshells': P([SL({ footN: [150, 156], footF: [152, 158], kneeN: -1, kneeF: -1 }), { footN: [146, 140] }]),
-    'beinheben-seitlich': P([SL(), { footN: [184, 104], footDirN: -30 }]),
+    'clamshells': P([SL({ lenN: 0.66, lenF: 0.74, kneeN: -1, kneeF: 1, footN: [176, 150], footF: [176, 153] }), { lenN: 0.92 }]),
+    'beinheben-seitlich': P([SL(), { footN: [190, 98], footDirN: -30 }]),
     'wandsitzen': P([{ hip: [104, 122], sh: [100, 72], footN: [144, 162], footF: [148, 162], handN: [126, 120], handF: [124, 121],
       kneeN: -1, kneeF: -1, elbowN: 1, elbowF: 1, footDirN: 0, footDirF: 0 }], { props: [{ type: 'wand', x: 90 }] }),
     'wadenheben': P([S({ hip: [120, 88], sh: [120, 38] }),
@@ -183,20 +190,21 @@ window.Takt = window.Takt || {};
     'hueftbeuger-dehnung': P([{ hip: [118, 128], sh: [114, 78], footN: [170, 162], footF: [60, 160], kneeN: -1, kneeF: -1,
       footDirN: 0, footDirF: 180, handN: [156, 124], handF: [154, 125], elbowN: 1, elbowF: 1 }, { hip: [126, 134], sh: [124, 84] }],
       { hold: 1, move: 1.2 }),
-    'taube': P([{ hip: [120, 150], sh: [122, 100], footN: [124, 162], footF: [40, 160], kneeN: -1, kneeF: -1, footDirN: 180, footDirF: 180,
-      handN: [104, 160], handF: [106, 160], elbowN: 1, elbowF: 1 }, { sh: [166, 140], handN: [214, 162], handF: [212, 162] }],
-      { hold: 1, move: 1.2 }),
+    'taube': P([{ hip: [120, 150], sh: [122, 100], footN: [158, 162], footF: [40, 160], kneeN: -1, kneeF: -1, shinN: 0.3,
+      footDirN: 180, footDirF: 180, handN: [142, 162], handF: [140, 162], elbowN: 1, elbowF: 1 },
+      { sh: [166, 140], handN: [212, 162], handF: [210, 162] }], { hold: 1, move: 1.2 }),
     'kindhaltung': P([{ hip: [140, 134], sh: [92, 152], footN: [156, 162], footF: [159, 162], kneeN: 1, kneeF: 1, footDirN: 0, footDirF: 0,
       handN: [34, 160], handF: [36, 160], elbowN: -1, elbowF: -1 }]),
     'herabschauender-hund': P([{ hip: [130, 92], sh: [90, 126], footN: [168, 162], footF: [171, 162], kneeN: -1, kneeF: -1,
-      footDirN: 180, footDirF: 180, handN: [56, 162], handF: [58, 162], elbowN: 1, elbowF: 1 }]),
+      footDirN: 180, footDirF: 180, handN: [46, 162], handF: [48, 162], elbowN: 1, elbowF: 1 }]),
     'hamstring-dehnung': P([SI({ handN: [150, 150], handF: [148, 151] }), { sh: [132, 122], handN: [180, 152], handF: [178, 153] }],
       { hold: 1, move: 1.2 }),
     'quad-dehnung': P([S({ footN: [108, 86], footDirN: -90, handN: [108, 88], handF: [170, 60] })]),
     'schmetterling': P([{ hip: [120, 142], sh: [120, 92], hipW: 9, shW: 13, footN: [124, 158], footF: [116, 158], kneeN: -1, kneeF: 1,
       footDirN: 180, footDirF: 0, handN: [126, 154], handF: [114, 154], elbowN: -1, elbowF: 1 }]),
     'figur-vier': P([SU({ footN: [152, 116], footF: [150, 122], footDirN: -90, footDirF: -90, handN: [126, 120], handF: [128, 122] })]),
-    'open-book': P([SL({ handN: [70, 92], handF: [72, 96], elbowN: 1 }), { handN: [14, 150] }], { hold: 0.8, move: 1.2 }),
+    'open-book': P([SL({ lenN: 0.66, lenF: 0.66, footN: [176, 147], footF: [176, 159] }),
+      { handN: [70, 86], elbowN: 1, headDir: [-0.6, -0.8] }], { hold: 0.8, move: 1.2 }),
     'nacken-dehnung': P([FR({ headDir: [0, -1] }), { headDir: [0.45, -0.9], handN: [132, 10] }], { hold: 1, move: 1 }),
     'schulterkreisen': P([FR(), { sh: [120, 28], handN: [138, 84], handF: [102, 84] }, { sh: [120, 36] }], { hold: 0.1, move: 0.5 }),
     'armkreisen': P([FR({ handN: [190, 34], handF: [50, 34] }), { handN: [180, 0], handF: [60, 0] },
@@ -208,9 +216,9 @@ window.Takt = window.Takt || {};
     'worlds-greatest': P([{ hip: [112, 128], sh: [146, 98], footN: [170, 162], footF: [52, 152], kneeN: -1, kneeF: -1,
       footDirN: 0, footDirF: 60, handN: [150, 160], handF: [154, 160], elbowN: 1, elbowF: 1 }, { handF: [150, 40] }],
       { hold: 0.8, move: 1 }),
-    'huefte-90-90': P([{ hip: [120, 156], sh: [118, 106], footN: [176, 160], footF: [66, 160], kneeN: -1, kneeF: 1,
-      footDirN: 0, footDirF: 180, handN: [100, 160], handF: [140, 160], elbowN: 1, elbowF: -1 }, { sh: [146, 116] }],
-      { hold: 1, move: 1.2 }),
+    'huefte-90-90': P([{ hip: [120, 154], sh: [120, 104], hipW: 8, shW: 13, footF: [128, 164], footN: [172, 150], kneeF: 1, kneeN: -1,
+      lenF: 0.58, shinF: 1.64, lenN: 0.96, shinN: 0.3, footDirF: 0, footDirN: -60,
+      handN: [150, 164], handF: [86, 164], elbowN: -1, elbowF: 1 }, { sh: [110, 108] }], { hold: 1, move: 1.2 }),
     'seitdehnung': P([FR({ handN: [136, -22] }), { sh: [106, 38], handN: [72, -12] }], { scale: 0.78, hold: 1, move: 1.2 }),
 
     /* ---------- Yoga ---------- */
@@ -273,6 +281,6 @@ window.Takt = window.Takt || {};
       handN: [100, 124], handF: [102, 124], elbowN: 1, elbowF: 1 }, { hip: [104, 148], sh: [104, 98] }],
       { props: [{ type: 'stuhl', x: 82, y: 126 }] }),
     'pike-pushup': P([{ hip: [130, 92], sh: [90, 126], footN: [168, 162], footF: [171, 162], kneeN: -1, kneeF: -1, footDirN: 180, footDirF: 180,
-      handN: [56, 162], handF: [58, 162], elbowN: 1, elbowF: 1 }, { sh: [80, 146] }])
+      handN: [46, 162], handF: [48, 162], elbowN: -1, elbowF: -1 }, { sh: [58, 132] }])
   };
 })(window.Takt);
