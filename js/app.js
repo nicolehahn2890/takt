@@ -379,6 +379,7 @@ window.Takt = window.Takt || {};
     };
     if (T.home) T.home.init(api);
     if (T.editor) T.editor.init(api);
+    if (T.statsView) T.statsView.init(api);
     renderStart();
     // Laenger als 30 Minuten liegengebliebene Trainings werden nicht fortgesetzt
     var saved = T.store.loadRun(null, { maxAgeMs: 30 * 60 * 1000 });
