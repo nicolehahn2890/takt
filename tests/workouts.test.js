@@ -163,3 +163,78 @@ test('mix Name, Thema, Quelle und Aufbau', function () {
   ok(idx[cool.exId].tags.indexOf('dehnen') >= 0 && cool.duration === 60, 'Abschluss');
   ok(mixBlock(w, 'Hauptteil').items.every(function (i) { return i.name === idx[i.exId].name; }), 'Name fehlt');
 });
+
+/* ---------- Workouts pruefen und kopieren ---------- */
+function vIn(blocks, name) {
+  return { name: name === undefined ? 'Mein Workout' : name, theme: 'bauch', defaultWork: 40, defaultRest: 15, blocks: blocks };
+}
+function vErr(res, field) { return res.errors.filter(function (e) { return e.field === field; }).length > 0; }
+
+test('validateWorkout leer', function () {
+  var r = Takt.validateWorkout(vIn([{ repeat: 1, items: [] }]));
+  eq(r.ok, false);
+  ok(vErr(r, 'blocks'), JSON.stringify(r.errors));
+  ok(vErr(Takt.validateWorkout(vIn([])), 'blocks'), 'ohne Bloecke');
+});
+
+test('validateWorkout Name zu lang oder leer', function () {
+  var items = [{ repeat: 1, items: wItems(1, 40) }];
+  ok(vErr(Takt.validateWorkout(vIn(items, new Array(42).join('x'))), 'name'), 'zu lang');
+  ok(vErr(Takt.validateWorkout(vIn(items, '   ')), 'name'), 'leer');
+  eq(Takt.validateWorkout(vIn(items, new Array(41).join('x'))).ok, true);
+});
+
+test('validateWorkout setzt name aus Bibliothek', function () {
+  var r = Takt.validateWorkout(vIn([{ repeat: 1, items: [{ exId: 'plank', name: null, duration: 40, rest: null }] }]));
+  eq(r.ok, true);
+  eq(r.workout.blocks[0].items[0].name, 'Plank');
+  var r2 = Takt.validateWorkout(vIn([{ repeat: 1, items: [{ exId: 'own-weg', name: null, duration: 40, rest: null }] }]));
+  eq(r2.ok, false);
+});
+
+test('validateWorkout Grenzen fuer Runden, Dauer und Pause', function () {
+  function one(item, repeat) { return Takt.validateWorkout(vIn([{ repeat: repeat || 1, items: [item] }])); }
+  ok(vErr(one({ exId: 'plank', duration: 5, rest: null }), 'duration'), 'Dauer 5');
+  ok(vErr(one({ exId: 'plank', duration: 601, rest: null }), 'duration'), 'Dauer 601');
+  ok(vErr(one({ exId: 'plank', duration: 40, rest: 121 }), 'rest'), 'Pause 121');
+  ok(vErr(one({ exId: 'plank', duration: 40, rest: null }, 11), 'repeat'), 'Runden 11');
+  ok(vErr(one({ exId: 'plank', duration: 40, rest: null }, -1), 'repeat'), 'Runden -1');
+  eq(one({ exId: 'plank', duration: 10, rest: 0 }, 10).ok, true);
+});
+
+test('validateWorkout baut ein sauberes eigenes Workout', function () {
+  var r = Takt.validateWorkout(vIn([{ repeat: 2, items: wItems(2, 40) }, { repeat: 1, items: [] }], '  Morgen  '),
+    new Date('2026-10-23T08:00:00Z'));
+  eq(r.ok, true);
+  var w = r.workout;
+  ok(/^w-/.test(w.id), w.id);
+  eq([w.name, w.theme, w.source, w.blocks.length, w.createdAt, w.updatedAt],
+    ['Morgen', 'bauch', 'own', 1, '2026-10-23T08:00:00.000Z', '2026-10-23T08:00:00.000Z']);
+  var again = Takt.validateWorkout(w, new Date('2026-10-24T08:00:00Z')).workout;
+  eq([again.id, again.createdAt, again.updatedAt], [w.id, '2026-10-23T08:00:00.000Z', '2026-10-24T08:00:00.000Z']);
+});
+
+test('copyWorkout Vorlage', function () {
+  var t = Takt.TEMPLATES.filter(function (x) { return x.id === 'vacuum-core-kurz'; })[0];
+  var c = Takt.copyWorkout(t);
+  ok(c.id !== t.id && /^w-/.test(c.id), c.id);
+  eq([c.name, c.source, c.level], [t.name, 'own', undefined]);
+  eq(Takt.workoutSeconds(c, wIdx()), Takt.workoutSeconds(t, wIdx()));
+  ok(c.blocks[0].items.every(function (i) { return !!i.name; }), 'Namen fehlen');
+  c.blocks[0].items[0].duration = 999;
+  ok(t.blocks[0].items[0].duration !== 999, 'Vorlage wurde veraendert');
+});
+
+test('copyWorkout eigenes Workout heisst (Kopie)', function () {
+  var w = Takt.validateWorkout(vIn([{ repeat: 1, items: wItems(1, 40) }], 'Abend')).workout;
+  eq(Takt.copyWorkout(w).name, 'Abend (Kopie)');
+  var long = Takt.validateWorkout(vIn([{ repeat: 1, items: wItems(1, 40) }], new Array(41).join('y'))).workout;
+  ok(Takt.copyWorkout(long).name.length <= 40, 'Name zu lang');
+});
+
+test('buildSteps mit geloeschter eigener Uebung', function () {
+  var w = vIn([{ repeat: 1, items: [{ exId: 'own-weg', name: 'Meine Übung', duration: 30, rest: null }] }]);
+  var s = Takt.buildSteps(w, wIdx(), {});
+  eq([s[0].name, s[0].exId], ['Meine Übung', 'own-weg']);
+  eq(Takt.exerciseFor('own-weg', wIdx(), s[0].name).name, 'Meine Übung');
+});

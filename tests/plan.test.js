@@ -1,4 +1,12 @@
-function testWorkout() { return Takt.TEMPLATES.filter(function (w) { return w.id === 'test-core'; })[0]; }
+/* Fester Test-Ablauf (frueher die Vorlage 'Test: Core kurz'), auch von announce.test.js genutzt.
+   Bewusst nicht aus data/templates.js, damit Aenderungen an Vorlagen die Tests nicht brechen. */
+function testWorkout() {
+  function it(id, d, rest) { return { exId: id, name: null, duration: d, rest: rest === undefined ? null : rest, bilateral: false }; }
+  return { id: 'test-core', name: 'Test: Core kurz', theme: 'core', defaultWork: 30, defaultRest: 10, source: 'own', blocks: [
+    { repeat: 1, items: [it('hampelmann', 30)] },
+    { repeat: 2, items: [it('plank', 30), it('glute-bridge', 30), it('dead-bug', 30)] },
+    { repeat: 1, items: [it('kindhaltung', 40, 0)] }] };
+}
 function exIdx() { return Takt.indexExercises(Takt.EXERCISES); }
 function kinds(steps) { return steps.map(function (s) { return s.kind; }); }
 

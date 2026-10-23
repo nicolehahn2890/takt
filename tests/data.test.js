@@ -122,3 +122,44 @@ test('data: Eisschnelllaeufer ist entfernt und Krieger heissen ohne Zahlen', fun
   eq(Takt.POSES.skater, undefined);
   eq(Takt.EXERCISES.filter(function (e) { return /I{1,3}$/.test(e.name); }).map(function (e) { return e.name; }), []);
 });
+
+/* ---------- Vorlagen ---------- */
+var D_THEMES = ['core', 'bauch', 'dehnen', 'yoga', 'beine', 'ruecken'];
+
+test('data: 12 Vorlagen', function () {
+  var ids = Takt.TEMPLATES.map(function (w) { return w.id; });
+  eq(ids.length, 12);
+  eq(ids.filter(function (id, i) { return ids.indexOf(id) !== i; }), []);
+  ok(ids.indexOf('test-core') < 0, 'Test-Workout noch da');
+  var idx = Takt.indexExercises(Takt.EXERCISES);
+  Takt.TEMPLATES.forEach(function (w) {
+    ok(D_THEMES.indexOf(w.theme) >= 0, w.id + ' Thema ' + w.theme);
+    ok(w.level === 'kurz' || w.level === 'lang', w.id + ' level');
+    eq(w.source, 'template', w.id);
+    w.blocks.forEach(function (b) {
+      ok(b.items.length > 0, w.id + ' leerer Block');
+      b.items.forEach(function (i) { ok(idx[i.exId], w.id + ': unbekannte Uebung ' + i.exId); });
+    });
+    var v = Takt.validateWorkout(w);
+    ok(v.ok, w.id + ' ungueltig: ' + JSON.stringify(v.errors));
+  });
+  D_THEMES.forEach(function (th) {
+    eq(Takt.TEMPLATES.filter(function (w) { return w.theme === th; }).map(function (w) { return w.level; }).sort(), ['kurz', 'lang'], th);
+  });
+});
+
+test('data: Vorlagen-Dauer', function () {
+  var idx = Takt.indexExercises(Takt.EXERCISES);
+  Takt.TEMPLATES.forEach(function (w) {
+    var min = Takt.workoutSeconds(w, idx) / 60;
+    var range = w.level === 'kurz' ? [8, 12] : [17, 23];
+    ok(min >= range[0] && min <= range[1], w.id + ': ' + min.toFixed(1) + ' Min.');
+  });
+});
+
+test('data: Vorlage beidseitig passt zur Bibliothek', function () {
+  var idx = Takt.indexExercises(Takt.EXERCISES);
+  Takt.TEMPLATES.forEach(function (w) {
+    w.blocks.forEach(function (b) { b.items.forEach(function (i) { eq(i.bilateral, !!idx[i.exId].beidseitig, w.id + ' ' + i.exId); }); });
+  });
+});

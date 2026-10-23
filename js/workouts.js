@@ -118,6 +118,93 @@ window.Takt = window.Takt || {};
     return T.totalSeconds(T.buildSteps(workout, exIndex, { prepSeconds: 0 }));
   };
 
+  /* ---------- Workouts pruefen und kopieren ---------- */
+  T.WORKOUT_THEMES = ['core', 'bauch', 'dehnen', 'yoga', 'beine', 'ruecken'];
+  var LIMIT = { name: 40, label: 30, repeat: [1, 10], duration: [10, 600], rest: [0, 120] };
+  var COPY = ' (Kopie)';
+
+  function isInt(v) { return typeof v === 'number' && isFinite(v) && Math.floor(v) === v; }
+  function inRange(v, r) { return isInt(v) && v >= r[0] && v <= r[1]; }
+  function stampOf(now) { return (now instanceof Date && !isNaN(now.getTime()) ? now : new Date()).toISOString(); }
+
+  /* Prueft eine Eingabe aus dem Editor und baut daraus ein sauberes eigenes Workout.
+     Leere Bloecke fallen weg, fehlende Namen kommen aus der Bibliothek. */
+  T.validateWorkout = function (input, now) {
+    input = input || {};
+    var errors = [];
+    function err(field, msg, block, item) {
+      var e = { field: field, msg: msg };
+      if (block != null) e.block = block;
+      if (item != null) e.item = item;
+      errors.push(e);
+    }
+    var idx = T.indexExercises(T.EXERCISES);
+    var name = String(input.name == null ? '' : input.name).trim();
+    if (!name) err('name', 'Bitte gib dem Workout einen Namen.');
+    else if (name.length > LIMIT.name) err('name', 'Der Name darf h\u00f6chstens 40 Zeichen haben.');
+    var defWork = inRange(input.defaultWork, LIMIT.duration) ? input.defaultWork : 40;
+    var defRest = inRange(input.defaultRest, LIMIT.rest) ? input.defaultRest : 15;
+
+    var blocks = [];
+    (Array.isArray(input.blocks) ? input.blocks : []).forEach(function (b, bi) {
+      var items = b && Array.isArray(b.items) ? b.items : [];
+      if (!items.length) return;
+      var repeat = b.repeat == null ? 1 : b.repeat;
+      if (!inRange(repeat, LIMIT.repeat)) err('repeat', 'Runden: 1 bis 10.', bi);
+      blocks.push({
+        label: String(b.label || '').trim().slice(0, LIMIT.label),
+        repeat: repeat,
+        items: items.map(function (it, ii) {
+          it = it || {};
+          var exId = typeof it.exId === 'string' && it.exId ? it.exId : null;
+          var ex = exId ? idx[exId] : null;
+          var nm = String(it.name || '').trim() || (ex ? ex.name : '');
+          if (!nm) err('itemName', 'Eine \u00dcbung hat keinen Namen.', bi, ii);
+          var duration = it.duration == null ? defWork : it.duration;
+          if (!inRange(duration, LIMIT.duration)) err('duration', 'Dauer: 10 bis 600 Sekunden.', bi, ii);
+          var rest = it.rest == null ? null : it.rest;
+          if (rest !== null && !inRange(rest, LIMIT.rest)) err('rest', 'Pause: 0 bis 120 Sekunden.', bi, ii);
+          return { exId: exId, name: nm, duration: duration, rest: rest,
+            bilateral: typeof it.bilateral === 'boolean' ? it.bilateral : !!(ex && ex.beidseitig) };
+        })
+      });
+    });
+    if (!blocks.length) err('blocks', 'F\u00fcge mindestens eine \u00dcbung hinzu.');
+
+    var stamp = stampOf(now);
+    var workout = {
+      id: typeof input.id === 'string' && /^w-/.test(input.id) ? input.id : T.uid('w-'),
+      name: name,
+      theme: T.WORKOUT_THEMES.indexOf(input.theme) >= 0 ? input.theme : 'core',
+      defaultWork: defWork,
+      defaultRest: defRest,
+      source: 'own',
+      blocks: blocks,
+      createdAt: typeof input.createdAt === 'string' && input.createdAt ? input.createdAt : stamp,
+      updatedAt: stamp
+    };
+    return { ok: !errors.length, errors: errors, workout: workout };
+  };
+
+  /* Kopie als eigenes Workout; Vorlagen und Mixe behalten ihren Namen, eigene heissen "... (Kopie)" */
+  T.copyWorkout = function (workout) {
+    var c = JSON.parse(JSON.stringify(workout || {}));
+    var idx = T.indexExercises(T.EXERCISES);
+    var name = String(c.name || '').trim();
+    if (c.source === 'own' || !c.source) name = name.slice(0, LIMIT.name - COPY.length).trim() + COPY;
+    var stamp = stampOf();
+    c.id = T.uid('w-');
+    c.name = name;
+    c.source = 'own';
+    delete c.level;
+    c.createdAt = stamp;
+    c.updatedAt = stamp;
+    (c.blocks || []).forEach(function (b) {
+      (b.items || []).forEach(function (i) { if (!i.name && i.exId && idx[i.exId]) i.name = idx[i.exId].name; });
+    });
+    return c;
+  };
+
   /* ---------- Mix ---------- */
 
   /* Zufallszahlen mit Seed (mulberry32), damit ein Mix nachvollziehbar bleibt */

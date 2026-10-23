@@ -1,8 +1,7 @@
 // Schritte des Test-Workouts mit 5 s Vorbereitung:
 // 0 prep hampelmann, 1 work hampelmann, 2 rest, 3 work plank, ...
 function annSteps() {
-  var w = Takt.TEMPLATES.filter(function (x) { return x.id === 'test-core'; })[0];
-  return Takt.buildSteps(w, Takt.indexExercises(Takt.EXERCISES), { prepSeconds: 5 });
+  return Takt.buildSteps(testWorkout(), Takt.indexExercises(Takt.EXERCISES), { prepSeconds: 5 });
 }
 function annCtx(mode, opts) {
   opts = opts || {};
