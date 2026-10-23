@@ -269,6 +269,8 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
 /* Nicht fixiert: iOS 26 legt ueber fixierte Leisten am oberen Rand einen Glas-Schleier (Titel unscharf) */
 .page > .bar { position: relative; margin: calc(-12px - env(safe-area-inset-top)) -16px 4px;
   padding: calc(8px + var(--glass-top) + env(safe-area-inset-top)) 10px 8px 6px; background: var(--bg); }
+/* Hauptseite ohne Zurueck-Knopf (Bibliothek): Titel buendig mit dem Inhalt (16 px) */
+.page > .bar > .back[hidden] + h2 { margin-left: 10px; }
 .bar-t { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .bar-t h2 { font-family: var(--font-display); font-size: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bar-t small { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
