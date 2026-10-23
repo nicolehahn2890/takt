@@ -20,6 +20,18 @@ window.Takt = window.Takt || {};
   function show(name) {
     Array.prototype.forEach.call(document.querySelectorAll('.screen'), function (el) { el.hidden = el.id !== 'screen-' + name; });
     if (name !== 'done') T.figure.unmount($('done-fig'));
+    // Leiste unten nur auf den drei Hauptseiten
+    var tabbed = name === 'start' || name === 'lib' || name === 'stats';
+    $('tabbar').hidden = !tabbed;
+    document.body.classList.toggle('has-tabbar', tabbed);
+    Array.prototype.forEach.call($('tabbar').children, function (b) { b.classList.toggle('on', b.getAttribute('data-tab') === name); });
+  }
+  function openTab(tab) {
+    if (tab === 'lib' && T.library) return T.library.open();
+    if (tab === 'stats') { if (T.statsView) T.statsView.open(); else show('stats'); window.scrollTo(0, 0); return; }
+    renderStart();
+    show('start');
+    window.scrollTo(0, 0);
   }
   function toast(msg) {
     var t = $('toast');
@@ -43,8 +55,6 @@ window.Takt = window.Takt || {};
   /* ---------- Start ---------- */
   function renderStart() {
     $('brand-logo').innerHTML = '<img src="assets/takt-mark.svg" alt="">';
-    var own = (data.exercisesOwn || []).length;
-    $('lib-sub').textContent = (T.EXERCISES || []).length + ' \u00dcbungen mit Figur und Ansage' + (own ? ' \u00b7 ' + own + ' eigene' : '');
     if (T.home) T.home.render();
   }
 
@@ -327,6 +337,10 @@ window.Takt = window.Takt || {};
       if (run && window.confirm('Training beenden?')) abort();
     });
     $('b-home').addEventListener('click', function () { renderStart(); show('start'); });
+    $('tabbar').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-tab]');
+      if (b) openTab(b.getAttribute('data-tab'));
+    });
     document.addEventListener('visibilitychange', function () {
       if (document.hidden) return;
       T.audio.resume();
@@ -352,7 +366,6 @@ window.Takt = window.Takt || {};
         toast: toast,
         home: function () { renderStart(); show('start'); }
       });
-      $('go-lib').addEventListener('click', function () { T.library.open(); });
     }
     var api = {
       data: function () { return data; },

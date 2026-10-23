@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <link rel="icon" href="assets/takt-mark.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icon-180.png">
-<link rel="stylesheet" href="css/app.css?v=25">
+<link rel="stylesheet" href="css/app.css?v=26">
 </head>
 <body>
 
@@ -32,11 +32,6 @@
   </div>
   <h2 class="sec-tpl">Vorlagen <span class="aside" id="tpl-count"></span></h2>
   <div id="tpl-list"></div>
-  <h2>Bibliothek</h2>
-  <button class="card nav" id="go-lib" style="--theme:#B794C5">
-    <div class="card-main"><h3>Übungen</h3><p id="lib-sub">110 Übungen mit Figur und Ansage</p></div>
-    <span class="chev" aria-hidden="true">&#8250;</span>
-  </button>
   <p class="hint"><b>Vor dem Start</b>Schalter am iPhone auf Klingeln stellen und Musik in Spotify starten. Danach Takt vorne lassen.</p>
 </section>
 
@@ -80,7 +75,7 @@
 
 <section id="screen-lib" class="screen page" hidden>
   <header class="bar">
-    <button class="back" id="lib-back" aria-label="Zurück">&#8249;</button>
+    <button class="back" id="lib-back" aria-label="Zurück" hidden>&#8249;</button>
     <h2>Übungen</h2>
     <button class="pill" id="lib-add">+ Eigene</button>
   </header>
@@ -205,27 +200,38 @@
   </div>
 </div></div>
 
+<section id="screen-stats" class="screen start" hidden>
+  <h1 class="page-title">Statistik</h1>
+  <div id="stats-body"></div>
+</section>
+
+<nav class="tabbar" id="tabbar" hidden aria-label="Bereiche">
+  <button data-tab="start">Home</button>
+  <button data-tab="lib">Bibliothek</button>
+  <button data-tab="stats">Statistik</button>
+</nav>
+
 <div id="toast" class="toast" hidden></div>
 
-<script src="data/strings.js?v=25"></script>
-<script src="data/exercises.js?v=25"></script>
-<script src="data/templates.js?v=25"></script>
-<script src="data/poses.js?v=25"></script>
-<script src="data/voice-manifest.js?v=25"></script>
-<script src="js/core.js?v=25"></script>
-<script src="js/store.js?v=25"></script>
-<script src="js/plan.js?v=25"></script>
-<script src="js/workouts.js?v=25"></script>
-<script src="js/stats.js?v=25"></script>
-<script src="js/engine.js?v=25"></script>
-<script src="js/announce.js?v=25"></script>
-<script src="js/audio.js?v=25"></script>
-<script src="js/wake.js?v=25"></script>
-<script src="js/figure.js?v=25"></script>
-<script src="js/photos.js?v=25"></script>
-<script src="js/app.js?v=25"></script>
-<script src="js/library.js?v=25"></script>
-<script src="js/home.js?v=25"></script>
-<script src="js/editor.js?v=25"></script>
+<script src="data/strings.js?v=26"></script>
+<script src="data/exercises.js?v=26"></script>
+<script src="data/templates.js?v=26"></script>
+<script src="data/poses.js?v=26"></script>
+<script src="data/voice-manifest.js?v=26"></script>
+<script src="js/core.js?v=26"></script>
+<script src="js/store.js?v=26"></script>
+<script src="js/plan.js?v=26"></script>
+<script src="js/workouts.js?v=26"></script>
+<script src="js/stats.js?v=26"></script>
+<script src="js/engine.js?v=26"></script>
+<script src="js/announce.js?v=26"></script>
+<script src="js/audio.js?v=26"></script>
+<script src="js/wake.js?v=26"></script>
+<script src="js/figure.js?v=26"></script>
+<script src="js/photos.js?v=26"></script>
+<script src="js/app.js?v=26"></script>
+<script src="js/library.js?v=26"></script>
+<script src="js/home.js?v=26"></script>
+<script src="js/editor.js?v=26"></script>
 </body>
 </html>
