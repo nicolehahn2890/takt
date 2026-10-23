@@ -304,3 +304,6 @@ body:has(.start:not([hidden])) { background: linear-gradient(160deg, var(--bg2),
 .pk.on { border-color: var(--lila); background: #2c2030; }
 .ck { width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(255,255,255,.2); flex: none; display: grid; place-items: center; font-size: 14px; font-weight: 700; }
 .pk.on .ck { background: var(--lila); border-color: var(--lila); color: var(--bg); }
+.chips.wrap { flex-wrap: wrap; overflow: visible; padding-top: 0; }
+.chips.wrap .chip { min-height: 40px; }
+.mx-start { margin-top: 10px; }

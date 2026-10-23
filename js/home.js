@@ -148,8 +148,75 @@ window.Takt = window.Takt || {};
     api.start(adj.w, o);
   }
 
+  /* ---------- Mix ---------- */
+  var mix = { themes: ['core'], minutes: 15, w: null };
+  var MIX_ORDER = ['core', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'];
+  var MIX_MINUTES = [10, 15, 20, 30];
+  function openMix() {
+    var last = api.data().settings.mixLast;
+    if (last && Array.isArray(last.themes)) {
+      var th = last.themes.filter(function (k) { return MIX_ORDER.indexOf(k) >= 0; });
+      if (th.length) mix.themes = th;
+      if (MIX_MINUTES.indexOf(last.minutes) >= 0) mix.minutes = last.minutes;
+    }
+    mix.w = null;
+    renderMix();
+    openSheet('mix');
+  }
+  function renderMix() {
+    $('mx-chips').innerHTML = MIX_ORDER.map(function (k) {
+      return '<button class="chip' + (mix.themes.indexOf(k) >= 0 ? ' on' : '') + '" data-mix="' + k + '">' + T.esc(T.MIX_LABELS[k]) + '</button>';
+    }).join('');
+    Array.prototype.forEach.call($('mx-seg').children, function (b) { b.classList.toggle('on', Number(b.getAttribute('data-min')) === mix.minutes); });
+    $('mx-go').disabled = !mix.themes.length;
+    $('mx-go').hidden = !!mix.w;
+    $('mx-res').hidden = !mix.w;
+    if (!mix.w) return;
+    $('mx-name').textContent = mix.w.name;
+    $('mx-sum').textContent = T.fmt(secs(mix.w)) + ' Min.';
+    $('mx-list').innerHTML = blocksHtml(mix.w);
+    drawFigs($('mx-list'));
+  }
+  function doMix() {
+    mix.w = T.makeMix({ themes: mix.themes, minutes: mix.minutes, seed: Math.floor(Math.random() * 2147483647) }, T.EXERCISES);
+    api.data().settings.mixLast = { themes: mix.themes.slice(), minutes: mix.minutes };
+    api.save();
+    renderMix();
+  }
+  function saveMix() {
+    var res = T.validateWorkout(T.copyWorkout(mix.w));
+    if (!res.ok) { api.toast(res.errors[0].msg); return; }
+    var d = api.data();
+    if (!Array.isArray(d.workouts)) d.workouts = [];
+    d.workouts.unshift(res.workout);
+    if (!api.save()) {
+      d.workouts.shift();
+      api.toast('Speichern hat nicht geklappt. Ist der Speicher voll oder der private Modus an?');
+      return;
+    }
+    closeSheets();
+    render();
+    api.toast('Unter \u201eMeine Workouts\u201c gespeichert. Antippen zum \u00c4ndern.');
+  }
+
   /* ---------- Verdrahtung ---------- */
   function bind() {
+    $('mx-chips').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-mix]');
+      if (!b) return;
+      var k = b.getAttribute('data-mix'), i = mix.themes.indexOf(k);
+      if (i >= 0) mix.themes.splice(i, 1); else mix.themes.push(k);
+      mix.w = null;
+      renderMix();
+    });
+    $('mx-seg').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-min]');
+      if (b) { mix.minutes = Number(b.getAttribute('data-min')); mix.w = null; renderMix(); }
+    });
+    $('mx-go').addEventListener('click', doMix);
+    $('mx-again').addEventListener('click', doMix);
+    $('mx-save').addEventListener('click', saveMix);
+    $('mx-start').addEventListener('click', function () { var w = mix.w; closeSheets(); api.start(w); });
     $('screen-start').addEventListener('click', function (e) {
       var b = e.target.closest('[data-start],[data-adjust],[data-open],[data-preview],#go-new,#go-mix');
       if (!b || b.hasAttribute('data-start')) return;
@@ -178,6 +245,7 @@ window.Takt = window.Takt || {};
     render: render,
     openPreview: openPreview,
     openAdjust: openAdjust,
+    mix: openMix,
     openSheet: openSheet,
     closeSheets: closeSheets,
     blocksHtml: blocksHtml,

@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Takt">
 <title>Takt</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=13">
+<link rel="stylesheet" href="css/app.css?v=14">
 </head>
 <body>
 
@@ -188,26 +188,40 @@
   <button class="bigbtn" id="adj-go">Starten</button>
 </div></div>
 
+<div class="sheet-wrap" id="sh-mix" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mx-title">
+  <div class="sh-head"><h3 id="mx-title">Mix</h3><button class="sh-x" data-close aria-label="Schließen">&#10005;</button></div>
+  <p class="sub">Themen antippen, Zeit wählen. Takt stellt den Rest zusammen: Aufwärmen, Hauptteil, Abschluss.</p>
+  <div class="fld"><span>Themen</span><div class="chips wrap" id="mx-chips"></div></div>
+  <div class="fld"><span>Gesamtdauer</span><div class="seg" id="mx-seg"><button data-min="10">10 Min.</button><button data-min="15">15 Min.</button><button data-min="20">20 Min.</button><button data-min="30">30 Min.</button></div></div>
+  <button class="bigbtn" id="mx-go">Mixen</button>
+  <div id="mx-res" hidden>
+    <div class="res"><span id="mx-name"></span><b id="mx-sum"></b></div>
+    <div id="mx-list"></div>
+    <div class="row-btns"><button id="mx-again">Neu mischen</button><button id="mx-save">Speichern</button></div>
+    <button class="bigbtn mx-start" id="mx-start">Starten</button>
+  </div>
+</div></div>
+
 <div id="toast" class="toast" hidden></div>
 
-<script src="data/strings.js?v=13"></script>
-<script src="data/exercises.js?v=13"></script>
-<script src="data/templates.js?v=13"></script>
-<script src="data/poses.js?v=13"></script>
-<script src="data/voice-manifest.js?v=13"></script>
-<script src="js/core.js?v=13"></script>
-<script src="js/store.js?v=13"></script>
-<script src="js/plan.js?v=13"></script>
-<script src="js/workouts.js?v=13"></script>
-<script src="js/engine.js?v=13"></script>
-<script src="js/announce.js?v=13"></script>
-<script src="js/audio.js?v=13"></script>
-<script src="js/wake.js?v=13"></script>
-<script src="js/figure.js?v=13"></script>
-<script src="js/photos.js?v=13"></script>
-<script src="js/app.js?v=13"></script>
-<script src="js/library.js?v=13"></script>
-<script src="js/home.js?v=13"></script>
-<script src="js/editor.js?v=13"></script>
+<script src="data/strings.js?v=14"></script>
+<script src="data/exercises.js?v=14"></script>
+<script src="data/templates.js?v=14"></script>
+<script src="data/poses.js?v=14"></script>
+<script src="data/voice-manifest.js?v=14"></script>
+<script src="js/core.js?v=14"></script>
+<script src="js/store.js?v=14"></script>
+<script src="js/plan.js?v=14"></script>
+<script src="js/workouts.js?v=14"></script>
+<script src="js/engine.js?v=14"></script>
+<script src="js/announce.js?v=14"></script>
+<script src="js/audio.js?v=14"></script>
+<script src="js/wake.js?v=14"></script>
+<script src="js/figure.js?v=14"></script>
+<script src="js/photos.js?v=14"></script>
+<script src="js/app.js?v=14"></script>
+<script src="js/library.js?v=14"></script>
+<script src="js/home.js?v=14"></script>
+<script src="js/editor.js?v=14"></script>
 </body>
 </html>
