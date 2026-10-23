@@ -40,7 +40,8 @@ window.Takt = window.Takt || {};
   }
   function blocksHtml(w) {
     return (w.blocks || []).filter(function (b) { return (b.items || []).length; }).map(function (b, bi) {
-      return '<div class="ml-h">' + T.esc(b.label || ('Block ' + (bi + 1))) + (b.repeat > 1 ? ' \u00b7 ' + b.repeat + ' Runden' : '') + '</div>' +
+      return '<div class="ml-h"><span>' + T.esc(b.label || ('Block ' + (bi + 1))) + '</span>' +
+        (b.repeat > 1 ? '<span class="aside">' + b.repeat + ' Runden</span>' : '') + '</div>' +
         b.items.map(function (it) {
           return '<div class="mi"><span class="th">' + (it.exId ? fig(it.exId) : '') + '</span><span class="mn">' + T.esc(itemName(it)) +
             (it.bilateral ? ' <em>beidseitig</em>' : '') + '</span><em>' + it.duration + ' s</em></div>';
@@ -136,6 +137,8 @@ window.Takt = window.Takt || {};
   function updAdjust() {
     var o = adjOpts();
     $('adj-min').textContent = o.budgetSec ? (o.budgetSec / 60) + ' Min.' : 'Volle L\u00e4nge';
+    var r = $('adj-range'), span = Number(r.max) - Number(r.min);
+    r.style.setProperty('--pct', (span > 0 ? (Number(r.value) - Number(r.min)) / span * 100 : 100) + '%');
     Array.prototype.forEach.call($('adj-seg').children, function (b) { b.classList.toggle('on', b.getAttribute('data-lvl') === adj.lvl); });
     $('adj-note').textContent = NOTE[adj.lvl];
     var steps = T.prepareSteps(adj.w, api.exIndex(), { prepSeconds: api.data().settings.prepSeconds, intensity: o.intensity, budgetSec: o.budgetSec });
