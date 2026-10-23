@@ -19,6 +19,7 @@ window.Takt = window.Takt || {};
   /* ---------- Hilfen ---------- */
   function show(name) {
     Array.prototype.forEach.call(document.querySelectorAll('.screen'), function (el) { el.hidden = el.id !== 'screen-' + name; });
+    if (name !== 'done') T.figure.unmount($('done-fig'));
   }
   function toast(msg) {
     var t = $('toast');
@@ -270,6 +271,9 @@ window.Takt = window.Takt || {};
     stopTimer();
     setNeedTap(false);
     var wid = run.workout.id;
+    // Geschafft-Figur (Design v2): Kindhaltung in der Themenfarbe, wird in show() wieder abgemeldet
+    $('screen-done').style.setProperty('--theme', themeColor(run.workout.theme));
+    T.figure.mount($('done-fig'), (T.POSES || {}).kindhaltung || T.POSE_DEFAULT);
     run = null;
     $('done-sub').textContent = T.fmt(entry.actualSec) + ' trainiert \u00b7 ' + v.workTotal + ' \u00dcbungen';
     $('b-again').setAttribute('data-start', wid);
