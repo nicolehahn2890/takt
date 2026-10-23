@@ -1,6 +1,8 @@
 /* Takt: Gestaltung v2 (Design System „Takt“, docs/design_handoff_takt_redesign/).
    Grundlage: app.css aus dem Handoff; darunter die Oberflaechen aus Schritt 3 im selben Stil. */
 :root {
+  /* iOS 26 legt einen Glas-Schleier ueber den obersten Bereich unter der Statusleiste: Inhalte erst darunter */
+  --glass-top: 40px;
   /* Palette v2 */
   --bg: #171217; --bg2: #2a1c27; --card: #241B23; --elevated: #30232D; --sunken: #1d161c;
   --line: rgba(255,255,255,.07); --ghost: rgba(255,255,255,.07); --ghost-strong: rgba(255,255,255,.10);
@@ -28,7 +30,7 @@ a { color: var(--lila); text-underline-offset: 3px; }
 /* ---------- Start ---------- */
 .start {
   max-width: 560px; margin: 0 auto; min-height: 100%;
-  padding: calc(24px + env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom));
+  padding: calc(24px + var(--glass-top) + env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom));
 }
 body:has(.start:not([hidden])) { background: linear-gradient(160deg, var(--bg2), var(--bg) 360px) no-repeat, var(--bg); }
 .brand { display: flex; align-items: center; gap: 12px; margin-bottom: var(--s5); }
@@ -266,7 +268,7 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
 /* ---------- Kopfleiste der Unterseiten (TopBar, fixiert) ---------- */
 /* Nicht fixiert: iOS 26 legt ueber fixierte Leisten am oberen Rand einen Glas-Schleier (Titel unscharf) */
 .page > .bar { position: relative; margin: calc(-12px - env(safe-area-inset-top)) -16px 4px;
-  padding: calc(8px + env(safe-area-inset-top)) 10px 8px 6px; background: var(--bg); }
+  padding: calc(8px + var(--glass-top) + env(safe-area-inset-top)) 10px 8px 6px; background: var(--bg); }
 .bar-t { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .bar-t h2 { font-family: var(--font-display); font-size: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bar-t small { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
