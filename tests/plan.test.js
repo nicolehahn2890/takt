@@ -91,3 +91,10 @@ test('exerciseFor liefert die Uebung oder einen sicheren Ersatz', function () {
   var e = Takt.exerciseFor('own-geloescht', idx, 'Alter Name');
   eq([e.id, e.name, e.typ, e.beidseitig, e.tags], ['own-geloescht', 'Alter Name', 'zeit', false, []]);
 });
+
+test('Bibliotheksname schlaegt gespeicherten Namen (nach Umbenennen)', function () {
+  var w = { defaultWork: 30, defaultRest: 10, blocks: [{ repeat: 1, items: [
+    { exId: 'plank', name: 'Alter Plank-Name', duration: 20 }, { exId: 'own-weg', name: 'Geloeschte', duration: 20 }] }] };
+  var s = Takt.buildSteps(w, exIdx(), { prepSeconds: 5 });
+  eq([s[0].name, s[1].name, s[3].name], ['Plank', 'Plank', 'Geloeschte']);
+});

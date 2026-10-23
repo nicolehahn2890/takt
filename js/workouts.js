@@ -44,7 +44,24 @@ window.Takt = window.Takt || {};
       var mid = (lo + hi) / 2;
       if (total(scaled(steps, mid)) <= budget) lo = mid; else hi = mid;
     }
-    return scaled(steps, lo);
+    return topUp(steps, scaled(steps, lo), budget);
+  }
+
+  /* Restzeit in 5-s-Schritten an die am staerksten gekuerzten Schritte geben, nie ueber die geplante Dauer */
+  function topUp(base, fit, budget) {
+    var left = budget - total(fit);
+    while (left >= 5) {
+      var best = -1, ratio = 0;
+      for (var i = 0; i < fit.length; i++) {
+        if (!scalable(fit[i]) || fit[i].duration + 5 > base[i].duration) continue;
+        var r = base[i].duration / fit[i].duration;
+        if (r > ratio) { ratio = r; best = i; }
+      }
+      if (best < 0) break;
+      fit[best].duration += 5;
+      left -= 5;
+    }
+    return fit;
   }
 
   /* Keine Pause am Ende, Uebungen neu durchzaehlen, Rundenzahl je Block neu bestimmen */
@@ -266,6 +283,15 @@ window.Takt = window.Takt || {};
     }
     return a;
   }
+  /* "Mix: Core, Bauch"; bei vielen Themen gekuerzt ("Mix: Core, Bauch +3"), damit der Name in 40 Zeichen passt */
+  function mixName(themes) {
+    var labels = themes.map(function (k) { return T.MIX_LABELS[k]; });
+    for (var k = labels.length; k >= 1; k--) {
+      var name = 'Mix: ' + labels.slice(0, k).join(', ') + (k < labels.length ? ' +' + (labels.length - k) : '');
+      if (name.length <= LIMIT.name) return name;
+    }
+    return 'Mix';
+  }
   function mixItem(e, duration) {
     return { exId: e.id, name: e.name, duration: duration, rest: null, bilateral: !!e.beidseitig };
   }
@@ -301,7 +327,7 @@ window.Takt = window.Takt || {};
 
     var workout = {
       id: 'mix-' + ((Math.floor(Number(opts.seed)) || 0) >>> 0),
-      name: 'Mix: ' + themes.map(function (k) { return T.MIX_LABELS[k]; }).join(', '),
+      name: mixName(themes),
       theme: MIX_COLOR[themes[0]], defaultWork: MIX.work, defaultRest: MIX.rest, source: 'mix', blocks: blocks
     };
     if (!main.length) return workout;

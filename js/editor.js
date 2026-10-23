@@ -19,7 +19,7 @@ window.Takt = window.Takt || {};
   function entries() { return ed.blocks.reduce(function (n, b) { return n + b.items.length; }, 0); }
   function restOf(it) { return it.rest == null ? ed.defaultRest : it.rest; }
   function exOf(id) { return id ? api.exIndex()[id] : null; }
-  function itemName(it) { var e = exOf(it.exId); return it.name || (e && e.name) || '\u00dcbung'; }
+  function itemName(it) { var e = exOf(it.exId); return (e && e.name) || it.name || '\u00dcbung'; }
   function own() { var d = api.data(); if (!Array.isArray(d.workouts)) d.workouts = []; return d.workouts; }
   function thumb(exId) {
     var e = exOf(exId);

@@ -247,7 +247,7 @@ Projekt Homeworkout/
 | 0b | Spike auf Nicoles iPhone (Pflicht, Hauptgerät): Mini-Seite mit Sprachansage, Ton, Bildschirm-an, Spotify nebenbei, Stummschalter, App-Wechsel | Erledigt: Test 1 und 2, Ergebnis in 3.1 und 3.2 | ~30k |
 | 1 | Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Sprachdateien für feste Sätze (gewählte Stimme), Training-Screen (Ring) mit einem Test-Workout, Test-Hilfe Uhrzeit (Repo + Pages gibt es schon) | Erledigt 2026-10-22 (live, 52 Tests grün, Code-Review ohne kritische Funde, iPhone-Test bestanden, siehe 3.3) | ~220k |
 | 2 | Bibliothek (110 Übungen mit animierter Figur statt Bildern, Katja-Ansagen), Übungs-Screens, eigene Übungen mit Foto/Video | Erledigt 2026-10-22 (live, 81 Tests grün, zwei Prüfungen ohne kritische Funde). iPhone-Test durch Nicole steht aus | ~450k |
-| 3 | Workout-Editor, Start-Screen, 12 Vorlagen, Zeit-Budget, Intensität, Mix-Modus | Eigenes Workout bauen und starten | ~250k |
+| 3 | Workout-Editor, Start-Screen, 12 Vorlagen, Zeit-Budget, Intensität, Mix-Modus | Erledigt 2026-10-23 (live v=15, 121 Tests grün, klickbarer Entwurf von Nicole abgenommen, zwei Prüfungen, wichtige Funde behoben). iPhone-Test durch Nicole steht aus | ~290k |
 | 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Teilen, Export/Import | Alle Extras nutzbar | ~220k |
 | 5 | PWA (Manifest, Service Worker, Icons), Querformat, Feinschliff, Installations-Hinweis beim ersten Start, Abschlusstest auf dem iPhone | Installierbar, offline, auf dem Homescreen | ~120k |
 
@@ -277,7 +277,27 @@ Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzu
 - Video-Feld ohne `autocapitalize/autocorrect=off`; Suchfeld schließt die Tastatur nicht.
 - Bei einigen Übungen kippt ein fast gestrecktes Knie oder ein Ellbogen kurz die Richtung (z. B. Bird Dog, Kickback).
 - Hinweis für Schritt 4/5: Safari löscht Daten und Fotos einer Website nach 7 Tagen ohne Nutzung; die Homescreen-App hat eigenen Speicher. Beim Import `exercisesOwn` durch `validateOwn` prüfen.
-- Hinweis für Schritt 3: Beim Einfügen eigener Übungen in Workouts den Namen mitspeichern, damit nach dem Löschen nicht nur „Übung“ dasteht.
+- Hinweis für Schritt 3: Beim Einfügen eigener Übungen in Workouts den Namen mitspeichern, damit nach dem Löschen nicht nur „Übung“ dasteht. (Erledigt in Schritt 3: Name wird gespeichert, angezeigt wird der aktuelle Bibliotheksname, der gespeicherte nur nach dem Löschen.)
+
+### 8.3 Offene Kleinigkeiten aus Schritt 3 (bewusst zurückgestellt)
+
+- „Nochmal“ tut nichts, wenn das Workout gelöscht wurde oder ein ungespeicherter Mix nach Neuladen fertig wurde; nach Neuladen startet „Nochmal“ ohne die Anpassung (volle Länge).
+- Während „Lädt …“ (bis 2,5 s) kann ein zweiter Start über „Anpassen“ ausgelöst werden.
+- „Diese Woche x Min.“ zählt Pausenzeit mit (Zeit seit Start). Klären, ob nur Trainingszeit zählen soll.
+- Löschen eines Workouts setzt bei vollem Speicher nicht zurück.
+- Die Dehnen-Vorlagen haben keinen Block-Namen und zeigen „Block 1“.
+- Block-Namen lassen sich im Editor nicht ändern, obwohl der Knopf „+ Block (z. B. Abschluss)“ heißt.
+- „Für neue Übungen“: Die Standard-Pause ändert auch bestehende Einträge, die keine eigene Pause haben.
+- Touch-Ziele unter 44 px: „Anpassen“-Link (34 px), „Speichern“ im Editor-Kopf, Themen-Chips, ± Knöpfe (42 px).
+- Mix für Dehnen oder Yoga beginnt mit sportlichen Aufwärm-Übungen (z. B. Hampelmann); Nicole fragen, ob das so bleiben soll.
+- Anpassen: kleinstes Budget immer 5 Min. (bei langen Dehn-Vorlagen werden die Übungen dann sehr kurz).
+- `validateWorkout`/`copyWorkout` kennen nur die Bibliothek, nicht eigene Übungen (heute egal, weil der Editor den Namen immer mitspeichert).
+- Hintergrund scrollt auf iOS hinter offenen Fenstern mit; Escape schließt Fenster nicht.
+- Editor lädt Fotos eigener Übungen bei jedem ± neu; Auswahl zeichnet bei jedem Buchstaben alle Figuren neu.
+- Startseite springt nach Zurück aus Vorlage oder Editor nach oben.
+- Training ohne Übungen (nur bei von Hand geänderten Daten) wird als „Geschafft“ gezählt; kaputter Eintrag in `workouts` würde die Startseite leeren.
+- Budget unter Vorbereitung + 10 s kann überschritten werden (über die Oberfläche nicht erreichbar).
+- Tote CSS-Klassen `.ic`, `.is-prep`; Ring-Balken `#t-bar` heißt noch `.bar`.
 
 ## 9. Verifikation
 

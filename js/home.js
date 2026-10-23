@@ -17,7 +17,7 @@ window.Takt = window.Takt || {};
   function plural(n) { return n === 1 ? '1 \u00dcbung' : n + ' \u00dcbungen'; }
   function itemName(it) {
     var e = it.exId ? api.exIndex()[it.exId] : null;
-    return it.name || (e && e.name) || '\u00dcbung';
+    return (e && e.name) || it.name || '\u00dcbung';
   }
   function poseFor(exId) {
     var e = api.exIndex()[exId];
@@ -115,7 +115,7 @@ window.Takt = window.Takt || {};
   }
   function openAdjust(w) {
     if (!w) return;
-    var full = secs(w);
+    var full = T.totalSeconds(T.prepareSteps(w, api.exIndex(), { prepSeconds: api.data().settings.prepSeconds }));
     var last = budgetLast()[w.id] || {};
     var max = Math.max(5, Math.ceil(full / 60));
     adj = { w: w, max: max, lvl: Object.prototype.hasOwnProperty.call(T.INTENSITY, last.intensity) ? last.intensity : 'normal' };

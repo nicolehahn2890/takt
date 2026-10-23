@@ -261,3 +261,44 @@ test('THEMES hat Farbe und Name fuer alle Workout-Themen', function () {
     ok(Takt.THEMES[k].label.length > 2, k);
   });
 });
+
+/* ---------- Funde aus der Abschlusspruefung ---------- */
+test('fitBudget nutzt das Budget aus (mind. 90 %)', function () {
+  var idx = wIdx();
+  function tpl(id) { return Takt.TEMPLATES.filter(function (w) { return w.id === id; })[0]; }
+  var a = Takt.prepareSteps(tpl('vacuum-core-kurz'), idx, { prepSeconds: 5, intensity: 'normal', budgetSec: 420 });
+  var b = Takt.prepareSteps(tpl('ruecken-lang'), idx, { prepSeconds: 5, intensity: 'leicht', budgetSec: 300 });
+  ok(Takt.totalSeconds(a) <= 420 && Takt.totalSeconds(a) >= 378, 'vacuum-core-kurz 7 Min.: ' + Takt.totalSeconds(a));
+  ok(Takt.totalSeconds(b) <= 300 && Takt.totalSeconds(b) >= 270, 'ruecken-lang leicht 5 Min.: ' + Takt.totalSeconds(b));
+  var bad = [];
+  Takt.TEMPLATES.forEach(function (w) {
+    ['leicht', 'normal', 'hart'].forEach(function (lvl) {
+      var full = Takt.totalSeconds(Takt.prepareSteps(w, idx, { prepSeconds: 5, intensity: lvl }));
+      for (var m = 5; m * 60 < full; m++) {
+        var s = Takt.prepareSteps(w, idx, { prepSeconds: 5, intensity: lvl, budgetSec: m * 60 });
+        var t = Takt.totalSeconds(s);
+        if (t > m * 60 || t < m * 60 * 0.9) bad.push(w.id + ' ' + lvl + ' ' + m + ' Min.: ' + t);
+        if (s.some(function (x) { return x.kind === 'work' && x.duration < 10; })) bad.push(w.id + ' ' + lvl + ' ' + m + ' unter 10 s');
+      }
+    });
+  });
+  eq(bad, []);
+});
+
+test('fitBudget verlaengert nie ueber die geplante Dauer', function () {
+  var steps = wSteps(w600());
+  var s = Takt.fitBudget(steps, 450);
+  s.forEach(function (x, i) { ok(x.duration <= steps[i].duration, 'Schritt ' + i + ' laenger als geplant'); });
+});
+
+test('mix Name passt immer in 40 Zeichen und laesst sich speichern', function () {
+  var keys = ['core', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'];
+  for (var mask = 1; mask < 128; mask++) {
+    var th = keys.filter(function (k, i) { return mask & (1 << i); });
+    var w = Takt.makeMix({ themes: th, minutes: 15, seed: mask }, Takt.EXERCISES);
+    ok(w.name.length <= 40, w.name);
+    var v = Takt.validateWorkout(Takt.copyWorkout(w));
+    ok(v.ok, th.join(',') + ': ' + JSON.stringify(v.errors));
+  }
+  eq(Takt.makeMix({ themes: ['core', 'bauch'], minutes: 10, seed: 1 }, Takt.EXERCISES).name, 'Mix: Core, Bauch');
+});

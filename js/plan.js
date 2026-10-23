@@ -17,10 +17,10 @@ window.Takt = window.Takt || {};
     var defWork = num(workout.defaultWork, 40);
     var defRest = num(workout.defaultRest, 10);
 
+    /* Aktueller Name aus der Bibliothek; gespeicherter Name nur, wenn die Uebung fehlt (geloescht oder frei getippt) */
     function nameOf(item) {
-      if (item.name) return item.name;
       var ex = item.exId ? exIndex[item.exId] : null;
-      return (ex && ex.name) || '\u00dcbung';
+      return (ex && ex.name) || item.name || '\u00dcbung';
     }
 
     // Alle Uebungen in Reihenfolge, Runden aufgeloest
