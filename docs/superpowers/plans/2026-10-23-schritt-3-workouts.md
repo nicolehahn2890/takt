@@ -208,3 +208,77 @@ Format: Übung Sekunden. „2 Runden“ wiederholt den Hauptteil. Pausen 15 s, w
 - Abschluss: Sphinx 60 · Kindhaltung 60 · Knie zur Brust 60
 
 Die genauen Minuten rechnet der Test `data: Vorlagen-Dauer` nach; weicht eine Vorlage ab, werden Sekunden angepasst, nicht Übungen getauscht.
+
+---
+
+## Umsetzung: Entscheidungen und zurückgestellte Punkte (2026-10-23)
+
+Aus dem Arbeitsprotokoll übernommen. Format: Entscheidung — Grund — was es kostet, falls sie falsch war. Die zurückgestellten Kleinigkeiten stehen auch in `docs/KONZEPT.md` 8.3.
+
+### Entscheidungen
+
+- Setup: Ruling: Arbeit direkt auf main, kein Worktree — Nicoles CLAUDE.md verlangt "immer auf main pushen, keine Feature-Branches" — Kosten falls falsch: keine, alles in git nachvollziehbar
+- Setup: Ruling: Push nur mit Privatkonto-Token (nicolehahn2890), nach jedem Task Sync-Check git status -sb — Nicoles Vorgabe — Kosten: keine
+- T2 <- T4: T2-Tests nennen Vorlage vacuum-core-kurz, die erst T4 anlegt. Ruling: T2-Tests nutzen ein gleich aufgebautes Inline-Workout (40 s Arbeit / 15 s Pause) — Kosten falls falsch: keine, T4 testet die Vorlagen selbst
+- T3 <- T2: makeMix liefert Workout, fitBudget arbeitet auf Step[]. Ruling: makeMix waehlt Runden 1-4 nach workoutSeconds und kuerzt bei Ueberlaenge die Dauern der Eintraege anteilig (gleiche Regeln: 5-s-Schritte, work >= 10, rest >= 5) statt Step-fitBudget — Kosten falls falsch: Mix wenige Sekunden anders lang
+- T3 <- T4: Test "mix Dauer passt" braucht workoutSeconds aus T4. Ruling: workoutSeconds wird in T3 gebaut, T4 testet es zusaetzlich — Kosten: keine
+- Task 1: Ruling: Entwurf ist Wegwerf-Prototyp, kein TDD; Pruefung im Vorschau-Browser 375x667 ohne Konsolenfehler — Kosten falls falsch: keine, Entwurf wird nicht in die App uebernommen
+- Task 1: Ruling: Entwurf zeigt Block-Namen (Aufwaermen/Hauptteil/Abschluss) als optionales Feld label je Block — macht Vorlagen verstaendlicher — Kosten falls falsch: Feld wieder weglassen
+- Task 1: Ruling: Yoga-Vorlagen im Entwurf in 4 Bloecke geteilt (Ankommen, Sonnengruss 2x, Haltungen, Abschluss), Reihenfolge und Zeiten wie im Anhang — Kosten: keine
+- Task 2: Ruling: Test "fitBudget streicht Runden" mit Budget 100 s statt 200 s — bei 200 s passen 12 x 10 s + 11 x 5 s = 175 s auch ohne Runden zu streichen; KONZEPT 5.3 streicht Runden erst, wenn die Mindestdauern nicht reichen — Kosten falls falsch: keine, Test prueft dieselbe Regel
+- Task 2: Ruling: Budget zaehlt die Vorbereitung (prep) mit — "15 Minuten ergibt nie mehr als 15 Minuten" gilt fuer die ganze Zeit am Bildschirm — Kosten falls falsch: 5 s
+- Task 2: Ruling: applyIntensity "normal" gibt Kopien unveraendert zurueck, Mindestwerte verlaengern nie einen kuerzeren Schritt — sonst wuerden 32 s oder 3-s-Pausen schon bei normal veraendert — Kosten: keine
+- Task 2: Ruling: Nach Streichen von Runden/Uebungen werden workIndex und rounds neu gesetzt — Anzeige "Runde x von y" stimmt sonst nicht — Kosten: keine
+- Task 3: Ruling: Mix fuellt die Zieldauer, indem die Arbeitszeit im Hauptteil in 5-s-Schritten zwischen 20 und 60 s angepasst wird (nach Wahl der Runden 1-4) — mit festen 40 s ergaeben 10 Min. nur 445 s (74 %), Test verlangt >= 80 % — Kosten falls falsch: Hauptteil-Uebungen 45-60 s statt 40 s
+- Task 3: Ruling: Mix nimmt keine Uebungen mit Band, Stuhl, Tisch oder Sofa (nur Matte und Wand) — ein Zufalls-Workout soll ohne Vorbereitung gehen — Kosten falls falsch: 9 Uebungen kommen im Mix nicht vor
+- Task 3: Ruling: keine Uebung doppelt im ganzen Mix (Aufwaermen, Hauptteil, Abschluss), Abschluss ohne Aufwaerm-Uebungen — Kosten: keine
+- Task 3: Ruling: Thema "ganz" bekommt die Workout-Farbe core; Bloecke tragen label (Aufwaermen/Hauptteil/Abschluss, siehe Task-1-Ruling); Id mix-<seed>, beim Speichern neue Id ueber copyWorkout — Kosten: keine
+- Task 4: Ruling: plan.test.js und announce.test.js nutzen das alte Test-Workout als festen Ablauf in den Tests (testWorkout() in plan.test.js) statt der Vorlage vacuum-core-kurz — Vorlagen soll Nicole aendern koennen, ohne dass Ablauf-Tests brechen; Vorlagen pruefen die data-Tests — Kosten falls falsch: keine
+- Task 4: Ruling: Vorlagen speichern name: null (Name kommt aus der Bibliothek), validateWorkout und copyWorkout setzen den Namen beim Speichern/Kopieren — sonst zeigt eine Vorlage nach Umbenennen einer Uebung den alten Namen — Kosten: keine
+- Task 4: Ruling: copyWorkout haengt "(Kopie)" nur an eigene Workouts, Vorlagen und Mixe behalten ihren Namen — Kosten: keine
+- Task 4: Ruling: validateWorkout nimmt fehlende Dauer als Standard-Dauer, behaelt Ids mit "w-", sonst neue Id; Fehler tragen block/item-Index fuer den Editor — Kosten: keine
+- Task 4: Ruling: ?v= schon jetzt auf 11 (Vorlagen aendern sich in der Live-App; ohne Hochzaehlen laedt der Browser die alte templates.js, im Vorschau-Browser beobachtet), am Ende Task 7 dann v=12 — Kosten: keine
+- Task 5: Ruling: ?v= bei jedem Push mit geaenderten App-Dateien hochzaehlen (jetzt v=12) — sonst mischt das iPhone neue index.html mit alter app.js aus dem Cache — Kosten: keine
+- Task 5: Ruling: Fortschrittsbalken-Klasse .bar -> .dbar (Kollision mit Kopfleiste .bar aus Schritt 2, KONZEPT 8.2) — Kosten: keine
+- Task 5: Ruling: Knoepfe "+ Neu" und "Mix" erscheinen erst, wenn Editor (Task 6) bzw. Mix (Task 7) geladen sind; Antippen eines eigenen Workouts oeffnet den Editor, solange es keinen gibt die Ansicht — keine toten Knoepfe live zwischen den Tasks — Kosten: keine
+- Task 5: Ruling: "Nochmal" startet mit denselben Anpassungen wie der letzte Start (auch fuer ungespeicherten Mix) — Kosten falls falsch: Nochmal waere sonst volle Laenge
+- Task 5: Ruling: Anpassen-Anzeige rechnet mit der Vorbereitungszeit (prepSeconds), damit die gezeigte Dauer der echten Trainingsdauer entspricht; THEMES (Farbe+Name) liegen jetzt in workouts.js, app.js nutzt sie — Kosten: keine
+- Task 6: Ruling: Uebungs-Auswahl ist eine eigene Liste in editor.js, nutzt aber Filter, Suche und Chips der Bibliothek (library.js exportiert CHIPS und matches) und deren Listen-Stil — die Bibliotheksliste selbst bleibt unveraendert, kein Risiko fuer Schritt 2 — Kosten falls falsch: zwei Listen-Renderer
+- Task 6: Ruling: neue Workouts starten mit 40 s / 15 s (Plan), nicht mit settings.defaultWork/defaultRest (10 s Pause aus Schritt 1) — Kosten: keine
+- Task 6: Ruling: Antippen einer Vorlage-Id im Editor oeffnet eine Kopie; Speichern bei vollem Speicher nimmt die Aenderung zurueck und zeigt SAVE_FAIL — Kosten: keine
+- Task 7: Ruling: Mix merkt die letzte Themen- und Minutenwahl in settings.mixLast; gespeicherter Mix laeuft durch copyWorkout + validateWorkout — Kosten: keine
+- Final: Ruling: Mix-Aufbau fuer Dehnen/Yoga mit Aufwaerm-Uebungen wie Hampelmann bleibt wie geplant — Plan legt Aufbau fest; als Frage an Nicole — Kosten falls falsch: Dehn-Mix beginnt sportlich
+- Final: Ruling: Mix ohne Atem-Uebungen bleibt — strenger als Plan, nicht falsch — Kosten: keine
+- Final: Ruling: "Speichern" im Editor fuehrt zur Startseite — wie im abgenommenen Entwurf — Kosten: keine
+- Final: Ruling: Filter der Auswahl bleibt zwischen Oeffnungen erhalten — Geschmack — Kosten: keine
+- Final: Ruling: window.confirm in der Homescreen-App bleibt — in Schritt 2 auf dem iPhone getestet — Kosten: keine
+- Final: Ruling: Entwurf mockups/editor ohne ?v= bleibt — Wegwerf-Entwurf — Kosten: keine
+- Final: Ruling: Figuren-Neuzeichnen pro Tastendruck in der Auswahl bleibt — wie Bibliothek, nicht gemessen langsam — Kosten: ggf. Ruckeln auf altem Geraet
+
+### Behobene Prüf-Funde
+
+- Final: fixed F1 Budget-Ausnutzung — "fitBudget nutzt das Budget aus (mind. 90 %)" RED (vacuum-core-kurz 7 Min. = 340 s) -> GREEN (Durchlauf alle Vorlagen x Intensitaet x Minuten), suite 121/121
+- Final: fixed F2 Mix-Name > 40 Zeichen — "mix Name passt immer in 40 Zeichen und laesst sich speichern" RED -> GREEN (alle 127 Themen-Kombinationen); Toast z-index 30 ueber Fenstern (Browser: toast 30 > sheet 20, 7-Themen-Mix gespeichert), suite 121/121
+- Final: fixed F3 Bibliotheksname vor gespeichertem Namen — "Bibliotheksname schlaegt gespeicherten Namen" RED -> GREEN (plan.js, dazu home.js/editor.js itemName), suite 121/121
+- Final: fixed F4 Geplant = Neue Dauer — Browser RED (Geplant 20:30, Neue Dauer 20:35) -> GREEN (20:35 | 20:35); kein Node-Test moeglich (Oberflaeche)
+- Final: fixed F5 Editor-Knoepfe 44x44 — Browser RED (40x40) -> GREEN (44x44, keine Querscroll-Leiste bei 375 px); kein Node-Test moeglich (CSS)
+
+### Zurückgestellt (klein)
+
+- Nochmal nach geloeschtem Workout/ungespeichertem Mix nach Neuladen wirkungslos, Anpassung geht nach Neuladen verloren
+- zweiter Start waehrend "Laedt ..." ueber Anpassen moeglich
+- Wochen-Minuten zaehlen Pausenzeit mit (klaeren)
+- Loeschen setzt bei vollem Speicher nicht zurueck
+- Dehnen-Vorlagen ohne Block-Namen ("Block 1")
+- Block-Namen im Editor nicht aenderbar, Knopftext verspricht es
+- Standard-Pause aendert bestehende Eintraege ohne eigene Pause
+- Touch-Ziele unter 44 px (Anpassen-Link, Speichern-Pill, Chips, +/- 42 px)
+- Mix Dehnen/Yoga beginnt mit sportlichem Aufwaermen (Nicole fragen)
+- kleinstes Budget fest 5 Min.
+- validateWorkout/copyWorkout kennen eigene Uebungen nicht
+- iOS-Hintergrund scrollt hinter Fenstern, Escape schliesst nicht
+- Editor laedt Fotos bei jedem +/- neu; Auswahl zeichnet alle Figuren pro Buchstabe
+- Startseite springt nach Zurueck nach oben
+- Training ohne Uebungen / kaputter workouts-Eintrag (nur bei Handaenderung)
+- Budget unter prep + 10 s ueberschreitbar (nicht erreichbar)
+- tote Klassen .ic/.is-prep, #t-bar noch .bar
