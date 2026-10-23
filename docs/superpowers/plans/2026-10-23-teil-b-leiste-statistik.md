@@ -115,3 +115,29 @@
 | Task 5 Statistik-Seite | 40.000 |
 | Task 6 Prüfung, Übergabe | 35.000 |
 | **Summe** | **ca. 175.000** |
+
+---
+
+## Umsetzung: Entscheidungen und zurückgestellte Punkte (2026-10-23)
+
+Aus dem Arbeitsprotokoll. Format: Entscheidung — Grund — Kosten, falls falsch.
+
+### Entscheidungen
+
+- Setup: Ruling: direkt auf main, Push mit Privatkonto, Sync-Check nach jedem Task — Nicoles Vorgaben — Kosten: keine
+- Task 1: Ruling: prev() innerhalb eines Schritts verbucht die bisherige Zeit und zaehlt beim Wiederholen erneut — es ist tatsaechlich trainierte Zeit — Kosten: keine
+- Task 3: Ruling: Text ohne Training in der Vorperiode einheitlich "Vorwoche/Vormonat/Vorjahr ohne Training" statt "Letzte Woche kein Training" — passt zu "+10 % zur Vorwoche" und stimmt auch beim Zurueckblaettern — Kosten: nur Wortlaut
+- Task 3: Ruling: Testfall Datums-Spanne ueber Monatsgrenze auf Woche -2 gesetzt (Woche -1 heisst immer "Letzte Woche") — Testfehler, nicht Code — Kosten: keine
+- Zwischen-Fix (Nicole, iPhone): Ruling: Kopfleisten der Unterseiten nicht mehr fixiert — iOS 26 legt ueber fixierte Leisten am oberen Rand einen Glas-Schleier (Titel unscharf trotz entferntem backdrop-filter; nur Seiten mit fixierter Leiste betroffen, Startseite nicht) — Kosten falls falsch: Kopfleiste scrollt weg (Abweichung vom Design-TopBar), Schleier bliebe
+- Task 5: Ruling: bei 320 px sind Monats-Balken nur ca. 6 px breit (volle Hoehe antippbar) — 31 Tage passen sonst nicht — Kosten: auf sehr kleinen Handys fummelig
+- Zwischen-Fix (Nicole, iPhone v=28): Ruling: Ursache korrigiert — Glas-Schleier haengt an der Position oben (auch ohne fixierte Leiste unscharf); Ueberschriften auf allen Seiten 40 px tiefer (--glass-top), Kopfleisten bleiben nicht fixiert — Kosten falls falsch: mehr Leerraum oben
+- Final: Ruling: gesperrtes Handy mitten im Training zaehlt als Trainingszeit (Ablauf laeuft mit Ton weiter); "Sonstiges" nie haeufigster Bereich neben anderen; Wochenlabel ueber Neujahr ohne Jahr; kleiner Punkt im leeren Ring wie im Trainingsring; geringe Kontrastwerte ausgegrauter Knoepfe (Nicoles Wunsch); Speichern-Pill im Editor scrollt weg (Fuss-Knopf bleibt) — vom Pruefer bewusst ausgelassen, bleiben so — Kosten: keine
+
+### Zurückgestellt (klein, auch in KONZEPT.md 8.5)
+
+- Segment-Umschalter Woche/Monat/Jahr hat role=radiogroup ohne radio/aria-checked (VoiceOver)
+- Vergleichstext "(bis zum 31.)" obwohl der Vormonat schon am 28. endet (Fenster selbst richtig)
+- Rundung je Schritt kann areaSec-Summe um wenige Sekunden ueber activeSec heben (nach Minuten-Rundung unsichtbar)
+- Training, das waehrend des Updates lief, verliert die Zeit der Schritte davor (einmalig)
+- ungenutzter Zurueck-Knopf der Bibliothek samt Listener im Code
+- auf dem iPhone pruefen, ob die Leiste unten beim Tippen in der Suche ueber der Tastatur haengt
