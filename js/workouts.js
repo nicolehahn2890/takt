@@ -112,4 +112,106 @@ window.Takt = window.Takt || {};
     var steps = T.applyIntensity(T.buildSteps(workout, exIndex, { prepSeconds: opts.prepSeconds }), opts.intensity);
     return opts.budgetSec ? T.fitBudget(steps, opts.budgetSec) : steps;
   };
+
+  /* Gesamtdauer ohne Vorbereitung */
+  T.workoutSeconds = function (workout, exIndex) {
+    return T.totalSeconds(T.buildSteps(workout, exIndex, { prepSeconds: 0 }));
+  };
+
+  /* ---------- Mix ---------- */
+
+  /* Zufallszahlen mit Seed (mulberry32), damit ein Mix nachvollziehbar bleibt */
+  T.rng = function (seed) {
+    var a = (Math.floor(Number(seed)) || 0) >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  };
+
+  T.MIX_THEMES = { core: ['core', 'vacuum'], bauch: ['bauch'], beine: ['beine-po'], ruecken: ['ruecken'], dehnen: ['dehnen'],
+    yoga: ['yoga'], ganz: ['ganzkoerper', 'oberkoerper'] };
+  T.MIX_LABELS = { core: 'Core', bauch: 'Bauch', beine: 'Beine & Po', ruecken: 'R\u00fccken', dehnen: 'Dehnen', yoga: 'Yoga',
+    ganz: 'Ganzk\u00f6rper' };
+  /* Farbe des Mix: Ganzkoerper hat keine eigene Workout-Farbe */
+  var MIX_COLOR = { core: 'core', bauch: 'bauch', beine: 'beine', ruecken: 'ruecken', dehnen: 'dehnen', yoga: 'yoga', ganz: 'core' };
+  var MIX = { warm: 2, main: 5, work: 40, rest: 15, warmWork: 40, coolWork: 60, maxWork: 60, minWork: 20, maxRounds: 4 };
+  var LABEL = { warm: 'Aufw\u00e4rmen', main: 'Hauptteil', cool: 'Abschluss' };
+
+  function hasTag(e, tags) { return (e.tags || []).some(function (t) { return tags.indexOf(t) >= 0; }); }
+  /* nur Zeit-Uebungen mit Figur, ohne Hilfsmittel ausser Matte und Wand */
+  function mixable(e) {
+    return e && e.typ === 'zeit' && !!(T.POSES || {})[e.id] &&
+      (e.hilfsmittel || []).every(function (h) { return h === 'matte' || h === 'wand'; });
+  }
+  function shuffle(list, rand) {
+    var a = list.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(rand() * (i + 1)), t = a[i];
+      a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function mixItem(e, duration) {
+    return { exId: e.id, name: e.name, duration: duration, rest: null, bilateral: !!e.beidseitig };
+  }
+
+  T.makeMix = function (opts, exercises) {
+    opts = opts || {};
+    var rand = T.rng(opts.seed);
+    var themes = (opts.themes || []).filter(function (k) { return Object.prototype.hasOwnProperty.call(T.MIX_THEMES, k); });
+    if (!themes.length) themes = ['core'];
+    var minutes = Number(opts.minutes) > 0 ? Number(opts.minutes) : 15;
+    var pool = (exercises || []).filter(mixable);
+    var used = [];
+    function take(list, n) {
+      var picked = shuffle(list.filter(function (e) { return used.indexOf(e.id) < 0; }), rand).slice(0, n);
+      picked.forEach(function (e) { used.push(e.id); });
+      return picked;
+    }
+
+    var warm = take(pool.filter(function (e) { return hasTag(e, ['aufwaermen']); }), MIX.warm);
+    var tags = [].concat.apply([], themes.map(function (k) { return T.MIX_THEMES[k]; }));
+    var main = take(pool.filter(function (e) { return hasTag(e, tags); }), MIX.main);
+    if (main.length < MIX.main) {
+      var fill = T.MIX_THEMES.core.concat(T.MIX_THEMES.ganz);
+      main = main.concat(take(pool.filter(function (e) { return hasTag(e, fill); }), MIX.main - main.length));
+    }
+    var cool = take(pool.filter(function (e) { return hasTag(e, ['dehnen']) && !hasTag(e, ['aufwaermen']); }), 1);
+
+    var blocks = [];
+    if (warm.length) blocks.push({ label: LABEL.warm, repeat: 1, items: warm.map(function (e) { return mixItem(e, MIX.warmWork); }) });
+    var mainBlock = { label: LABEL.main, repeat: 1, items: main.map(function (e) { return mixItem(e, MIX.work); }) };
+    if (main.length) blocks.push(mainBlock);
+    if (cool.length) blocks.push({ label: LABEL.cool, repeat: 1, items: [mixItem(cool[0], MIX.coolWork)] });
+
+    var workout = {
+      id: 'mix-' + ((Math.floor(Number(opts.seed)) || 0) >>> 0),
+      name: 'Mix: ' + themes.map(function (k) { return T.MIX_LABELS[k]; }).join(', '),
+      theme: MIX_COLOR[themes[0]], defaultWork: MIX.work, defaultRest: MIX.rest, source: 'mix', blocks: blocks
+    };
+    if (!main.length) return workout;
+
+    /* Runden so, dass die Zieldauer am besten passt, dann Arbeitszeit im Hauptteil in 5-s-Schritten anpassen */
+    var target = minutes * 60;
+    var secs = function () { return T.workoutSeconds(workout); };
+    var setWork = function (d) { mainBlock.items.forEach(function (i) { i.duration = d; }); };
+    var best = 1;
+    for (var r = 1; r <= MIX.maxRounds; r++) {
+      mainBlock.repeat = r;
+      if (secs() <= target) best = r;
+    }
+    mainBlock.repeat = best;
+    var work = MIX.work;
+    while (work < MIX.maxWork) {
+      setWork(work + 5);
+      if (secs() > target) { setWork(work); break; }
+      work += 5;
+    }
+    while (secs() > target && work > MIX.minWork) { work -= 5; setWork(work); }
+    return workout;
+  };
 })(window.Takt);

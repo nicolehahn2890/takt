@@ -85,3 +85,81 @@ test('prepareSteps Reihenfolge', function () {
   ok(Takt.totalSeconds(s) >= 270, 'Summe ' + Takt.totalSeconds(s));
   eq({ kind: s[0].kind, duration: s[0].duration }, { kind: 'prep', duration: 5 });
 });
+
+/* ---------- Mix ---------- */
+function mixIds(block) { return block ? block.items.map(function (i) { return i.exId; }) : []; }
+function mixBlock(w, label) { return w.blocks.filter(function (b) { return b.label === label; })[0]; }
+function mixAll(w) { return [].concat.apply([], w.blocks.map(mixIds)); }
+
+test('workoutSeconds ohne Vorbereitung', function () {
+  eq(Takt.workoutSeconds(w600(), wIdx()), 600);
+});
+
+test('rng: gleicher Seed gleiche Folge, Werte zwischen 0 und 1', function () {
+  var a = Takt.rng(7), b = Takt.rng(7), c = Takt.rng(8);
+  var xa = [a(), a(), a()], xb = [b(), b(), b()];
+  eq(xa, xb);
+  ok(JSON.stringify(xa) !== JSON.stringify([c(), c(), c()]), 'anderer Seed gleiche Folge');
+  ok(xa.every(function (x) { return x >= 0 && x < 1; }), 'Wert ausserhalb');
+});
+
+test('mix gleicher seed gleiches Ergebnis', function () {
+  var a = Takt.makeMix({ themes: ['core', 'bauch'], minutes: 15, seed: 42 }, Takt.EXERCISES);
+  var b = Takt.makeMix({ themes: ['core', 'bauch'], minutes: 15, seed: 42 }, Takt.EXERCISES);
+  var c = Takt.makeMix({ themes: ['core', 'bauch'], minutes: 15, seed: 43 }, Takt.EXERCISES);
+  eq(a, b);
+  ok(JSON.stringify(mixAll(a)) !== JSON.stringify(mixAll(c)), 'anderer Seed gleicher Mix');
+});
+
+test('mix keine Uebung doppelt im Hauptblock', function () {
+  ['core', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'].forEach(function (th) {
+    for (var seed = 1; seed <= 15; seed++) {
+      var w = Takt.makeMix({ themes: [th], minutes: 20, seed: seed }, Takt.EXERCISES);
+      var main = mixIds(mixBlock(w, 'Hauptteil'));
+      eq(main.length, 5, th + ' ' + seed);
+      var all = mixAll(w);
+      eq(all.filter(function (x, i) { return all.indexOf(x) === i; }).length, all.length, 'doppelt bei ' + th + ' ' + seed);
+    }
+  });
+});
+
+test('mix Dauer passt', function () {
+  [10, 15, 20, 30].forEach(function (m) {
+    for (var seed = 1; seed <= 10; seed++) {
+      var s = Takt.workoutSeconds(Takt.makeMix({ themes: ['core', 'ruecken'], minutes: m, seed: seed }, Takt.EXERCISES), wIdx());
+      ok(s <= m * 60 && s >= m * 60 * 0.8, m + ' Min. ergibt ' + s + ' s');
+    }
+  });
+});
+
+test('mix nur Zeit-Uebungen mit Figur, ohne Hilfsmittel ausser Matte und Wand', function () {
+  var idx = wIdx();
+  for (var seed = 1; seed <= 20; seed++) {
+    mixAll(Takt.makeMix({ themes: ['ganz', 'yoga', 'ruecken'], minutes: 30, seed: seed }, Takt.EXERCISES)).forEach(function (id) {
+      ok(Takt.POSES[id], 'ohne Figur: ' + id);
+      eq(idx[id].typ, 'zeit', id);
+      ok((idx[id].hilfsmittel || []).every(function (h) { return h === 'matte' || h === 'wand'; }), 'Hilfsmittel bei ' + id);
+    });
+  }
+});
+
+test('mix mit duennem Thema', function () {
+  eq(mixIds(mixBlock(Takt.makeMix({ themes: ['yoga'], minutes: 15, seed: 5 }, Takt.EXERCISES), 'Hauptteil')).length, 5);
+  var thin = Takt.EXERCISES.filter(function (e) { return e.tags.indexOf('yoga') < 0 || e.id === 'baum' || e.id === 'stuhl'; });
+  var main = mixIds(mixBlock(Takt.makeMix({ themes: ['yoga'], minutes: 15, seed: 3 }, thin), 'Hauptteil'));
+  eq(main.length, 5);
+  eq(main.filter(function (x, i) { return main.indexOf(x) === i; }).length, 5);
+  ok(main.indexOf('baum') >= 0 && main.indexOf('stuhl') >= 0, 'Yoga-Uebungen fehlen: ' + main);
+});
+
+test('mix Name, Thema, Quelle und Aufbau', function () {
+  var w = Takt.makeMix({ themes: ['ganz', 'bauch'], minutes: 10, seed: 1 }, Takt.EXERCISES);
+  eq([w.name, w.theme, w.source], ['Mix: Ganzkörper, Bauch', 'core', 'mix']);
+  eq(w.blocks.map(function (b) { return [b.label, b.items.length]; }),
+    [['Aufwärmen', 2], ['Hauptteil', 5], ['Abschluss', 1]]);
+  var idx = wIdx();
+  ok(mixBlock(w, 'Aufwärmen').items.every(function (i) { return idx[i.exId].tags.indexOf('aufwaermen') >= 0 && i.duration === 40; }), 'Aufwaermen');
+  var cool = mixBlock(w, 'Abschluss').items[0];
+  ok(idx[cool.exId].tags.indexOf('dehnen') >= 0 && cool.duration === 60, 'Abschluss');
+  ok(mixBlock(w, 'Hauptteil').items.every(function (i) { return i.name === idx[i.exId].name; }), 'Name fehlt');
+});
