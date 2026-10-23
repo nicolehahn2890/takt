@@ -299,6 +299,17 @@ Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzu
 - Budget unter Vorbereitung + 10 s kann überschritten werden (über die Oberfläche nicht erreichbar).
 - Tote CSS-Klassen `.ic`, `.is-prep`; Ring-Balken `#t-bar` heißt noch `.bar`.
 
+### 8.4 Design v2 (Teil A, 2026-10-23) – umgesetzt und bewusst zurückgestellt
+
+Design aus Claude Design (`docs/design_handoff_takt_redesign/`) auf alle Screens angewendet (live v=22): neue Farben, Outfit + DM Sans, Figur-Logo und App-Symbol, Karten ohne Randstreifen, fixierte Kopfleisten, Geschafft mit Figur. Plan mit allen Entscheidungen: `docs/superpowers/plans/2026-10-23-design-v2.md`. Teil B (Leiste unten mit Home / Bibliothek / Statistik, Statistik-Screen) folgt nach Nicoles iPhone-Test.
+
+Zurückgestellt:
+- Unter 360 px Breite ragen die ± Knöpfe im Editor etwas aus ihrem Feld (kein aktuelles iPhone ist so schmal).
+- `color-mix()` ohne Ersatzfarbe: auf Safari älter als 16.2 fehlen die getönten Figuren-Flächen und die Markierung in der Übungs-Auswahl.
+- Der Hinweis „Vor dem Start“ steht jetzt fett ohne Doppelpunkt davor (wie im Design).
+- Hinweis-Toasts erscheinen im Training über der Zeile „Als Nächstes“ (nur kurz).
+- Langer Workout-Name im Training bricht neben dem ✕ um (aus der Design-Grundlage, Training war nicht Teil der Umgestaltung).
+
 ## 9. Verifikation
 
 - Pro Schritt: `node --check` auf alle JS-Dateien; Agent `html-app-tester` (statische Prüfung); Vorschau im eingebauten Browser (`python -m http.server` im Projektordner, Handy-Viewport emuliert). Auf dem iPhone immer über die Live-URL (HTTPS), nie über die lokale IP.
