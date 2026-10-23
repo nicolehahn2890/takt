@@ -265,8 +265,7 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
 
 /* ---------- Kopfleiste der Unterseiten (TopBar, fixiert) ---------- */
 .page > .bar { position: sticky; top: 0; z-index: 5; margin: calc(-12px - env(safe-area-inset-top)) -16px 4px;
-  padding: calc(8px + env(safe-area-inset-top)) 10px 8px 6px; background: rgba(23,18,23,.94);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  padding: calc(8px + env(safe-area-inset-top)) 10px 8px 6px; background: var(--bg); }
 .bar-t { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .bar-t h2 { font-family: var(--font-display); font-size: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bar-t small { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
@@ -288,7 +287,7 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
   padding: 10px 16px calc(16px + env(safe-area-inset-bottom)); background: linear-gradient(rgba(23,18,23,0), var(--bg) 30%); }
 .foot-main { flex: 1; min-height: var(--btn-h-lg); border-radius: 16px; background: var(--pink); color: var(--bg); font-weight: 700; font-size: 17px; transition: transform .15s; }
 .foot-main:active { transform: scale(.96); }
-.foot-main[disabled] { opacity: .4; }
+.foot-main[disabled], .bigbtn[disabled] { opacity: 1; background: var(--elevated); color: var(--muted); }
 .foot-side { min-height: var(--btn-h-lg); padding: 0 18px; border-radius: 16px; background: var(--danger-bg); color: var(--danger); font-weight: 700; }
 
 /* ---------- Fenster von unten (Sheet, RangeField, Segmented) ---------- */
@@ -321,7 +320,6 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
 .res b { font-family: var(--font-display); font-size: 28px; font-weight: 600; letter-spacing: -.5px; font-variant-numeric: tabular-nums; flex: none; }
 .bigbtn { width: 100%; min-height: var(--btn-h-lg); border-radius: 16px; background: var(--salbei); color: var(--bg); font-weight: 700; font-size: 17px; transition: transform .15s; }
 .bigbtn:active { transform: scale(.96); }
-.bigbtn[disabled] { opacity: .4; }
 .row-btns { display: flex; gap: 8px; margin-top: 12px; }
 .row-btns button { flex: 1; min-height: var(--btn-h); border-radius: 14px; background: var(--ghost); font-weight: 600; transition: transform .15s; }
 .row-btns button:active { transform: scale(.96); }
@@ -372,3 +370,6 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
   .tg-row .wc-btns { flex-direction: column; align-items: stretch; gap: 0; }
   .ent .th { display: none; }
 }
+
+/* Titel mit "..."-Kuerzung schneiden sonst auf dem iPhone die Punkte von Ae/Oe/Ue ab */
+.bar h2, .bar-t h2, .wcard h3 { line-height: 1.3; padding-block: 3px; margin-block: -3px; }
