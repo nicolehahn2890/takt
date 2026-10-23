@@ -8,6 +8,8 @@ window.Takt = window.Takt || {};
 
   function make(st, opts) {
     var now = (opts && opts.now) || function () { return Date.now(); };
+    // Verbrachte Zeit je Schritt (ms, ohne Pausieren); aeltere gespeicherte Staende haben sie noch nicht
+    if (!Array.isArray(st.spent) || st.spent.length !== st.steps.length) st.spent = st.steps.map(function () { return 0; });
 
     function durMs(i) { return st.durations[i] * 1000; }
     function elapsedMs() {
@@ -18,7 +20,12 @@ window.Takt = window.Takt || {};
       if (st.index < 0 || st.done) return 0;
       return Math.max(0, Math.ceil((durMs(st.index) - elapsedMs()) / 1000));
     }
+    /* Zeit eines Schritts verbuchen, hoechstens seine Dauer */
+    function book(i, ms) {
+      if (i >= 0 && i < st.spent.length) st.spent[i] += Math.max(0, Math.min(ms, durMs(i)));
+    }
     function finish() {
+      if (!st.done && st.index >= 0) book(st.index, elapsedMs());
       st.done = true;
       if (st.paused) { st.pausedMs += now() - st.pauseBegan; st.paused = false; }
       return [{ type: 'done' }];
@@ -26,6 +33,7 @@ window.Takt = window.Takt || {};
     /* Manueller Sprung: neuer Schritt beginnt jetzt, Pause bleibt bestehen */
     function go(i) {
       if (i >= st.steps.length) return finish();
+      if (st.index >= 0) book(st.index, elapsedMs());
       var t = now();
       st.index = i;
       st.stepStart = t;
@@ -56,6 +64,7 @@ window.Takt = window.Takt || {};
         while (elapsedMs() >= durMs(st.index)) {
           var endAt = st.stepStart + durMs(st.index);
           if (st.index + 1 >= st.steps.length) return finish();
+          book(st.index, durMs(st.index));
           st.index++;
           st.stepStart = endAt;   // Zeit mitnehmen: kein Drift
           advanced++;
@@ -138,6 +147,8 @@ window.Takt = window.Takt || {};
         var total = st.done ? 0 : rem;
         if (!st.done) for (j = Math.max(i + 1, 0); j < st.steps.length; j++) total += st.durations[j];
         var pausedMs = st.pausedMs + (st.paused ? now() - st.pauseBegan : 0);
+        var activeMs = st.spent.reduce(function (a, b) { return a + b; }, 0);
+        if (i >= 0 && !st.done) activeMs += Math.min(elapsedMs(), durMs(i));
         return {
           index: i,
           step: i >= 0 ? st.steps[i] : null,
@@ -151,9 +162,12 @@ window.Takt = window.Takt || {};
           workTotal: workTotal,
           remainingTotal: total,
           startedAt: st.startedAt,
-          pausedSec: Math.round(pausedMs / 1000)
+          pausedSec: Math.round(pausedMs / 1000),
+          activeSec: Math.round(activeMs / 1000)
         };
       },
+
+      spentSeconds: function () { return st.spent.map(function (ms) { return Math.round(ms / 1000); }); },
 
       snapshot: function () { return clone(st); }
     };
@@ -167,7 +181,7 @@ window.Takt = window.Takt || {};
       durations: list.map(function (s) { return s.duration; }),
       index: -1, stepStart: 0, startedAt: null,
       paused: false, pausedAt: null, pauseBegan: null, pausedMs: 0,
-      done: false, lastWhole: null, adjustments: []
+      done: false, lastWhole: null, adjustments: [], spent: list.map(function () { return 0; })
     }, opts);
   };
 

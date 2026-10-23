@@ -122,3 +122,75 @@ test('engine: remainingTotal und Positionen', function () {
   v = m.e.view();
   eq([v.index, v.remainingTotal, v.workPos], [1, 35, 2]);
 });
+
+/* ---------- Teil B: verbrachte Zeit je Schritt ---------- */
+function mkSpent() {
+  var c = { t: 0 };
+  var steps = [
+    { kind: 'work', duration: 10, exId: 'a', name: 'A' },
+    { kind: 'work', duration: 10, exId: 'b', name: 'B' }
+  ];
+  return { c: c, e: Takt.Engine(steps, { now: function () { return c.t; } }) };
+}
+
+test('engine spent volle Schritte', function () {
+  var m = mkSpent(); m.e.start();
+  m.c.t = 10000; m.e.tick();
+  m.c.t = 20000; m.e.tick();
+  eq(m.e.view().done, true);
+  eq(m.e.spentSeconds(), [10, 10]);
+  eq(m.e.view().activeSec, 20);
+});
+
+test('engine spent Ueberspringen', function () {
+  var m = mkSpent(); m.e.start();
+  m.c.t = 4000; m.e.next();
+  eq(m.e.spentSeconds(), [4, 0]);
+  m.c.t = 6000;
+  eq(m.e.view().activeSec, 6);
+});
+
+test('engine spent ohne Pausieren', function () {
+  var m = mkSpent(); m.e.start();
+  m.c.t = 5000; m.e.pause();
+  m.c.t = 35000; m.e.resume();
+  m.c.t = 40000; m.e.tick();
+  eq(m.e.view().activeSec, 10);
+  eq(m.e.spentSeconds()[0], 10);
+});
+
+test('engine spent nach Ende gesperrt', function () {
+  var m = mkSpent(); m.e.start();
+  m.c.t = 20000 + 600000; m.e.tick();
+  eq(m.e.view().done, true);
+  eq(m.e.view().activeSec, 20);
+});
+
+test('engine spent mit +15', function () {
+  var m = mkSpent(); m.e.start();
+  m.c.t = 2000; m.e.adjust(15);
+  m.c.t = 25000; m.e.tick();
+  eq(m.e.spentSeconds()[0], 25);
+});
+
+test('engine spent bleibt nach restore', function () {
+  var m = mkSpent(); m.e.start();
+  m.c.t = 10000; m.e.tick();
+  m.c.t = 13000;
+  var snap = m.e.snapshot();
+  var e2 = Takt.Engine.restore(snap, { now: function () { return m.c.t; } });
+  m.c.t = 20000; e2.tick();
+  eq(e2.view().done, true);
+  eq(e2.spentSeconds(), [10, 10]);
+  eq(e2.view().activeSec, 20);
+});
+
+test('engine restore alter Snapshot ohne spent', function () {
+  var m = mkSpent(); m.e.start();
+  m.c.t = 3000;
+  var snap = m.e.snapshot();
+  delete snap.spent;
+  var e2 = Takt.Engine.restore(snap, { now: function () { return m.c.t; } });
+  ok(e2.view().activeSec >= 0, 'activeSec fehlt');
+  eq(e2.spentSeconds().length, 2);
+});
