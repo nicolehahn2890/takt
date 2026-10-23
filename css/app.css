@@ -264,7 +264,8 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
 .hint b { color: var(--pink-light); font-weight: 700; margin-right: 6px; }
 
 /* ---------- Kopfleiste der Unterseiten (TopBar, fixiert) ---------- */
-.page > .bar { position: sticky; top: 0; z-index: 5; margin: calc(-12px - env(safe-area-inset-top)) -16px 4px;
+/* Nicht fixiert: iOS 26 legt ueber fixierte Leisten am oberen Rand einen Glas-Schleier (Titel unscharf) */
+.page > .bar { position: relative; margin: calc(-12px - env(safe-area-inset-top)) -16px 4px;
   padding: calc(8px + env(safe-area-inset-top)) 10px 8px 6px; background: var(--bg); }
 .bar-t { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .bar-t h2 { font-family: var(--font-display); font-size: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -287,7 +288,8 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
   padding: 10px 16px calc(16px + env(safe-area-inset-bottom)); background: linear-gradient(rgba(23,18,23,0), var(--bg) 30%); }
 .foot-main { flex: 1; min-height: var(--btn-h-lg); border-radius: 16px; background: var(--pink); color: var(--bg); font-weight: 700; font-size: 17px; transition: transform .15s; }
 .foot-main:active { transform: scale(.96); }
-.foot-main[disabled], .bigbtn[disabled] { opacity: 1; background: var(--elevated); color: var(--muted); }
+.foot-main[disabled] { opacity: 1; background: #7d5068; background: color-mix(in oklab, var(--pink) 60%, var(--bg)); color: rgba(23,18,23,.75); }
+.bigbtn[disabled] { opacity: 1; background: #7f7e6c; background: color-mix(in oklab, var(--salbei) 60%, var(--bg)); color: rgba(23,18,23,.75); }
 .foot-side { min-height: var(--btn-h-lg); padding: 0 18px; border-radius: 16px; background: var(--danger-bg); color: var(--danger); font-weight: 700; }
 
 /* ---------- Fenster von unten (Sheet, RangeField, Segmented) ---------- */
