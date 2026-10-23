@@ -5,6 +5,10 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/done.mp3",
   "text": "Geschafft, super gemacht!"
  },
+ "ex_abduktion-stehend": {
+  "src": "assets/voice/ex_abduktion-stehend.mp3",
+  "text": "Bein seitlich heben im Stehen"
+ },
  "ex_arm-bein-bauchlage": {
   "src": "assets/voice/ex_arm-bein-bauchlage.mp3",
   "text": "Arm und Bein gegengleich"
@@ -57,9 +61,17 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_bird-dog.mp3",
   "text": "Bird Dog"
  },
+ "ex_boot": {
+  "src": "assets/voice/ex_boot.mp3",
+  "text": "Boot"
+ },
  "ex_box-atmung": {
   "src": "assets/voice/ex_box-atmung.mp3",
   "text": "Box-Atmung"
+ },
+ "ex_brust-dehnung": {
+  "src": "assets/voice/ex_brust-dehnung.mp3",
+  "text": "Brustdehnung an der Wand"
  },
  "ex_bulgarian-split-squat": {
   "src": "assets/voice/ex_bulgarian-split-squat.mp3",
@@ -93,6 +105,10 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_dreieck.mp3",
   "text": "Dreieck"
  },
+ "ex_faden-einfaedeln": {
+  "src": "assets/voice/ex_faden-einfaedeln.mp3",
+  "text": "Faden einfädeln"
+ },
  "ex_fahrrad-crunch": {
   "src": "assets/voice/ex_fahrrad-crunch.mp3",
   "text": "Fahrrad-Crunch"
@@ -120,6 +136,10 @@ Takt.VOICE_FILES = {
  "ex_glute-bridge-einbeinig": {
   "src": "assets/voice/ex_glute-bridge-einbeinig.mp3",
   "text": "Glute Bridge einbeinig"
+ },
+ "ex_glute-bridge-marsch": {
+  "src": "assets/voice/ex_glute-bridge-marsch.mp3",
+  "text": "Glute Bridge mit Marschieren"
  },
  "ex_good-morning": {
   "src": "assets/voice/ex_good-morning.mp3",
@@ -177,9 +197,17 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_hueftkreisen.mp3",
   "text": "Hüftkreisen"
  },
+ "ex_hypopressive-atmung": {
+  "src": "assets/voice/ex_hypopressive-atmung.mp3",
+  "text": "Hypopressive Atmung"
+ },
  "ex_inchworm": {
   "src": "assets/voice/ex_inchworm.mp3",
   "text": "Inchworm"
+ },
+ "ex_innenschenkel": {
+  "src": "assets/voice/ex_innenschenkel.mp3",
+  "text": "Innenschenkel heben"
  },
  "ex_katze-kuh": {
   "src": "assets/voice/ex_katze-kuh.mp3",
@@ -189,13 +217,25 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_kickback.mp3",
   "text": "Kickback gestreckt"
  },
+ "ex_kickback-stehend": {
+  "src": "assets/voice/ex_kickback-stehend.mp3",
+  "text": "Kickback im Stehen"
+ },
  "ex_kindhaltung": {
   "src": "assets/voice/ex_kindhaltung.mp3",
   "text": "Kindhaltung"
  },
+ "ex_knee-tucks": {
+  "src": "assets/voice/ex_knee-tucks.mp3",
+  "text": "Knee Tucks im Sitzen"
+ },
  "ex_knie-liegestuetz": {
   "src": "assets/voice/ex_knie-liegestuetz.mp3",
   "text": "Knie-Liegestütz"
+ },
+ "ex_knie-zur-brust": {
+  "src": "assets/voice/ex_knie-zur-brust.mp3",
+  "text": "Knie zur Brust"
  },
  "ex_kniebeuge": {
   "src": "assets/voice/ex_kniebeuge.mp3",
@@ -215,11 +255,15 @@ Takt.VOICE_FILES = {
  },
  "ex_krieger-1": {
   "src": "assets/voice/ex_krieger-1.mp3",
-  "text": "Krieger I"
+  "text": "Krieger eins"
  },
  "ex_krieger-2": {
   "src": "assets/voice/ex_krieger-2.mp3",
-  "text": "Krieger II"
+  "text": "Krieger zwei"
+ },
+ "ex_krieger-3": {
+  "src": "assets/voice/ex_krieger-3.mp3",
+  "text": "Krieger drei"
  },
  "ex_lange-ausatmung": {
   "src": "assets/voice/ex_lange-ausatmung.mp3",
@@ -261,6 +305,10 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_plank.mp3",
   "text": "Plank"
  },
+ "ex_plank-beinheben": {
+  "src": "assets/voice/ex_plank-beinheben.mp3",
+  "text": "Plank mit Beinheben"
+ },
  "ex_plank-hip-dips": {
   "src": "assets/voice/ex_plank-hip-dips.mp3",
   "text": "Plank Hüftdrehung"
@@ -268,6 +316,10 @@ Takt.VOICE_FILES = {
  "ex_plank-jacks": {
   "src": "assets/voice/ex_plank-jacks.mp3",
   "text": "Plank Jacks"
+ },
+ "ex_plank-knie": {
+  "src": "assets/voice/ex_plank-knie.mp3",
+  "text": "Plank auf den Knien"
  },
  "ex_plank-rock": {
   "src": "assets/voice/ex_plank-rock.mp3",
@@ -289,6 +341,10 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_reverse-crunch.mp3",
   "text": "Reverse Crunch"
  },
+ "ex_reverse-plank": {
+  "src": "assets/voice/ex_reverse-plank.mp3",
+  "text": "Umgekehrter Stütz"
+ },
  "ex_rueckenstrecker": {
   "src": "assets/voice/ex_rueckenstrecker.mp3",
   "text": "Rückenstrecker"
@@ -296,6 +352,10 @@ Takt.VOICE_FILES = {
  "ex_russian-twist": {
   "src": "assets/voice/ex_russian-twist.mp3",
   "text": "Russian Twist"
+ },
+ "ex_schattenboxen": {
+  "src": "assets/voice/ex_schattenboxen.mp3",
+  "text": "Schattenboxen"
  },
  "ex_scheibenwischer": {
   "src": "assets/voice/ex_scheibenwischer.mp3",
@@ -309,9 +369,17 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_schmetterling.mp3",
   "text": "Schmetterling"
  },
+ "ex_schulter-dehnung": {
+  "src": "assets/voice/ex_schulter-dehnung.mp3",
+  "text": "Schulterdehnung"
+ },
  "ex_schulterkreisen": {
   "src": "assets/voice/ex_schulterkreisen.mp3",
   "text": "Schulterkreisen"
+ },
+ "ex_seilspringen": {
+  "src": "assets/voice/ex_seilspringen.mp3",
+  "text": "Seilspringen ohne Seil"
  },
  "ex_seitdehnung": {
   "src": "assets/voice/ex_seitdehnung.mp3",
@@ -333,9 +401,17 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_seitstuetz-hueftheben.mp3",
   "text": "Seitstütz mit Hüftheben"
  },
+ "ex_seitstuetz-knie": {
+  "src": "assets/voice/ex_seitstuetz-knie.mp3",
+  "text": "Seitstütz auf den Knien"
+ },
  "ex_sit-up": {
   "src": "assets/voice/ex_sit-up.mp3",
   "text": "Sit-up"
+ },
+ "ex_skater": {
+  "src": "assets/voice/ex_skater.mp3",
+  "text": "Eisschnellläufer"
  },
  "ex_snow-angels": {
   "src": "assets/voice/ex_snow-angels.mp3",
@@ -344,6 +420,10 @@ Takt.VOICE_FILES = {
  "ex_sonnengruss": {
   "src": "assets/voice/ex_sonnengruss.mp3",
   "text": "Sonnengruß"
+ },
+ "ex_sphinx": {
+  "src": "assets/voice/ex_sphinx.mp3",
+  "text": "Sphinx"
  },
  "ex_spiderman-plank": {
   "src": "assets/voice/ex_spiderman-plank.mp3",
@@ -356,6 +436,14 @@ Takt.VOICE_FILES = {
  "ex_squat-jacks": {
   "src": "assets/voice/ex_squat-jacks.mp3",
   "text": "Squat Jacks"
+ },
+ "ex_squat-pulses": {
+  "src": "assets/voice/ex_squat-pulses.mp3",
+  "text": "Kniebeuge mit Nachfedern"
+ },
+ "ex_standwaage": {
+  "src": "assets/voice/ex_standwaage.mp3",
+  "text": "Standwaage"
  },
  "ex_step-ups": {
   "src": "assets/voice/ex_step-ups.mp3",
@@ -381,6 +469,10 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_swimmer.mp3",
   "text": "Swimmer"
  },
+ "ex_tabletop-crunch": {
+  "src": "assets/voice/ex_tabletop-crunch.mp3",
+  "text": "Crunch mit Beinen in der Luft"
+ },
  "ex_taube": {
   "src": "assets/voice/ex_taube.mp3",
   "text": "Taube"
@@ -401,13 +493,49 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_v-ups.mp3",
   "text": "V-Ups"
  },
+ "ex_vacuum-arme-oben": {
+  "src": "assets/voice/ex_vacuum-arme-oben.mp3",
+  "text": "Stomach Vacuum mit Armen über dem Kopf"
+ },
+ "ex_vacuum-baerenstand": {
+  "src": "assets/voice/ex_vacuum-baerenstand.mp3",
+  "text": "Stomach Vacuum im Bärenstand"
+ },
+ "ex_vacuum-beckenkippen": {
+  "src": "assets/voice/ex_vacuum-beckenkippen.mp3",
+  "text": "Stomach Vacuum mit Beckenkippen"
+ },
  "ex_vacuum-fersentippen": {
   "src": "assets/voice/ex_vacuum-fersentippen.mp3",
   "text": "Vacuum mit Fersentippen"
  },
+ "ex_vacuum-gehen": {
+  "src": "assets/voice/ex_vacuum-gehen.mp3",
+  "text": "Stomach Vacuum beim Gehen auf der Stelle"
+ },
+ "ex_vacuum-glute-bridge": {
+  "src": "assets/voice/ex_vacuum-glute-bridge.mp3",
+  "text": "Stomach Vacuum in der Glute Bridge"
+ },
+ "ex_vacuum-kindhaltung": {
+  "src": "assets/voice/ex_vacuum-kindhaltung.mp3",
+  "text": "Stomach Vacuum in der Kindhaltung"
+ },
+ "ex_vacuum-kniend": {
+  "src": "assets/voice/ex_vacuum-kniend.mp3",
+  "text": "Stomach Vacuum kniend"
+ },
  "ex_vacuum-liegend": {
   "src": "assets/voice/ex_vacuum-liegend.mp3",
   "text": "Stomach Vacuum liegend"
+ },
+ "ex_vacuum-marschieren": {
+  "src": "assets/voice/ex_vacuum-marschieren.mp3",
+  "text": "Stomach Vacuum mit Marschieren"
+ },
+ "ex_vacuum-schneidersitz": {
+  "src": "assets/voice/ex_vacuum-schneidersitz.mp3",
+  "text": "Stomach Vacuum im Schneidersitz"
  },
  "ex_vacuum-sitzend": {
   "src": "assets/voice/ex_vacuum-sitzend.mp3",
@@ -417,9 +545,25 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_vacuum-stehend.mp3",
   "text": "Stomach Vacuum stehend"
  },
+ "ex_vacuum-unterarmstuetz": {
+  "src": "assets/voice/ex_vacuum-unterarmstuetz.mp3",
+  "text": "Stomach Vacuum im Unterarmstütz"
+ },
  "ex_vacuum-vierfuessler": {
   "src": "assets/voice/ex_vacuum-vierfuessler.mp3",
   "text": "Stomach Vacuum Vierfüßler"
+ },
+ "ex_vacuum-vorgebeugt": {
+  "src": "assets/voice/ex_vacuum-vorgebeugt.mp3",
+  "text": "Stomach Vacuum vorgebeugt"
+ },
+ "ex_vorbeuge-stehend": {
+  "src": "assets/voice/ex_vorbeuge-stehend.mp3",
+  "text": "Vorbeuge im Stehen"
+ },
+ "ex_waden-dehnung": {
+  "src": "assets/voice/ex_waden-dehnung.mp3",
+  "text": "Wadendehnung an der Wand"
  },
  "ex_wadenheben": {
   "src": "assets/voice/ex_wadenheben.mp3",
