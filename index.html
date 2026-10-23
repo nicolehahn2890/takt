@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Takt">
 <title>Takt</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=12">
+<link rel="stylesheet" href="css/app.css?v=13">
 </head>
 <body>
 
@@ -148,6 +148,37 @@
   <div class="foot" id="tpl-foot" hidden><button class="foot-main" id="tpl-copy">Bearbeiten (als Kopie)</button></div>
 </section>
 
+<section id="screen-edit" class="screen page has-foot" hidden>
+  <header class="bar sticky">
+    <button class="back" id="ed-back" aria-label="Zurück">&#8249;</button>
+    <div class="bar-t"><h2 id="ed-title">Neues Workout</h2><small id="ed-sum"></small></div>
+    <button class="pill" id="ed-save">Speichern</button>
+  </header>
+  <label class="fld"><span>Name</span><input class="inp" id="ed-name" maxlength="40" placeholder="z. B. Morgen-Core" autocomplete="off"></label>
+  <p class="err" id="ed-err-name"></p>
+  <div class="fld"><span>Thema (Farbe)</span><div class="themes" id="ed-themes"></div></div>
+  <div class="fld"><span>Für neue Übungen</span><div class="defs" id="ed-defs">
+    <div class="val"><button data-def="w-" aria-label="Dauer kürzer">&minus;</button><span class="sv"><b id="ed-defw"></b><small>Dauer</small></span><button data-def="w+" aria-label="Dauer länger">+</button></div>
+    <div class="val"><button data-def="r-" aria-label="Pause kürzer">&minus;</button><span class="sv"><b id="ed-defr"></b><small>Pause</small></span><button data-def="r+" aria-label="Pause länger">+</button></div>
+  </div></div>
+  <div id="ed-blocks"></div>
+  <button class="addblk" id="ed-addblock">+ Block (z. B. Abschluss)</button>
+  <p class="hint">Ein Block kann mehrere Runden haben, z. B. Hauptteil 3&times;. Beidseitige Übungen: Die Zeit gilt für beide Seiten zusammen.</p>
+  <p class="err" id="ed-err" role="alert"></p>
+  <div class="foot"><button class="foot-side" id="ed-del" hidden>Löschen</button><button class="foot-main" id="ed-go">Speichern &amp; Starten</button></div>
+</section>
+
+<section id="screen-pick" class="screen page has-foot" hidden>
+  <header class="bar">
+    <button class="back" id="pk-back" aria-label="Zurück">&#8249;</button>
+    <div class="bar-t"><h2>Übungen wählen</h2><small id="pk-count"></small></div>
+  </header>
+  <input class="search" id="pk-q" type="search" placeholder="Suchen, z. B. Plank" enterkeyhint="search" autocomplete="off" autocorrect="off" autocapitalize="off">
+  <div class="chips" id="pk-chips"></div>
+  <div class="lib-list" id="pk-list"></div>
+  <div class="foot"><button class="foot-main" id="pk-add" disabled>Übungen antippen</button></div>
+</section>
+
 <div class="sheet-wrap" id="sh-adj" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="adj-title">
   <div class="sh-head"><h3 id="adj-title">Anpassen</h3><button class="sh-x" data-close aria-label="Schließen">&#10005;</button></div>
   <p class="sub"><b id="adj-name"></b><br><span id="adj-full"></span></p>
@@ -159,23 +190,24 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="data/strings.js?v=12"></script>
-<script src="data/exercises.js?v=12"></script>
-<script src="data/templates.js?v=12"></script>
-<script src="data/poses.js?v=12"></script>
-<script src="data/voice-manifest.js?v=12"></script>
-<script src="js/core.js?v=12"></script>
-<script src="js/store.js?v=12"></script>
-<script src="js/plan.js?v=12"></script>
-<script src="js/workouts.js?v=12"></script>
-<script src="js/engine.js?v=12"></script>
-<script src="js/announce.js?v=12"></script>
-<script src="js/audio.js?v=12"></script>
-<script src="js/wake.js?v=12"></script>
-<script src="js/figure.js?v=12"></script>
-<script src="js/photos.js?v=12"></script>
-<script src="js/app.js?v=12"></script>
-<script src="js/library.js?v=12"></script>
-<script src="js/home.js?v=12"></script>
+<script src="data/strings.js?v=13"></script>
+<script src="data/exercises.js?v=13"></script>
+<script src="data/templates.js?v=13"></script>
+<script src="data/poses.js?v=13"></script>
+<script src="data/voice-manifest.js?v=13"></script>
+<script src="js/core.js?v=13"></script>
+<script src="js/store.js?v=13"></script>
+<script src="js/plan.js?v=13"></script>
+<script src="js/workouts.js?v=13"></script>
+<script src="js/engine.js?v=13"></script>
+<script src="js/announce.js?v=13"></script>
+<script src="js/audio.js?v=13"></script>
+<script src="js/wake.js?v=13"></script>
+<script src="js/figure.js?v=13"></script>
+<script src="js/photos.js?v=13"></script>
+<script src="js/app.js?v=13"></script>
+<script src="js/library.js?v=13"></script>
+<script src="js/home.js?v=13"></script>
+<script src="js/editor.js?v=13"></script>
 </body>
 </html>

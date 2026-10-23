@@ -363,17 +363,18 @@ window.Takt = window.Takt || {};
       });
       $('go-lib').addEventListener('click', function () { T.library.open(); });
     }
-    if (T.home) {
-      T.home.init({
-        data: function () { return data; },
-        save: function () { return T.store.save(data); },
-        exIndex: function () { return exIndex; },
-        find: findWorkout,
-        start: startWorkout,
-        show: show,
-        toast: toast
-      });
-    }
+    var api = {
+      data: function () { return data; },
+      save: function () { return T.store.save(data); },
+      exIndex: function () { return exIndex; },
+      find: findWorkout,
+      start: startWorkout,
+      show: show,
+      toast: toast,
+      home: function () { renderStart(); show('start'); window.scrollTo(0, 0); }
+    };
+    if (T.home) T.home.init(api);
+    if (T.editor) T.editor.init(api);
     renderStart();
     // Laenger als 30 Minuten liegengebliebene Trainings werden nicht fortgesetzt
     var saved = T.store.loadRun(null, { maxAgeMs: 30 * 60 * 1000 });

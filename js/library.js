@@ -38,14 +38,16 @@ window.Takt = window.Takt || {};
     return (T.POSES || {})[e.id] || T.POSE_DEFAULT;
   }
 
-  function matches(e) {
-    if (filter === 'eigen' && e.quelle !== 'eigen') return false;
-    var chip = CHIPS.filter(function (c) { return c[0] === filter; })[0];
+  /* Filter und Suche, auch fuer die Uebungs-Auswahl im Editor */
+  function matchesWith(e, chipKey, q) {
+    if (chipKey === 'eigen' && e.quelle !== 'eigen') return false;
+    var chip = CHIPS.filter(function (c) { return c[0] === chipKey; })[0];
     if (chip && chip[2] && !(e.tags || []).some(function (t) { return chip[2].indexOf(t) >= 0; })) return false;
-    if (!query) return true;
+    if (!q) return true;
     var hay = norm([e.name].concat(e.alias || []).join(' '));
-    return norm(query).split(' ').every(function (w) { return hay.indexOf(w) >= 0; });
+    return norm(q).split(' ').every(function (w) { return hay.indexOf(w) >= 0; });
   }
+  function matches(e) { return matchesWith(e, filter, query); }
 
   /* ---------- Liste ---------- */
   function renderChips() {
@@ -307,6 +309,8 @@ window.Takt = window.Takt || {};
     init: function (a) { api = a; bind(); },
     open: openLib,
     openEx: openEx,
-    norm: norm
+    norm: norm,
+    CHIPS: CHIPS,
+    matches: matchesWith
   };
 })(window.Takt);
