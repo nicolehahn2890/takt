@@ -153,8 +153,8 @@ window.Takt = window.Takt || {};
     var res = { seconds: 0, count: 0 };
     (Array.isArray(log) ? log : []).forEach(function (e) {
       var t = e && e.date ? new Date(e.date).getTime() : NaN;
-      if (!isFinite(t) || t < monday || t > now.getTime() || typeof e.actualSec !== 'number' || !isFinite(e.actualSec)) return;
-      res.seconds += Math.max(0, Math.round(e.actualSec));
+      if (!isFinite(t) || t < monday || t > now.getTime() || !T.entryValid(e)) return;
+      res.seconds += T.entrySeconds(e);
       res.count++;
     });
     return res;

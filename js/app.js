@@ -262,6 +262,9 @@ window.Takt = window.Takt || {};
       date: new Date().toISOString(),
       plannedSec: T.totalSeconds(steps),
       actualSec: Math.round((Date.now() - v.startedAt) / 1000),
+      activeSec: v.activeSec,
+      theme: run.workout.theme || 'core',
+      areaSec: T.areaSeconds(steps, run.engine.spentSeconds(), exIndex),
       adjustments: run.engine.adjustments.slice()
     };
     data.log.push(entry);
@@ -275,7 +278,7 @@ window.Takt = window.Takt || {};
     $('screen-done').style.setProperty('--theme', themeColor(run.workout.theme));
     T.figure.mount($('done-fig'), (T.POSES || {}).kindhaltung || T.POSE_DEFAULT);
     run = null;
-    $('done-sub').textContent = T.fmt(entry.actualSec) + ' trainiert \u00b7 ' + v.workTotal + ' \u00dcbungen';
+    $('done-sub').textContent = T.fmt(entry.activeSec) + ' trainiert \u00b7 ' + v.workTotal + ' \u00dcbungen';
     $('b-again').setAttribute('data-start', wid);
     show('done');
   }

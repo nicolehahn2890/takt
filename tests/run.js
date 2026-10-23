@@ -7,7 +7,7 @@ var path = require('path');
 var vm = require('vm');
 
 var root = path.resolve(__dirname, '..');
-var LOGIC = ['js/core.js', 'js/store.js', 'js/plan.js', 'js/workouts.js', 'js/engine.js', 'js/announce.js', 'js/figure.js'];
+var LOGIC = ['js/core.js', 'js/store.js', 'js/plan.js', 'js/workouts.js', 'js/stats.js', 'js/engine.js', 'js/announce.js', 'js/figure.js'];
 var tests = [];
 
 function FakeStorage() {
