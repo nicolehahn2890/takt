@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Takt">
 <title>Takt</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=11">
+<link rel="stylesheet" href="css/app.css?v=12">
 </head>
 <body>
 
@@ -19,8 +19,17 @@
     <div id="brand-logo" class="logo"></div>
     <div><h1>Takt</h1><p>Dein Training, dein Takt</p></div>
   </header>
+  <div class="week" id="week"></div>
+  <div class="quick" id="quick" hidden>
+    <button class="qbtn mix" id="go-mix" hidden>Mix<small>Zufall aus deinen Themen</small></button>
+    <button class="qbtn new" id="go-new" hidden>+ Neu<small>eigenes Workout bauen</small></button>
+  </div>
+  <div id="my-sec" hidden>
+    <h2>Meine Workouts</h2>
+    <div id="my-list"></div>
+  </div>
   <h2>Vorlagen</h2>
-  <div id="start-list"></div>
+  <div id="tpl-list"></div>
   <h2>Bibliothek</h2>
   <button class="card nav" id="go-lib" style="--theme:#B88CC0">
     <div class="card-main"><h3>Übungen</h3><p id="lib-sub">110 Übungen mit Figur und Ansage</p></div>
@@ -128,23 +137,45 @@
   </div>
 </section>
 
+<section id="screen-tpl" class="screen page has-foot" hidden>
+  <header class="bar">
+    <button class="back" id="tpl-back" aria-label="Zurück">&#8249;</button>
+    <div class="bar-t"><h2 id="tpl-name"></h2><small id="tpl-meta"></small></div>
+  </header>
+  <div class="pv-btns"><button class="btn-start" id="tpl-start" data-start="">Start</button><button class="btn" id="tpl-adj">Anpassen</button></div>
+  <div id="tpl-blocks"></div>
+  <p class="hint" id="tpl-hint" hidden>Vorlagen bleiben, wie sie sind. „Bearbeiten“ legt eine Kopie unter „Meine Workouts“ an, die du frei ändern kannst.</p>
+  <div class="foot" id="tpl-foot" hidden><button class="foot-main" id="tpl-copy">Bearbeiten (als Kopie)</button></div>
+</section>
+
+<div class="sheet-wrap" id="sh-adj" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="adj-title">
+  <div class="sh-head"><h3 id="adj-title">Anpassen</h3><button class="sh-x" data-close aria-label="Schließen">&#10005;</button></div>
+  <p class="sub"><b id="adj-name"></b><br><span id="adj-full"></span></p>
+  <div class="fld"><span>Wie viel Zeit hast du?</span><div class="rangebox"><input type="range" id="adj-range" step="1" aria-label="Minuten"><b id="adj-min"></b></div></div>
+  <div class="fld"><span>Intensität</span><div class="seg" id="adj-seg"><button data-lvl="leicht">leicht</button><button data-lvl="normal">normal</button><button data-lvl="hart">hart</button></div><small class="note" id="adj-note"></small></div>
+  <div class="res"><span>Neue Dauer</span><b id="adj-new"></b></div>
+  <button class="bigbtn" id="adj-go">Starten</button>
+</div></div>
+
 <div id="toast" class="toast" hidden></div>
 
-<script src="data/strings.js?v=11"></script>
-<script src="data/exercises.js?v=11"></script>
-<script src="data/templates.js?v=11"></script>
-<script src="data/poses.js?v=11"></script>
-<script src="data/voice-manifest.js?v=11"></script>
-<script src="js/core.js?v=11"></script>
-<script src="js/store.js?v=11"></script>
-<script src="js/plan.js?v=11"></script>
-<script src="js/engine.js?v=11"></script>
-<script src="js/announce.js?v=11"></script>
-<script src="js/audio.js?v=11"></script>
-<script src="js/wake.js?v=11"></script>
-<script src="js/figure.js?v=11"></script>
-<script src="js/photos.js?v=11"></script>
-<script src="js/app.js?v=11"></script>
-<script src="js/library.js?v=11"></script>
+<script src="data/strings.js?v=12"></script>
+<script src="data/exercises.js?v=12"></script>
+<script src="data/templates.js?v=12"></script>
+<script src="data/poses.js?v=12"></script>
+<script src="data/voice-manifest.js?v=12"></script>
+<script src="js/core.js?v=12"></script>
+<script src="js/store.js?v=12"></script>
+<script src="js/plan.js?v=12"></script>
+<script src="js/workouts.js?v=12"></script>
+<script src="js/engine.js?v=12"></script>
+<script src="js/announce.js?v=12"></script>
+<script src="js/audio.js?v=12"></script>
+<script src="js/wake.js?v=12"></script>
+<script src="js/figure.js?v=12"></script>
+<script src="js/photos.js?v=12"></script>
+<script src="js/app.js?v=12"></script>
+<script src="js/library.js?v=12"></script>
+<script src="js/home.js?v=12"></script>
 </body>
 </html>

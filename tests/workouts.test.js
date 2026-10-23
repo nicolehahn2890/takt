@@ -238,3 +238,26 @@ test('buildSteps mit geloeschter eigener Uebung', function () {
   eq([s[0].name, s[0].exId], ['Meine Übung', 'own-weg']);
   eq(Takt.exerciseFor('own-weg', wIdx(), s[0].name).name, 'Meine Übung');
 });
+
+/* ---------- Startseite ---------- */
+test('weekStats zaehlt ab Montag 0 Uhr', function () {
+  var log = [
+    { date: new Date(2026, 9, 19, 8, 0).toISOString(), actualSec: 600 },
+    { date: new Date(2026, 9, 18, 23, 0).toISOString(), actualSec: 900 },
+    { date: new Date(2026, 9, 23, 10, 0).toISOString(), actualSec: 1230 },
+    { date: 'kaputt', actualSec: 100 },
+    { actualSec: 100 },
+    { date: new Date(2026, 9, 20, 9, 0).toISOString(), actualSec: 'x' }
+  ];
+  eq(Takt.weekStats(log, new Date(2026, 9, 23, 12, 0)), { seconds: 1830, count: 2 });
+  eq(Takt.weekStats(log, new Date(2026, 9, 25, 21, 0)), { seconds: 1830, count: 2 });
+  eq(Takt.weekStats(log, new Date(2026, 9, 26, 7, 0)), { seconds: 0, count: 0 });
+  eq(Takt.weekStats(null, new Date()), { seconds: 0, count: 0 });
+});
+
+test('THEMES hat Farbe und Name fuer alle Workout-Themen', function () {
+  Takt.WORKOUT_THEMES.forEach(function (k) {
+    ok(/^#[0-9A-F]{6}$/i.test(Takt.THEMES[k].color), k);
+    ok(Takt.THEMES[k].label.length > 2, k);
+  });
+});

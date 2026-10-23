@@ -118,8 +118,32 @@ window.Takt = window.Takt || {};
     return T.totalSeconds(T.buildSteps(workout, exIndex, { prepSeconds: 0 }));
   };
 
-  /* ---------- Workouts pruefen und kopieren ---------- */
+  /* ---------- Themen und Wochen-Minuten ---------- */
   T.WORKOUT_THEMES = ['core', 'bauch', 'dehnen', 'yoga', 'beine', 'ruecken'];
+  T.THEMES = {
+    core: { label: 'Vacuum & Core', color: '#C0BEA0' },
+    bauch: { label: 'Bauch', color: '#C8729A' },
+    dehnen: { label: 'Dehnen & R\u00fccken', color: '#A8C4A0' },
+    yoga: { label: 'Yoga & Atmung', color: '#B88CC0' },
+    beine: { label: 'Beine & Po', color: '#C4A882' },
+    ruecken: { label: 'Starker R\u00fccken', color: '#8AB4C4' }
+  };
+
+  /* Trainings seit Montag 0 Uhr (Ortszeit) */
+  T.weekStats = function (log, now) {
+    now = now instanceof Date ? now : new Date();
+    var monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ((now.getDay() + 6) % 7)).getTime();
+    var res = { seconds: 0, count: 0 };
+    (Array.isArray(log) ? log : []).forEach(function (e) {
+      var t = e && e.date ? new Date(e.date).getTime() : NaN;
+      if (!isFinite(t) || t < monday || t > now.getTime() || typeof e.actualSec !== 'number' || !isFinite(e.actualSec)) return;
+      res.seconds += Math.max(0, Math.round(e.actualSec));
+      res.count++;
+    });
+    return res;
+  };
+
+  /* ---------- Workouts pruefen und kopieren ---------- */
   var LIMIT = { name: 40, label: 30, repeat: [1, 10], duration: [10, 600], rest: [0, 120] };
   var COPY = ' (Kopie)';
 

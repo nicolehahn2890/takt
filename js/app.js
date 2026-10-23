@@ -3,7 +3,6 @@ window.Takt = window.Takt || {};
 (function (T) {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
-  var THEMES = { core: '#C0BEA0', bauch: '#C8729A', dehnen: '#A8C4A0', yoga: '#B88CC0', beine: '#C4A882', ruecken: '#8AB4C4' };
   var RING_C = 2 * Math.PI * 138;
   var PEACH = [
     '......gg....', '.....g......', '..pppp.ppp..', '.pplppppppp.',
@@ -21,10 +20,11 @@ window.Takt = window.Takt || {};
   var needTap = false;
   var wakeWarned = false;
   var enteredAt = 0;       // Zeitpunkt, an dem der Training-Screen erschien
+  var lastStart = null;    // { workout, opts } fuer \u201eNochmal\u201c, auch bei nicht gespeichertem Mix
 
   /* ---------- Hilfen ---------- */
   function show(name) {
-    ['start', 'train', 'done', 'lib', 'ex', 'own'].forEach(function (n) { $('screen-' + n).hidden = n !== name; });
+    Array.prototype.forEach.call(document.querySelectorAll('.screen'), function (el) { el.hidden = el.id !== 'screen-' + name; });
   }
   function toast(msg) {
     var t = $('toast');
@@ -33,10 +33,9 @@ window.Takt = window.Takt || {};
     clearTimeout(toast.h);
     toast.h = setTimeout(function () { t.hidden = true; }, 4500);
   }
-  function themeColor(theme) { return THEMES[theme] || THEMES.core; }
+  function themeColor(theme) { return (T.THEMES[theme] || T.THEMES.core).color; }
   function allWorkouts() { return (T.TEMPLATES || []).concat(data.workouts || []); }
   function findWorkout(id) { return allWorkouts().filter(function (w) { return w.id === id; })[0] || null; }
-  function stepsFor(w) { return T.buildSteps(w, exIndex, { prepSeconds: data.settings.prepSeconds }); }
   function voiceKeys(steps) {
     var keys = Object.keys(T.VOICE_LINES || {});
     steps.forEach(function (s) {
@@ -61,13 +60,7 @@ window.Takt = window.Takt || {};
     $('brand-logo').innerHTML = peachSvg();
     var own = (data.exercisesOwn || []).length;
     $('lib-sub').textContent = (T.EXERCISES || []).length + ' \u00dcbungen mit Figur und Ansage' + (own ? ' \u00b7 ' + own + ' eigene' : '');
-    $('start-list').innerHTML = allWorkouts().map(function (w) {
-      var steps = stepsFor(w);
-      return '<article class="card" style="--theme:' + themeColor(w.theme) + '">' +
-        '<div class="card-main"><h3>' + T.esc(w.name) + '</h3>' +
-        '<p>' + T.fmt(T.totalSeconds(steps)) + ' \u00b7 ' + T.workCount(steps) + ' \u00dcbungen</p></div>' +
-        '<button class="btn-start" data-start="' + T.esc(w.id) + '">Start</button></article>';
-    }).join('');
+    if (T.home) T.home.render();
   }
 
   function setLoading(on) {
@@ -87,13 +80,17 @@ window.Takt = window.Takt || {};
     });
   }
 
-  /* Muss aus einem Tipp heraus aufgerufen werden: Ton und Bildschirm-an brauchen das */
-  function startWorkout(id) {
-    var w = findWorkout(id);
+  /* Muss aus einem Tipp heraus aufgerufen werden: Ton und Bildschirm-an brauchen das.
+     ref: Id oder Workout-Objekt (z. B. ungespeicherter Mix); opts: { intensity, budgetSec } aus dem Anpassen-Fenster */
+  function startWorkout(ref, opts) {
+    var w = typeof ref === 'string' ? findWorkout(ref) : ref;
+    if (!w && lastStart && lastStart.workout.id === ref) w = lastStart.workout;
     if (!w || run) return;
+    opts = opts || {};
+    lastStart = { workout: w, opts: opts };
     T.audio.unlock();
     wakeOn();
-    var steps = stepsFor(w);
+    var steps = T.prepareSteps(w, exIndex, { prepSeconds: data.settings.prepSeconds, intensity: opts.intensity, budgetSec: opts.budgetSec });
     setLoading(true);
     var timeout = new Promise(function (res) { setTimeout(res, 2500); });
     Promise.race([T.audio.load(voiceKeys(steps)), timeout]).then(function () {
@@ -145,7 +142,7 @@ window.Takt = window.Takt || {};
   function buildDots() {
     var total = run.engine.view().workTotal;
     var box = $('t-dots');
-    if (total > 24) { box.innerHTML = '<div class="bar"><b id="t-dotbar"></b></div>'; return; }
+    if (total > 24) { box.innerHTML = '<div class="dbar"><b id="t-dotbar"></b></div>'; return; }
     var h = '';
     for (var i = 0; i < total; i++) h += '<i></i>';
     box.innerHTML = h;
@@ -326,7 +323,7 @@ window.Takt = window.Takt || {};
     document.addEventListener('click', onFirstTap, true);
     document.addEventListener('click', function (e) {
       var b = e.target.closest ? e.target.closest('[data-start]') : null;
-      if (b && !b.disabled) startWorkout(b.getAttribute('data-start'));
+      if (b && !b.disabled) startWorkout(b.getAttribute('data-start'), b.id === 'b-again' && lastStart ? lastStart.opts : null);
     });
     // Mitte tippen = Pause; kurz nach dem Start ignorieren (zweiter Tipp auf Start)
     $('t-mid').addEventListener('click', function () { if (Date.now() - enteredAt > 700) togglePause(); });
@@ -365,6 +362,17 @@ window.Takt = window.Takt || {};
         home: function () { renderStart(); show('start'); }
       });
       $('go-lib').addEventListener('click', function () { T.library.open(); });
+    }
+    if (T.home) {
+      T.home.init({
+        data: function () { return data; },
+        save: function () { return T.store.save(data); },
+        exIndex: function () { return exIndex; },
+        find: findWorkout,
+        start: startWorkout,
+        show: show,
+        toast: toast
+      });
     }
     renderStart();
     // Laenger als 30 Minuten liegengebliebene Trainings werden nicht fortgesetzt
