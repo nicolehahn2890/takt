@@ -1,0 +1,30 @@
+import React from 'react';
+// Needs ../assets/badges/badge-icons.js (window.Takt.BADGE_ICONS) and, for the list, ../assets/badges/badges.js (window.Takt.BADGES).
+export function AchievementBadge({ badge, earned = false, progress, size = 64, celebrate = false, delay = 0, onClick, style }) {
+  const icons = (window.Takt && window.Takt.BADGE_ICONS) || {};
+  const ring = !earned && progress && progress.need > 1;
+  const pct = ring ? Math.round(Math.min(1, progress.have / progress.need) * 100) : 0;
+  const inner = size - 8;
+  const outer = earned ? badge.color
+    : ring ? `conic-gradient(${badge.color} 0 ${pct}%, var(--surface-ghost-strong) ${pct}% 100%)`
+    : 'var(--surface-ghost)';
+  const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const Tag = onClick ? 'button' : 'div';
+  return (
+    <Tag onClick={onClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, background: 'none', border: 0, padding: 0,
+      color: 'var(--text)', minWidth: 0, animation: celebrate ? `takt-badge-pop .3s ease-out ${delay}ms both` : undefined, ...style }}>
+      <i style={{ width: size, height: size, borderRadius: '50%', background: outer, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
+        <b style={{ width: inner, height: inner, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: earned ? 'transparent' : 'var(--surface-sunken)', color: earned ? 'var(--text-on-accent)' : 'var(--text-muted)' }}>
+          <svg viewBox="0 0 24 24" width={Math.round(size * 0.44)} height={Math.round(size * 0.44)} fill="none" stroke="currentColor"
+            strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+            dangerouslySetInnerHTML={{ __html: icons[badge.icon] || '' }} />
+        </b>
+      </i>
+      <span style={{ fontSize: 12, lineHeight: 1.3, textAlign: 'center', color: earned ? 'var(--text)' : 'var(--text-muted)' }}>{badge.title}</span>
+      {ring && <em style={{ fontStyle: 'normal', fontSize: 11, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums', marginTop: -3 }}>
+        {fmt(Math.min(progress.have, progress.need))} von {fmt(progress.need)}</em>}
+    </Tag>
+  );
+}
+// Keyframes (add once): @keyframes takt-badge-pop { from { opacity: 0; transform: scale(.8) } to { opacity: 1; transform: scale(1) } }

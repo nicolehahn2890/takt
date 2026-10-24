@@ -120,7 +120,7 @@ All screens keep their current DOM. Visual spec:
 - `assets/takt-mark.svg`: the logo, a lunge figure (Ausfallschritt) in the figure colours.
 - `assets/alternates/`: other figure marks (Krieger-2, Hampelmann).
 - Exercise figures: keep using `js/figure.js`, `data/poses.js`, `data/exercises.js` from the repo.
-- Icons: Unicode glyphs as before (‹ › ✕ ◀︎ ▶︎ ❚❚ −15 +15). No icon font.
+- Icons: Unicode glyphs as before (‹ › ✕ ◀︎ ▶︎ ❚❚ −15 +15). No icon font. Exception (Schritt 4): achievement badges use embedded Tabler outline icons, see `design-system/DESIGN_GUIDE.md` → ACHIEVEMENT BADGES.
 
 ## Files in this bundle
 - `app.css`: drop-in replacement for `css/app.css`.

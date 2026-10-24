@@ -16,16 +16,17 @@ Screens: **Start** (weekly stat, Mix / + Neu, Meine Workouts, Vorlagen by theme,
 - `components/` — React primitives (see list) + one card per folder
 - `ui_kits/app/` — click-through recreation of the app
 - `assets/figure/` — figure engine `figure.js`, `poses.js`, `exercises.js` (verbatim from repo) · `assets/photos/` — 3 AI test photos · `assets/takt-mark.svg` (figure mark) + `logo-figure-*.svg` alternates
+- `assets/badges/` — `badges.js` (the 22 Abzeichen) and `badge-icons.js` (their Tabler icons), verbatim from repo `data/` · preview `guidelines/achievement-badges.html`
 - `SKILL.md`, `github.md`
 
 ## Components
 - core: **Button** (primary/secondary/ghost/danger/pill/link), **IconButton**
 - forms: **Chip**, **TextField**, **Checkbox**, **Segmented**, **RangeField**, **Stepper**
-- content: **ExerciseFigure**, **WorkoutCard**, **QuickTile**, **WeekStat**, **NavCard**, **ExerciseRow**, **Badge**, **BrandHeader**, **SectionTitle**, **TopBar**, **Hint**
+- content: **ExerciseFigure**, **WorkoutCard**, **QuickTile**, **WeekStat**, **NavCard**, **ExerciseRow**, **Badge**, **AchievementBadge**, **BrandHeader**, **SectionTitle**, **TopBar**, **Hint**
 - training: **TimerRing**, **ProgressDots**, **NextUp**, **TrainingControls**
 - feedback: **Banner**, **Toast**, **Sheet**
 
-Intentional additions: **ExerciseFigure** (React wrapper around `Takt.figure` so figures can be dropped anywhere), **SectionTitle** and **Hint** (replace the old uppercase `h2` and left-border `.ex-hint` patterns as part of the polish pass), **WeekStat** (typographic version of the editor mockup's boxed `.week`).
+Intentional additions: **ExerciseFigure** (React wrapper around `Takt.figure` so figures can be dropped anywhere), **SectionTitle** and **Hint** (replace the old uppercase `h2` and left-border `.ex-hint` patterns as part of the polish pass), **WeekStat** (typographic version of the editor mockup's boxed `.week`), **AchievementBadge** (Abzeichen, added in Schritt 4 at the user's request — see ACHIEVEMENT BADGES below). Not to be confused with **Badge**, the small read-only tag.
 
 ---
 
@@ -58,9 +59,21 @@ Intentional additions: **ExerciseFigure** (React wrapper around `Takt.figure` so
 
 ## ICONOGRAPHY
 - **No icon font, no SVG icon set.** Takt uses Unicode glyphs: `‹` back, `›` chevron, `✕` close, `◀︎ ▶︎` prev/next/play (with VS15 `&#xFE0E;` to prevent emoji rendering), `❚❚` pause, `−15 / +15` seek, `↑ ↓` reorder, `✓` checked, `+` add. Keep it that way; render them in DM Sans in soft round buttons (see `guidelines/brand-glyphs.html`).
+- **One exception: achievement badges.** Abzeichen use outline icons from **Tabler Icons 3.19.0** (MIT, embedded as SVG paths in `assets/badges/badge-icons.js`, stroke 1.8, round caps/joins, `currentColor`). Icons appear nowhere else — not in buttons, lists, navigation or the training screen.
 - **Illustration = figures** (`assets/figure/figure.js`). Load `exercises.js`, `poses.js`, `figure.js` and use `<ExerciseFigure exId="…">`.
 - **Logo:** the **figure mark** — a side-view lunge with arms extended (Ausfallschritt), built with the same `figure.js` geometry and colours as every exercise figure (`assets/takt-mark.svg`). Pair with the wordmark „Takt“ in Outfit 600. Alternates: `assets/logo-figure-*.svg`. (The pixel peach from `js/app.js` was retired at the user's request.)
 - **Emoji:** never.
+
+## ACHIEVEMENT BADGES (Abzeichen)
+Decided by the user on 2026-10-24 (style „C · Icon + Ring“). Source of truth: repo `data/badges.js`, `data/badge-icons.js`, `js/badges.js`, `css/app.css` („Schritt 4: Abzeichen“). Preview: `guidelines/achievement-badges.html`.
+- **Plaque:** circle 64 px with an inner disc 56 px and one icon 28 px. **Earned:** whole plaque in the group colour, icon in dark plum (`--text-on-accent`), title in `--text`. **Locked:** ghost ring (`--surface-ghost`) around a sunken disc (`--surface-sunken`), icon and title muted.
+- **Progress:** locked badges with a count goal show a conic ring in the group colour (`conic-gradient(colour 0 p%, --surface-ghost-strong p% 100%)`) and „4 von 10“ underneath (11 px, tabular, thousands with a dot: „1.000“). Yes/no badges (Frühaufsteherin, Nachteule, Eigenes Workout, Erstes Backup) stay plain grey.
+- **No numbers or words inside the plaque** — the title says what it is; numbers only appear as progress.
+- **Group colours:** Trainings Salbei `#C6C5A6` · Minuten Sand `#C4A882` · Serie Rosé `#BE7B9D` · Tageszeit Lavendel `#B794C5` · Abwechslung Dehnen-Grün `#A8C4A0` · Entdecken Rücken-Blau `#8AB4C4`.
+- **The 22:** Trainings 1/10/25/50/100 (flag, medal, medal-2, award, trophy) · Minuten 100/500/1.000 (clock, hourglass, rocket) · Tage in Folge 3/7/14/30 (flame, calendar-week, bolt, mountain) · Frühaufsteherin (sunrise), Nachteule (moon-stars) · Alle 6 Themen (palette), Mix-Meisterin (arrows-shuffle), Atemprofi (wind) · Eigenes Workout gebaut (pencil), Alle Vorlagen (layout-grid), 5 eigene Übungen (stretching), Erstes Backup (shield-check), 10 Notizen (notebook).
+- **Statistics page:** section „Abzeichen“ (Outfit 24 px) with „7 von 22“ on the right; 4-column grid, gap 14 px / 8 px; titles 12 px, max. two lines. Tap selects (2 px ring in the group colour) and shows one line below: „7 Tage in Folge · 7 Tage hintereinander trainiert · erreicht am 24. Okt. 2026“ or „· 4 von 7 Tagen“.
+- **Finish screen:** „Neues Abzeichen“ / „Neue Abzeichen“ (13 px, muted) above a centred row of plaques; each fades and scales in (.8 → 1, 300 ms ease-out, 120 ms stagger). No bounce, no confetti. Elsewhere (editor, own exercise, backup) a new badge is announced in the toast: „Neues Abzeichen: …“.
+- **Adding a badge** is content only: one line in `data/badges.js` (id, kind, n, icon, colour, title, rule); a new icon goes into `badge-icons.js` from the same Tabler version.
 
 ## Fonts
 Outfit + DM Sans load from Google Fonts (production loads only DM Sans; Outfit was added in this design system); no font binaries exist in the repo. If you want offline/self-hosted fonts, add the .woff2 files.

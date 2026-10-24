@@ -1,0 +1,27 @@
+import { CSSProperties } from 'react';
+/** One entry of window.Takt.BADGES (assets/badges/badges.js). */
+export interface TaktBadge {
+  id: string;
+  title: string;        // "7 Tage in Folge"
+  rule: string;         // "7 Tage hintereinander trainiert"
+  icon: string;         // key in window.Takt.BADGE_ICONS (Tabler outline, MIT)
+  color: string;        // group colour, filled when earned
+  kind: string;         // count | minutes | streak | before | from | themes | mix | breath | own | templates | ownEx | backup | notes
+  n: number;
+}
+/** Round achievement plaque: icon in the group colour when earned, grey with a progress ring while locked. */
+export interface AchievementBadgeProps {
+  badge: TaktBadge;
+  earned?: boolean;
+  /** Locked progress, e.g. { have: 4, need: 10 } -> ring at 40 % and "4 von 10". Ring only when need > 1. */
+  progress?: { have: number; need: number };
+  /** Plaque diameter in px (grid 64, finish screen 64). */
+  size?: number;
+  /** Finish screen: fade + scale .8 -> 1 in 300 ms. */
+  celebrate?: boolean;
+  /** Stagger for several new badges (120 ms steps). */
+  delay?: number;
+  onClick?: () => void;
+  style?: CSSProperties;
+}
+export declare function AchievementBadge(props: AchievementBadgeProps): JSX.Element;
