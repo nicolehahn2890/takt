@@ -72,3 +72,16 @@ test('announce sounds aus: Toene fallen weg', function () {
 test('VOICE_LINES enthaelt die festen Saetze', function () {
   eq(Object.keys(Takt.VOICE_LINES).sort(), ['done', 'go', 'left', 'next', 'pause', 'ready', 'right', 'side', 'warn10']);
 });
+
+/* ---------- Schritt 4: Seitenwechsel-Ansagen ---------- */
+test('announce side Reihenfolge', function () {
+  var steps = [{ kind: 'work', duration: 40, exId: 'seitstuetz', name: 'Seitstuetz', bilateral: true }];
+  eq(Takt.announce({ type: 'side', index: 0 }, annCtx('full', { steps: steps })), [B('go'), C('side'), C('right')]);
+  eq(Takt.announce({ type: 'side', index: 0 }, annCtx('beeps', { steps: steps })), [B('go')]);
+  eq(Takt.announce({ type: 'side', index: 0 }, annCtx('name', { steps: steps })), [B('go')]);
+});
+
+test('announce Links nach Name', function () {
+  var steps = [{ kind: 'work', duration: 40, exId: 'seitstuetz', name: 'Seitstuetz', bilateral: true }];
+  eq(Takt.announce(stepEv(0), annCtx('full', { steps: steps })), [B('go'), C('ex_seitstuetz'), C('left')]);
+});

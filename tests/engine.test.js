@@ -194,3 +194,65 @@ test('engine restore alter Snapshot ohne spent', function () {
   ok(e2.view().activeSec >= 0, 'activeSec fehlt');
   eq(e2.spentSeconds().length, 2);
 });
+
+/* ---------- Schritt 4: Seitenwechsel ---------- */
+function mkSide(durs, bilateral) {
+  var c = { t: 0 };
+  var steps = durs.map(function (d, i) { return { kind: 'work', duration: d, exId: 'x' + i, name: 'X' + i, bilateral: bilateral !== false }; });
+  return { c: c, e: Takt.Engine(steps, { now: function () { return c.t; } }) };
+}
+function types(evs) { return evs.map(function (e) { return e.type + (e.index != null ? e.index : ''); }); }
+
+test('engine side zur Haelfte', function () {
+  var m = mkSide([40]); m.e.start();
+  m.c.t = 19000; eq(types(m.e.tick()), []);
+  eq(m.e.view().side, 'links');
+  m.c.t = 20000; eq(types(m.e.tick()), ['side0']);
+  m.c.t = 21000; eq(types(m.e.tick()).indexOf('side0'), -1);
+  eq(m.e.view().side, 'rechts');
+});
+
+test('engine side mit +15', function () {
+  var m = mkSide([40]); m.e.start();
+  m.c.t = 5000; m.e.adjust(15);
+  m.c.t = 27000; eq(types(m.e.tick()).indexOf('side0'), -1);
+  m.c.t = 27500; ok(types(m.e.tick()).indexOf('side0') >= 0, 'Seitenwechsel bei 27,5 s');
+});
+
+test('engine side nach restore nicht doppelt', function () {
+  var m = mkSide([40]); m.e.start();
+  m.c.t = 21000; m.e.tick();
+  var e2 = Takt.Engine.restore(m.e.snapshot(), { now: function () { return m.c.t; } });
+  m.c.t = 22000; eq(types(e2.tick()).indexOf('side0'), -1);
+  eq(e2.view().side, 'rechts');
+});
+
+test('engine side beim Nachholen nur letzter Schritt', function () {
+  var m = mkSide([40, 40]); m.e.start();
+  m.c.t = 70000;
+  var t = types(m.e.tick());
+  eq([t.indexOf('side0'), t.indexOf('side1') >= 0], [-1, true]);
+});
+
+test('engine side nicht bei einseitigen Uebungen', function () {
+  var m = mkSide([40], false); m.e.start();
+  m.c.t = 20000; eq(types(m.e.tick()).indexOf('side0'), -1);
+  eq(m.e.view().side, null);
+});
+
+test('engine warn entfaellt nahe Seitenwechsel', function () {
+  function warnAt(dur, bil) {
+    var m = mkSide([dur], bil); m.e.start();
+    var all = [];
+    for (var t = 1000; t <= (dur - 4) * 1000; t += 1000) { m.c.t = t; all = all.concat(types(m.e.tick())); }
+    return all.indexOf('warn') >= 0;
+  }
+  eq([warnAt(20, true), warnAt(24, true), warnAt(40, true), warnAt(20, false)], [false, false, true, true]);
+});
+
+test('engine prev im Schritt setzt Seite zurueck', function () {
+  var m = mkSide([40]); m.e.start();
+  m.c.t = 21000; m.e.tick();
+  m.c.t = 25000; m.e.prev();
+  eq(m.e.view().side, 'links');
+});

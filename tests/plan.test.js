@@ -98,3 +98,9 @@ test('Bibliotheksname schlaegt gespeicherten Namen (nach Umbenennen)', function 
   var s = Takt.buildSteps(w, exIdx(), { prepSeconds: 5 });
   eq([s[0].name, s[1].name, s[3].name], ['Plank', 'Plank', 'Geloeschte']);
 });
+
+test('buildSteps bilateral aus Bibliothek', function () {
+  var w = { defaultWork: 30, defaultRest: 0, blocks: [{ repeat: 1, items: [
+    { exId: 'seitstuetz', duration: 20 }, { exId: 'plank', duration: 20 }, { exId: 'seitstuetz', duration: 20, bilateral: false }] }] };
+  eq(Takt.buildSteps(w, exIdx(), {}).map(function (s) { return s.bilateral; }), [true, false, false]);
+});

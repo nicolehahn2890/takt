@@ -198,7 +198,10 @@ window.Takt = window.Takt || {};
     if (v.paused) return 'Pausiert';
     if (s.kind === 'prep') return 'Gleich geht\u2019s los';
     if (s.kind === 'rest') return 'Pause';
-    return s.rounds > 1 ? 'Runde ' + s.round + ' von ' + s.rounds : '';
+    var parts = [];
+    if (s.rounds > 1) parts.push('Runde ' + s.round + ' von ' + s.rounds);
+    if (v.side) parts.push(v.side === 'links' ? 'Links' : 'Rechts');
+    return parts.join(' \u00b7 ');
   }
 
   function render() {

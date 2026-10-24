@@ -29,6 +29,7 @@ window.Takt = window.Takt || {};
       if (s.kind === 'work') {
         beep('go');
         if (mode !== 'beeps') clip(exKey(s));
+        if (mode === 'full' && s.bilateral) clip('left');
       } else if (s.kind === 'rest') {
         if (mode === 'full') {
           clip('pause');
@@ -44,6 +45,9 @@ window.Takt = window.Takt || {};
     } else if (ev.type === 'warn') {
       if (mode === 'full') clip('warn10');
       else if (mode === 'beeps') beep('warn');
+    } else if (ev.type === 'side') {
+      beep('go');
+      if (mode === 'full') { clip('side'); clip('right'); }
     } else if (ev.type === 'count') {
       beep('tick');
     } else if (ev.type === 'done') {

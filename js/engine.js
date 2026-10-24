@@ -10,6 +10,8 @@ window.Takt = window.Takt || {};
     var now = (opts && opts.now) || function () { return Date.now(); };
     // Verbrachte Zeit je Schritt (ms, ohne Pausieren); aeltere gespeicherte Staende haben sie noch nicht
     if (!Array.isArray(st.spent) || st.spent.length !== st.steps.length) st.spent = st.steps.map(function () { return 0; });
+    // Seitenwechsel: Index des Schritts, dessen Wechsel schon kam (-1 = noch nicht in diesem Durchlauf)
+    if (typeof st.sideDone !== 'number') st.sideDone = -1;
 
     function durMs(i) { return st.durations[i] * 1000; }
     function elapsedMs() {
@@ -36,12 +38,21 @@ window.Takt = window.Takt || {};
       if (st.index >= 0) book(st.index, elapsedMs());
       var t = now();
       st.index = i;
+      st.sideDone = -1;
       st.stepStart = t;
       if (st.paused) st.pausedAt = t;
       st.lastWhole = st.durations[i];
       return [{ type: 'step', index: i, catchUp: false }];
     }
     function isWork(i) { return st.steps[i] && st.steps[i].kind === 'work'; }
+    function isBi(i) { return isWork(i) && !!st.steps[i].bilateral; }
+    /* Seitenwechsel zur Haelfte der aktuellen Dauer, je Durchlauf eines Schritts genau einmal */
+    function sideEvent() {
+      var i = st.index;
+      if (!isBi(i) || st.sideDone === i || elapsedMs() < durMs(i) / 2) return [];
+      st.sideDone = i;
+      return [{ type: 'side', index: i }];
+    }
 
     var api = {
       steps: st.steps,
@@ -66,19 +77,22 @@ window.Takt = window.Takt || {};
           if (st.index + 1 >= st.steps.length) return finish();
           book(st.index, durMs(st.index));
           st.index++;
+          st.sideDone = -1;
           st.stepStart = endAt;   // Zeit mitnehmen: kein Drift
           advanced++;
         }
         var rem = remainingSec();
         if (advanced) {
           st.lastWhole = rem;
-          return [{ type: 'step', index: st.index, catchUp: advanced > 1 }];
+          return [{ type: 'step', index: st.index, catchUp: advanced > 1 }].concat(sideEvent());
         }
         var ev = [];
         var prev = st.lastWhole == null ? st.durations[st.index] : st.lastWhole;
         if (rem < prev) {
           var dur = st.durations[st.index];
-          if (isWork(st.index) && dur >= 20 && prev > 10 && rem <= 10 && rem > 3) ev.push({ type: 'warn' });
+          // "Noch zehn Sekunden" entfaellt, wenn der Seitenwechsel weniger als 4 s entfernt ist
+          var nearSide = isBi(st.index) && Math.abs(dur / 2 - 10) < 4;
+          if (isWork(st.index) && dur >= 20 && prev > 10 && rem <= 10 && rem > 3 && !nearSide) ev.push({ type: 'warn' });
           if (dur > 3) {
             var n = null;
             [3, 2, 1].forEach(function (k) { if (prev > k && rem <= k) n = k; });
@@ -86,7 +100,7 @@ window.Takt = window.Takt || {};
           }
         }
         st.lastWhole = rem;
-        return ev;
+        return sideEvent().concat(ev);
       },
 
       pause: function () {
@@ -163,6 +177,7 @@ window.Takt = window.Takt || {};
           remainingTotal: total,
           startedAt: st.startedAt,
           pausedSec: Math.round(pausedMs / 1000),
+          side: isBi(i) && !st.done ? (st.sideDone === i ? 'rechts' : 'links') : null,
           activeSec: Math.round(activeMs / 1000)
         };
       },

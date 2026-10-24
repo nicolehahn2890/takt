@@ -43,8 +43,10 @@ window.Takt = window.Takt || {};
     }
 
     works.forEach(function (w, i) {
+      var ex = w.item.exId ? exIndex[w.item.exId] : null;
       steps.push({ kind: 'work', duration: Math.max(1, Math.round(num(w.item.duration, defWork))),
         exId: w.item.exId || null, name: nameOf(w.item),
+        bilateral: typeof w.item.bilateral === 'boolean' ? w.item.bilateral : !!(ex && ex.beidseitig),
         workIndex: i, round: w.round, rounds: w.rounds, blockIndex: w.bi });
       var rest = Math.round(num(w.item.rest, defRest));
       if (rest > 0 && i < works.length - 1) {
