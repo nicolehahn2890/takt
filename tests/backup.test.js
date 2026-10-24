@@ -83,3 +83,19 @@ test('dayLabel fuer das Tagebuch', function () {
   eq(Takt.dayLabel(new Date(2026, 9, 24, 10)), 'Sa, 24. Okt.');
   eq(Takt.dayLabel(new Date(2026, 9, 19, 10)), 'Mo, 19. Okt.');
 });
+
+/* Review-Fund 1: auf dem iPhone (Home-Bildschirm-App) nie "Backup gesichert" melden, wenn keine Datei entstanden ist */
+test('backupRoute Teilen Download oder nichts', function () {
+  eq(Takt.backupRoute({ canShareFile: true, standalone: true }), 'share');
+  eq(Takt.backupRoute({ canShareFile: true, standalone: false }), 'share');
+  eq(Takt.backupRoute({ canShareFile: false, standalone: false }), 'download');
+  eq(Takt.backupRoute({ canShareFile: false, standalone: true }), 'none');
+});
+
+test('backupShareFailed Abbruch Wiederholen Download', function () {
+  eq(Takt.backupShareFailed('AbortError', true), 'ignore');
+  eq(Takt.backupShareFailed('AbortError', false), 'ignore');
+  eq(Takt.backupShareFailed('NotAllowedError', true), 'retry');
+  eq(Takt.backupShareFailed('NotAllowedError', false), 'download');
+  eq(Takt.backupShareFailed(undefined, true), 'retry');
+});

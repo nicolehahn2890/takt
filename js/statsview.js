@@ -84,13 +84,15 @@ window.Takt = window.Takt || {};
     return '<section class="st-sec"><div class="st-h"><h3>Backup</h3></div>' +
       '<p class="bk-when">' + T.esc(T.backupAgo(api.data().settings.lastBackup, new Date())) + '</p>' +
       '<p class="bk-txt">Sichert Workouts, eigene \u00dcbungen mit Fotos, Tagebuch, Abzeichen und Einstellungen in einer Datei.</p>' +
-      '<div class="bk-row"><button class="btn main" data-bk="save">Backup sichern</button><button class="btn" data-bk="load">Backup laden</button></div></section>';
+      '<div class="bk-row"><button class="btn main" data-bk="save"' + (photos ? '>Backup sichern' : ' disabled>Wird vorbereitet \u2026') + '</button>' +
+      '<button class="btn" data-bk="load">Backup laden</button></div></section>';
   }
 
   function preparePhotos() {
     photos = null;
     photosLoading = T.photos && T.photos.all ? T.photos.all().catch(function () { return {}; }) : Promise.resolve({});
-    photosLoading.then(function (p) { photos = p; });
+    // Erst wenn die Fotos da sind, wird "Backup sichern" aktiv: Teilen muss direkt im Tipp passieren
+    photosLoading.then(function (p) { photos = p; if (!$('screen-stats').hidden) render(); });
   }
 
   /* Nur Fotos, die eine eigene Uebung benutzt */
@@ -105,13 +107,18 @@ window.Takt = window.Takt || {};
     var b = T.makeBackup(d, usedPhotos(d, all || {}), new Date());
     var file = null;
     try { file = new File([b.text], b.filename, { type: 'application/json' }); } catch (e) { file = null; }
-    if (file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      navigator.share({ files: [file] }).then(backupDone, function (err) {
-        if (!err || err.name !== 'AbortError') download(b);   // Abbrechen zaehlt nicht als Backup
+    var canShareFile = false;
+    try { canShareFile = !!(file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })); } catch (e) { canShareFile = false; }
+    var standalone = window.navigator.standalone === true || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+    var route = T.backupRoute({ canShareFile: canShareFile, standalone: standalone });
+    if (route === 'share') {
+      navigator.share({ files: [file] }).then(function () { backupDone('Backup gesichert'); }, function (err) {
+        var next = T.backupShareFailed(err && err.name, standalone);
+        if (next === 'retry') api.toast('Das Teilen-Men\u00fc hat nicht geklappt. Bitte nochmal auf \u201eBackup sichern\u201c tippen.');
+        else if (next === 'download') download(b);
       });
-      return;
-    }
-    download(b);
+    } else if (route === 'download') download(b);
+    else api.toast('Hier kann Takt keine Datei sichern. \u00d6ffne Takt in Safari und sichere dort.');
   }
 
   function download(b) {
@@ -123,15 +130,15 @@ window.Takt = window.Takt || {};
     a.click();
     a.remove();
     setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
-    backupDone();
+    backupDone('Backup heruntergeladen');
   }
 
-  function backupDone() {
+  function backupDone(msg) {
     api.data().settings.lastBackup = new Date().toISOString();
     api.save();
     var fresh = api.badges ? api.badges() : [];
     render();
-    api.toast(fresh.length ? 'Backup gesichert \u00b7 Neues Abzeichen: ' + fresh.map(function (b) { return b.title; }).join(', ') : 'Backup gesichert');
+    api.toast(fresh.length ? msg + ' \u00b7 Neues Abzeichen: ' + fresh.map(function (b) { return b.title; }).join(', ') : msg);
   }
 
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
@@ -179,7 +186,6 @@ window.Takt = window.Takt || {};
       if (b.hasAttribute('data-bk')) {
         if (b.getAttribute('data-bk') === 'load') $('bk-file').click();
         else if (photos) saveBackup(photos);
-        else photosLoading.then(saveBackup);
         return;
       }
       if (b.hasAttribute('data-badge')) { var id = b.getAttribute('data-badge'); view.badge = view.badge === id ? null : id; }

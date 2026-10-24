@@ -62,6 +62,20 @@ window.Takt = window.Takt || {};
     };
   };
 
+  /* Weg zum Sichern: Teilen-Menue, sonst Download. In der Home-Bildschirm-App (standalone) kommt ein Download
+     auf dem iPhone oft nicht an; dort lieber nichts tun und das ehrlich sagen. */
+  T.backupRoute = function (env) {
+    env = env || {};
+    if (env.canShareFile) return 'share';
+    return env.standalone ? 'none' : 'download';
+  };
+
+  /* Teilen fehlgeschlagen: Abbrechen zaehlt nicht; in der App nochmal tippen lassen; im Browser Download versuchen */
+  T.backupShareFailed = function (errName, standalone) {
+    if (errName === 'AbortError') return 'ignore';
+    return standalone ? 'retry' : 'download';
+  };
+
   /* "Noch kein Backup" / "Letztes Backup: heute | gestern | vor 12 Tagen" (Kalendertage, Ortszeit) */
   T.backupAgo = function (iso, now) {
     var d = iso ? new Date(iso) : null;
