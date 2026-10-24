@@ -380,11 +380,11 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
 /* Titel mit "..."-Kuerzung schneiden sonst auf dem iPhone die Punkte von Ae/Oe/Ue ab */
 .bar h2, .bar-t h2, .wcard h3 { line-height: 1.3; padding-block: 3px; margin-block: -3px; }
 
-/* ---------- Teil B: Leiste unten (nur Text, aktiv als Lavendel-Pille, deckend ohne Weichzeichner) ---------- */
+/* ---------- Teil B: Leiste unten (nur Text, aktiv als Lavendel-Flaeche mit Radius 14 wie die Knoepfe, deckend ohne Weichzeichner) ---------- */
 .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 8; max-width: 560px; margin: 0 auto;
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;
   padding: 8px 16px calc(8px + env(safe-area-inset-bottom)); background: var(--bg); border-top: 1px solid var(--line); }
-.tabbar button { min-height: 44px; border-radius: 999px; font-size: 15px; font-weight: 600; color: var(--muted); transition: transform .15s, background .15s; }
+.tabbar button { min-height: 44px; border-radius: 14px; font-size: 15px; font-weight: 600; color: var(--muted); transition: transform .15s, background .15s; }
 .tabbar button:active { transform: scale(.96); }
 .tabbar button.on { background: var(--lila); color: var(--bg); font-weight: 700; }
 body.has-tabbar .start, body.has-tabbar #screen-lib { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
