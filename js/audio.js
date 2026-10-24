@@ -75,7 +75,8 @@ window.Takt = window.Takt || {};
       if (!ctx) return Promise.resolve(0);
       var jobs = (keys || []).filter(function (k) { return files()[k] && !buffers[k]; }).map(function (k) {
         if (!loading[k]) {
-          loading[k] = fetch(files()[k].src)
+          // Ansagetext in der Adresse: geaenderte Ansagen kommen nie aus dem alten Zwischenspeicher
+          loading[k] = fetch(files()[k].src + '?t=' + encodeURIComponent(files()[k].text || ''))
             .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); })
             .then(decode)
             .then(function (buf) {

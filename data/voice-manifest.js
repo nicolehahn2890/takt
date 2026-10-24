@@ -491,15 +491,15 @@ Takt.VOICE_FILES = {
  },
  "ex_vacuum-arme-oben": {
   "src": "assets/voice/ex_vacuum-arme-oben.mp3",
-  "text": "Stomach Vacuum mit Armen über dem Kopf"
+  "text": "Bauch-Vakuum mit Armen über dem Kopf"
  },
  "ex_vacuum-baerenstand": {
   "src": "assets/voice/ex_vacuum-baerenstand.mp3",
-  "text": "Stomach Vacuum im Bärenstand"
+  "text": "Bauch-Vakuum im Bärenstand"
  },
  "ex_vacuum-beckenkippen": {
   "src": "assets/voice/ex_vacuum-beckenkippen.mp3",
-  "text": "Stomach Vacuum mit Beckenkippen"
+  "text": "Bauch-Vakuum mit Beckenkippen"
  },
  "ex_vacuum-fersentippen": {
   "src": "assets/voice/ex_vacuum-fersentippen.mp3",
@@ -507,51 +507,51 @@ Takt.VOICE_FILES = {
  },
  "ex_vacuum-gehen": {
   "src": "assets/voice/ex_vacuum-gehen.mp3",
-  "text": "Stomach Vacuum beim Gehen auf der Stelle"
+  "text": "Bauch-Vakuum beim Gehen auf der Stelle"
  },
  "ex_vacuum-glute-bridge": {
   "src": "assets/voice/ex_vacuum-glute-bridge.mp3",
-  "text": "Stomach Vacuum in der Glute Bridge"
+  "text": "Bauch-Vakuum in der Glute Bridge"
  },
  "ex_vacuum-kindhaltung": {
   "src": "assets/voice/ex_vacuum-kindhaltung.mp3",
-  "text": "Stomach Vacuum in der Kindhaltung"
+  "text": "Bauch-Vakuum in der Kindhaltung"
  },
  "ex_vacuum-kniend": {
   "src": "assets/voice/ex_vacuum-kniend.mp3",
-  "text": "Stomach Vacuum kniend"
+  "text": "Bauch-Vakuum kniend"
  },
  "ex_vacuum-liegend": {
   "src": "assets/voice/ex_vacuum-liegend.mp3",
-  "text": "Stomach Vacuum liegend"
+  "text": "Bauch-Vakuum liegend"
  },
  "ex_vacuum-marschieren": {
   "src": "assets/voice/ex_vacuum-marschieren.mp3",
-  "text": "Stomach Vacuum mit Marschieren"
+  "text": "Bauch-Vakuum mit Marschieren"
  },
  "ex_vacuum-schneidersitz": {
   "src": "assets/voice/ex_vacuum-schneidersitz.mp3",
-  "text": "Stomach Vacuum im Schneidersitz"
+  "text": "Bauch-Vakuum im Schneidersitz"
  },
  "ex_vacuum-sitzend": {
   "src": "assets/voice/ex_vacuum-sitzend.mp3",
-  "text": "Stomach Vacuum sitzend"
+  "text": "Bauch-Vakuum sitzend"
  },
  "ex_vacuum-stehend": {
   "src": "assets/voice/ex_vacuum-stehend.mp3",
-  "text": "Stomach Vacuum stehend"
+  "text": "Bauch-Vakuum stehend"
  },
  "ex_vacuum-unterarmstuetz": {
   "src": "assets/voice/ex_vacuum-unterarmstuetz.mp3",
-  "text": "Stomach Vacuum im Unterarmstütz"
+  "text": "Bauch-Vakuum im Unterarmstütz"
  },
  "ex_vacuum-vierfuessler": {
   "src": "assets/voice/ex_vacuum-vierfuessler.mp3",
-  "text": "Stomach Vacuum Vierfüßler"
+  "text": "Bauch-Vakuum Vierfüßler"
  },
  "ex_vacuum-vorgebeugt": {
   "src": "assets/voice/ex_vacuum-vorgebeugt.mp3",
-  "text": "Stomach Vacuum vorgebeugt"
+  "text": "Bauch-Vakuum vorgebeugt"
  },
  "ex_vorbeuge-stehend": {
   "src": "assets/voice/ex_vorbeuge-stehend.mp3",

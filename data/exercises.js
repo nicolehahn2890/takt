@@ -468,5 +468,9 @@ window.Takt = window.Takt || {};
 
   // Ansagetexte, wo Katja den Namen anders sprechen soll
   var ANSAGE = { 'huefte-90-90': 'Neunzig neunzig Hüfte' };
-  T.EXERCISES.forEach(function (e) { if (ANSAGE[e.id]) e.ansage = ANSAGE[e.id]; });
+  T.EXERCISES.forEach(function (e) {
+    if (ANSAGE[e.id]) e.ansage = ANSAGE[e.id];
+    // Katja liest deutsch: „Stomach“ klingt falsch, gesprochen wird „Bauch-Vakuum“ (Nicole, 2026-10-24)
+    else if (/^Stomach Vacuum/.test(e.name)) e.ansage = e.name.replace('Stomach Vacuum', 'Bauch-Vakuum');
+  });
 })(window.Takt);

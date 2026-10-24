@@ -163,3 +163,10 @@ test('data: Vorlage beidseitig passt zur Bibliothek', function () {
     w.blocks.forEach(function (b) { b.items.forEach(function (i) { eq(i.bilateral, !!idx[i.exId].beidseitig, w.id + ' ' + i.exId); }); });
   });
 });
+
+test('data: Stomach-Uebungen spricht Katja als Bauch-Vakuum', function () {
+  var st = Takt.EXERCISES.filter(function (e) { return /^Stomach Vacuum/.test(e.name); });
+  eq(st.length, 15);
+  st.forEach(function (e) { eq(e.ansage, e.name.replace('Stomach Vacuum', 'Bauch-Vakuum'), e.id); });
+  eq(Takt.EXERCISES.filter(function (e) { return e.id === 'plank'; })[0].ansage, undefined);
+});
