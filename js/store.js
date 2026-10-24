@@ -17,7 +17,8 @@ window.Takt = window.Takt || {};
       },
       log: [],
       learn: {},
-      notes: {}
+      notes: {},
+      badges: {}
     };
   }
 

@@ -181,8 +181,11 @@ window.Takt = window.Takt || {};
     }
     dirty = false;
     ed = clone(w);
+    var fresh = api.badges ? api.badges() : [];
     api.home();
-    if (andStart) api.start(w); else api.toast('Gespeichert');
+    if (andStart) api.start(w);
+    if (fresh.length) api.toast('Neues Abzeichen: ' + fresh.map(function (b) { return b.title; }).join(', '));
+    else if (!andStart) api.toast('Gespeichert');
   }
   function remove() {
     if (!window.confirm('\u201e' + (ed.name || 'Workout') + '\u201c l\u00f6schen?')) return;

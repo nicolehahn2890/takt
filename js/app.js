@@ -319,6 +319,7 @@ window.Takt = window.Takt || {};
       note: ''
     };
     data.log.push(entry);
+    var fresh = checkBadges();
     T.store.save(data);
     T.store.clearRun();
     T.wake.off();
@@ -331,6 +332,7 @@ window.Takt = window.Takt || {};
     run = null;
     $('done-sub').textContent = T.fmt(entry.activeSec) + ' trainiert \u00b7 ' + v.workTotal + ' \u00dcbungen';
     $('done-adj').innerHTML = T.adjustSummary(entry.adjustments, exIndex).map(function (t) { return '<li>' + T.esc(t) + '</li>'; }).join('');
+    renderFreshBadges(fresh);
     noteEntryId = entry.id;
     $('done-note').value = '';
     $('b-again').setAttribute('data-start', wid);
@@ -341,6 +343,21 @@ window.Takt = window.Takt || {};
   /* Atem-Uebungen, bei denen mindestens die Haelfte der Zeit gelaufen ist (Abzeichen "Atemprofi") */
   function breathDone(steps, spent) {
     return steps.filter(function (s, i) { return s.kind === 'work' && s.atem && (spent[i] || 0) * 2 >= s.duration; }).length;
+  }
+
+  /* Abzeichen pruefen und erreichte merken; gibt die neu erreichten Ids zurueck (Speichern macht der Aufrufer) */
+  function checkBadges() {
+    var r = T.badgeCheck(data, new Date());
+    data.badges = r.earned;
+    return r.fresh;
+  }
+  function badgeById(id) { return (T.BADGES || []).filter(function (b) { return b.id === id; })[0]; }
+
+  /* Neu erreichte Abzeichen im Fertig-Screen, mit kurzer Einblendung */
+  function renderFreshBadges(ids) {
+    var list = ids.map(badgeById).filter(Boolean);
+    $('done-badges').innerHTML = list.length ? '<div class="done-bdg"><p>' + (list.length === 1 ? 'Neues Abzeichen' : 'Neue Abzeichen') + '</p><div class="bdg-row">' +
+      list.map(function (b, i) { return T.badgeHtml(b, true, 'div', 'pop', 'animation-delay:' + (i * 120) + 'ms'); }).join('') + '</div></div>' : '';
   }
 
   /* Lernende Dauer: hoechstens eine Frage im Fertig-Screen (ungespeicherte Mixe haben kein Workout) */
@@ -480,11 +497,14 @@ window.Takt = window.Takt || {};
       start: startWorkout,
       show: show,
       toast: toast,
-      home: function () { renderStart(); show('start'); window.scrollTo(0, 0); }
+      home: function () { renderStart(); show('start'); window.scrollTo(0, 0); },
+      badges: function () { var f = checkBadges(); if (f.length) T.store.save(data); return f.map(badgeById).filter(Boolean); }
     };
     if (T.home) T.home.init(api);
     if (T.editor) T.editor.init(api);
     if (T.statsView) T.statsView.init(api);
+    // Abzeichen still nachtragen (alte Trainings zaehlen mit, gefeiert wird nur Neues nach einem Training)
+    if (checkBadges().length) T.store.save(data);
     renderStart();
     // Laenger als 30 Minuten liegengebliebene Trainings werden nicht fortgesetzt
     var saved = T.store.loadRun(null, { maxAgeMs: 30 * 60 * 1000 });

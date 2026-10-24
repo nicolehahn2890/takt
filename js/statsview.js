@@ -5,7 +5,7 @@ window.Takt = window.Takt || {};
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var api = null;
-  var view = { kind: 'week', offset: 0, selected: null };
+  var view = { kind: 'week', offset: 0, selected: null, badge: null };
   var RING_C = 2 * Math.PI * 99;
   var KINDS = [['week', 'Woche'], ['month', 'Monat'], ['year', 'Jahr']];
 
@@ -40,14 +40,27 @@ window.Takt = window.Takt || {};
       '<div class="st-ring-in"><b>' + mins(s.seconds) + '<span>Min.</span></b><small>' + (s.count === 1 ? '1 Training' : s.count + ' Trainings') + '</small></div></div>' +
       '<p class="st-compare">' + T.esc(s.compare.text) + '</p>' +
       '<div class="st-chart st-' + view.kind + '"><div class="st-bars">' + bars + '</div><div class="st-axis">' + axis + '</div>' +
-      '<p class="st-sel">' + T.esc(selText) + '</p></div>' + top;
+      '<p class="st-sel">' + T.esc(selText) + '</p></div>' + top + badgesHtml();
+  }
+
+  /* Abzeichen als 4er-Raster; Antippen zeigt Name, Bedingung und Datum */
+  function badgesHtml() {
+    var got = api.data().badges || {};
+    var all = T.BADGES || [];
+    var n = all.filter(function (b) { return got[b.id]; }).length;
+    var sel = all.filter(function (b) { return b.id === view.badge; })[0];
+    var info = sel ? sel.title + ' \u00b7 ' + sel.rule + ' \u00b7 ' + (got[sel.id] ? 'erreicht am ' + T.badgeDate(got[sel.id]) : 'noch nicht erreicht') : '';
+    return '<section class="st-sec"><div class="st-h"><h3>Abzeichen</h3><span>' + n + ' von ' + all.length + '</span></div>' +
+      '<div class="bdg-grid">' + all.map(function (b) { return T.badgeHtml(b, !!got[b.id], 'button', b.id === view.badge ? 'sel' : ''); }).join('') + '</div>' +
+      '<p class="bdg-info">' + T.esc(info) + '</p></section>';
   }
 
   function bind() {
     $('stats-body').addEventListener('click', function (e) {
-      var b = e.target.closest('[data-kind],[data-nav],[data-bar]');
+      var b = e.target.closest('[data-kind],[data-nav],[data-bar],[data-badge]');
       if (!b || b.disabled) return;
-      if (b.hasAttribute('data-kind')) { view.kind = b.getAttribute('data-kind'); view.offset = 0; view.selected = null; }
+      if (b.hasAttribute('data-badge')) { var id = b.getAttribute('data-badge'); view.badge = view.badge === id ? null : id; }
+      else if (b.hasAttribute('data-kind')) { view.kind = b.getAttribute('data-kind'); view.offset = 0; view.selected = null; }
       else if (b.hasAttribute('data-nav')) { view.offset = Math.min(0, view.offset + Number(b.getAttribute('data-nav'))); view.selected = null; }
       else view.selected = Number(b.getAttribute('data-bar'));
       render();
@@ -56,6 +69,6 @@ window.Takt = window.Takt || {};
 
   T.statsView = {
     init: function (a) { api = a; bind(); },
-    open: function () { view.selected = null; render(); api.show('stats'); }
+    open: function () { view.selected = null; view.badge = null; render(); api.show('stats'); }
   };
 })(window.Takt);
