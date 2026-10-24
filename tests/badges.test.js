@@ -14,17 +14,20 @@ function bd(log, extra) {
 var BNOW = new Date(2026, 10, 30, 12, 0);
 
 test('badges Liste', function () {
-  eq(Takt.BADGES.length, 11);
+  eq(Takt.BADGES.length, 22);
   var ids = {};
   Takt.BADGES.forEach(function (b) {
-    ok(b.id && b.title && b.rule && b.face && b.color && b.kind, 'Felder bei ' + b.id);
+    ok(b.id && b.title && b.rule && b.icon && b.color && b.kind && b.n, 'Felder bei ' + b.id);
+    ok(Takt.BADGE_ICONS[b.icon], 'Icon fehlt bei ' + b.id);
     ok(!ids[b.id], 'doppelte Id ' + b.id); ids[b.id] = 1;
   });
   eq(Takt.badgeDate(new Date(2026, 9, 24, 10).toISOString()), '24. Okt. 2026');
+  eq([Takt.fmtCount(84), Takt.fmtCount(1000), Takt.fmtCount(12500)], ['84', '1.000', '12.500']);
 });
 
 test('badges erstes Training', function () {
-  eq(Takt.badgeCheck(bd([]), BNOW), { earned: {}, fresh: [] });
+  var leer = Takt.badgeCheck(bd([]), BNOW);
+  eq([leer.earned, leer.fresh], [{}, []]);
   var e = be(2026, 9, 20, 10);
   var r = Takt.badgeCheck(bd([e]), BNOW);
   eq(r.earned.first, e.date);
@@ -119,5 +122,44 @@ test('badges altes Protokoll ohne neue Felder', function () {
     null];
   var r = Takt.badgeCheck({ log: log }, BNOW);
   eq(r.fresh, ['first']);
-  eq(Takt.badgeCheck({}, BNOW), { earned: {}, fresh: [] });
+  var nichts = Takt.badgeCheck({}, BNOW);
+  eq([nichts.earned, nichts.fresh], [{}, []]);
+});
+
+test('badges Stufen', function () {
+  var log = [];
+  for (var i = 0; i < 100; i++) log.push(be(2026, 0, 1 + i, 10, { activeSec: 700 }));
+  var r = Takt.badgeCheck(bd(log), BNOW);
+  eq([r.earned.t25, r.earned.t50, r.earned.t100], [log[24].date, log[49].date, log[99].date]);
+  eq([r.earned.min500, r.earned.min1000], [log[42].date, log[85].date]);
+  eq([r.earned.streak14, r.earned.streak30], [log[13].date, log[29].date]);
+  r = Takt.badgeCheck(bd(log.slice(0, 99)), BNOW);
+  eq(r.earned.t100, undefined);
+});
+
+test('badges Entdecken', function () {
+  var log = Takt.TEMPLATES.map(function (t, i) { return be(2026, 8, 1 + i * 2, 10, { workoutId: t.id }); });
+  eq(Takt.badgeCheck(bd(log), BNOW).earned.tpl12, log[11].date);
+  var elf = log.slice(1).concat([be(2026, 9, 28, 10, { workoutId: Takt.TEMPLATES[1].id })]);
+  eq(Takt.badgeCheck(bd(elf), BNOW).earned.tpl12, undefined, 'eine Vorlage fehlt, eine doppelt');
+  var own = [1, 2, 3, 4].map(function (k) { return { id: 'own-' + k, name: 'E' + k }; });
+  eq(Takt.badgeCheck(bd([], { exercisesOwn: own }), BNOW).earned.ownex5, undefined);
+  own.push({ id: 'own-5', name: 'E5' });
+  eq(Takt.badgeCheck(bd([], { exercisesOwn: own }), BNOW).earned.ownex5, BNOW.toISOString());
+  eq(Takt.badgeCheck(bd([], { settings: { lastBackup: '2026-10-20T08:00:00.000Z' } }), BNOW).earned.backup1, '2026-10-20T08:00:00.000Z');
+  eq(Takt.badgeCheck(bd([], { settings: { lastBackup: null } }), BNOW).earned.backup1, undefined);
+  var notes = [];
+  for (var i = 0; i < 11; i++) notes.push(be(2026, 5, 1 + i * 2, 10, { note: i === 3 ? '   ' : 'Notiz ' + i }));
+  eq(Takt.badgeCheck(bd(notes), BNOW).earned.notes10, notes[10].date, 'leere Notiz zaehlt nicht');
+});
+
+test('badges Fortschritt', function () {
+  var log = [be(2026, 10, 28, 10, { activeSec: 1500, theme: 'yoga' }), be(2026, 10, 29, 10, { activeSec: 1500 })];
+  var p = Takt.badgeCheck(bd(log), BNOW).progress;
+  eq([p.ten, p.min100, p.streak7, p.themes, p.early, p.tpl12], [{ have: 2, need: 10 }, { have: 50, need: 100 }, { have: 2, need: 7 },
+    { have: 2, need: 6 }, { have: 0, need: 1 }, { have: 0, need: 12 }]);
+  var alt = [be(2026, 10, 20, 10), be(2026, 10, 21, 10)];
+  eq(Takt.badgeCheck(bd(alt), BNOW).progress.streak7, { have: 0, need: 7 }, 'Serie ist abgerissen');
+  eq(Takt.badgeCheck(bd(log), BNOW).progress.first, { have: 1, need: 1 });
+  eq(Takt.badgeCheck(bd([], { exercisesOwn: [{ id: 'own-1' }] }), BNOW).progress.ownex5, { have: 1, need: 5 });
 });

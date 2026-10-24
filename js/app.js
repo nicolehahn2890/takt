@@ -352,12 +352,23 @@ window.Takt = window.Takt || {};
     return r.fresh;
   }
   function badgeById(id) { return (T.BADGES || []).filter(function (b) { return b.id === id; })[0]; }
+  /* Fuer Editor, Bibliothek und Backup: pruefen, speichern, neu erreichte Abzeichen zurueckgeben */
+  function badgesNow() {
+    var f = checkBadges();
+    if (f.length) T.store.save(data);
+    return f.map(badgeById).filter(Boolean);
+  }
 
-  /* Neu erreichte Abzeichen im Fertig-Screen, mit kurzer Einblendung */
-  function renderFreshBadges(ids) {
+  /* Neu erreichte Abzeichen im Fertig-Screen, mit kurzer Einblendung (nur die ab Stelle "from" werden eingeblendet) */
+  var doneBadges = [];
+  function renderFreshBadges(ids, from) {
+    from = from || 0;
+    doneBadges = ids.slice();
     var list = ids.map(badgeById).filter(Boolean);
     $('done-badges').innerHTML = list.length ? '<div class="done-bdg"><p>' + (list.length === 1 ? 'Neues Abzeichen' : 'Neue Abzeichen') + '</p><div class="bdg-row">' +
-      list.map(function (b, i) { return T.badgeHtml(b, true, 'div', 'pop', 'animation-delay:' + (i * 120) + 'ms'); }).join('') + '</div></div>' : '';
+      list.map(function (b, i) {
+        return T.badgeHtml(b, true, null, i >= from ? { cls: 'pop', style: 'animation-delay:' + ((i - from) * 120) + 'ms' } : null);
+      }).join('') + '</div></div>' : '';
   }
 
   /* Lernende Dauer: hoechstens eine Frage im Fertig-Screen (ungespeicherte Mixe haben kein Workout) */
@@ -406,7 +417,9 @@ window.Takt = window.Takt || {};
     var e = (data.log || []).filter(function (x) { return x.id === noteEntryId; })[0];
     if (!e) return;
     e.note = $('done-note').value.slice(0, 500);
+    var fresh = checkBadges();   // z. B. "10 Notizen"
     T.store.save(data);
+    if (fresh.length) renderFreshBadges(doneBadges.concat(fresh), doneBadges.length);
   }
 
   function abort() {
@@ -486,6 +499,7 @@ window.Takt = window.Takt || {};
         reindex: reindex,
         show: show,
         toast: toast,
+        badges: badgesNow,
         home: function () { renderStart(); show('start'); }
       });
     }
@@ -498,7 +512,7 @@ window.Takt = window.Takt || {};
       show: show,
       toast: toast,
       home: function () { renderStart(); show('start'); window.scrollTo(0, 0); },
-      badges: function () { var f = checkBadges(); if (f.length) T.store.save(data); return f.map(badgeById).filter(Boolean); }
+      badges: badgesNow
     };
     if (T.home) T.home.init(api);
     if (T.editor) T.editor.init(api);

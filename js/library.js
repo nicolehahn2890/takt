@@ -257,7 +257,8 @@ window.Takt = window.Takt || {};
       api.reindex();
       btn.disabled = false;
       openEx(ex.id);
-      api.toast('Gespeichert.');
+      var fresh = api.badges ? api.badges() : [];
+      api.toast(fresh.length ? 'Neues Abzeichen: ' + fresh.map(function (b) { return b.title; }).join(', ') : 'Gespeichert.');
     }, function (err) {
       btn.disabled = false;
       $('own-err-photo').textContent = (err && err.message) || 'Das Foto konnte nicht gespeichert werden.';

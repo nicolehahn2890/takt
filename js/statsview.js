@@ -44,15 +44,24 @@ window.Takt = window.Takt || {};
       '<p class="st-sel">' + T.esc(selText) + '</p></div>' + top + badgesHtml() + diaryHtml() + backupHtml();
   }
 
-  /* Abzeichen als 4er-Raster; Antippen zeigt Name, Bedingung und Datum */
+  /* Abzeichen als 4er-Raster mit Fortschritt; Antippen zeigt Name, Bedingung und Datum bzw. Stand */
   function badgesHtml() {
     var got = api.data().badges || {};
+    var prog = T.badgeCheck(api.data(), new Date()).progress;
     var all = T.BADGES || [];
     var n = all.filter(function (b) { return got[b.id]; }).length;
     var sel = all.filter(function (b) { return b.id === view.badge; })[0];
-    var info = sel ? sel.title + ' \u00b7 ' + sel.rule + ' \u00b7 ' + (got[sel.id] ? 'erreicht am ' + T.badgeDate(got[sel.id]) : 'noch nicht erreicht') : '';
+    var info = '';
+    if (sel) {
+      var p = prog[sel.id];
+      var state = got[sel.id] ? 'erreicht am ' + T.badgeDate(got[sel.id]) :
+        p && p.need > 1 ? T.fmtCount(p.have) + ' von ' + T.fmtCount(p.need) + ' ' + (T.BADGE_UNITS[sel.kind] || '') : 'noch nicht erreicht';
+      info = sel.title + ' \u00b7 ' + sel.rule + ' \u00b7 ' + state.trim();
+    }
     return '<section class="st-sec"><div class="st-h"><h3>Abzeichen</h3><span>' + n + ' von ' + all.length + '</span></div>' +
-      '<div class="bdg-grid">' + all.map(function (b) { return T.badgeHtml(b, !!got[b.id], 'button', b.id === view.badge ? 'sel' : ''); }).join('') + '</div>' +
+      '<div class="bdg-grid">' + all.map(function (b) {
+        return T.badgeHtml(b, !!got[b.id], prog[b.id], { tag: 'button', cls: b.id === view.badge ? 'sel' : '' });
+      }).join('') + '</div>' +
       '<p class="bdg-info">' + T.esc(info) + '</p></section>';
   }
 
@@ -120,8 +129,9 @@ window.Takt = window.Takt || {};
   function backupDone() {
     api.data().settings.lastBackup = new Date().toISOString();
     api.save();
+    var fresh = api.badges ? api.badges() : [];
     render();
-    api.toast('Backup gesichert');
+    api.toast(fresh.length ? 'Backup gesichert \u00b7 Neues Abzeichen: ' + fresh.map(function (b) { return b.title; }).join(', ') : 'Backup gesichert');
   }
 
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
