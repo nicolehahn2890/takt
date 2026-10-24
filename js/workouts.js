@@ -224,6 +224,7 @@ window.Takt = window.Takt || {};
       createdAt: typeof input.createdAt === 'string' && input.createdAt ? input.createdAt : stamp,
       updatedAt: stamp
     };
+    if (input.origin === 'mix') workout.origin = 'mix';   // Herkunft fuer das Abzeichen "Mix-Meisterin"
     return { ok: !errors.length, errors: errors, workout: workout };
   };
 
@@ -234,6 +235,7 @@ window.Takt = window.Takt || {};
     var name = String(c.name || '').trim();
     if (c.source === 'own' || !c.source) name = name.slice(0, LIMIT.name - COPY.length).trim() + COPY;
     var stamp = stampOf();
+    if (c.source === 'mix') c.origin = 'mix';
     c.id = T.uid('w-');
     c.name = name;
     c.source = 'own';

@@ -197,4 +197,20 @@ window.Takt = window.Takt || {};
     return { label: label(kind, offset, r, now), current: current, seconds: seconds, count: count, bars: bars,
       compare: compare, ring: ring, top: top, selected: selected };
   };
+
+  /* Anpassungen eines Trainings in Worten: "Plank 2x verlaengert" (netto je Uebung, 15 s je Tipp) */
+  T.adjustSummary = function (adjustments, exIndex) {
+    var order = [], net = {};
+    (Array.isArray(adjustments) ? adjustments : []).forEach(function (a) {
+      if (!a || typeof a.delta !== 'number' || !isFinite(a.delta)) return;
+      var k = a.exId || '';
+      if (!Object.prototype.hasOwnProperty.call(net, k)) { net[k] = 0; order.push(k); }
+      net[k] += a.delta;
+    });
+    return order.filter(function (k) { return net[k] !== 0; }).map(function (k) {
+      var e = k && exIndex ? exIndex[k] : null;
+      var n = Math.max(1, Math.round(Math.abs(net[k]) / 15));
+      return ((e && e.name) || '\u00dcbung') + ' ' + n + '\u00d7 ' + (net[k] > 0 ? 'verl\u00e4ngert' : 'gek\u00fcrzt');
+    });
+  };
 })(window.Takt);

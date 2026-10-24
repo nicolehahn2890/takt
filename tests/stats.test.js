@@ -133,3 +133,12 @@ test('periodStats Bereich Anteil', function () {
   var only = Takt.periodStats([E(D(2026, 10, 20, 8), 700, { sonst: 500 })], 'week', 0, now).top;
   eq([only.key, only.share], ['sonst', 100]);
 });
+
+/* ---------- Schritt 4: Fertig-Screen ---------- */
+test('adjustSummary netto', function () {
+  var idx = Takt.indexExercises(Takt.EXERCISES);
+  var adj = [{ exId: 'plank', delta: 15 }, { exId: 'crunch', delta: -15 }, { exId: 'plank', delta: 15 },
+    { exId: 'dead-bug', delta: 15 }, { exId: 'dead-bug', delta: -15 }, { exId: 'own-weg', delta: 15 }];
+  eq(Takt.adjustSummary(adj, idx), ['Plank 2× verlängert', 'Crunch 1× gekürzt', 'Übung 1× verlängert']);
+  eq(Takt.adjustSummary(null, idx), []);
+});

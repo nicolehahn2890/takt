@@ -15,6 +15,7 @@ window.Takt = window.Takt || {};
   var wakeWarned = false;
   var enteredAt = 0;       // Zeitpunkt, an dem der Training-Screen erschien
   var lastStart = null;
+  var noteEntryId = null, noteTimer = null;
   var breathIdx = -1, breathLast = -1;   // Atem-Toene: Schritt und zuletzt gepruefte Schrittzeit    // { workout, opts } fuer \u201eNochmal\u201c, auch bei nicht gespeichertem Mix
 
   /* ---------- Hilfen ---------- */
@@ -91,7 +92,10 @@ window.Takt = window.Takt || {};
     var timeout = new Promise(function (res) { setTimeout(res, 2500); });
     Promise.race([T.audio.load(voiceKeys(steps)), timeout]).then(function () {
       setLoading(false);
-      run = { workout: { id: w.id, name: w.name, theme: w.theme || 'core' }, engine: T.Engine(steps) };
+      run = { workout: { id: w.id, name: w.name, theme: w.theme || 'core',
+        source: w.source === 'template' || w.source === 'mix' ? w.source : 'own',
+        origin: w.origin === 'mix' || w.source === 'mix' ? 'mix' : null,
+        adjusted: !!(opts.budgetSec || (opts.intensity && opts.intensity !== 'normal')) }, engine: T.Engine(steps) };
       enterTraining();
       handle(run.engine.start());
       render();
@@ -305,7 +309,13 @@ window.Takt = window.Takt || {};
       activeSec: v.activeSec,
       theme: run.workout.theme || 'core',
       areaSec: T.areaSeconds(steps, run.engine.spentSeconds(), exIndex),
-      adjustments: run.engine.adjustments.slice()
+      adjustments: run.engine.adjustments.slice(),
+      source: run.workout.source || 'own',
+      origin: run.workout.origin || null,
+      adjusted: !!run.workout.adjusted,
+      breathCount: breathDone(steps, run.engine.spentSeconds()),
+      startedAt: v.startedAt ? new Date(v.startedAt).toISOString() : null,
+      note: ''
     };
     data.log.push(entry);
     T.store.save(data);
@@ -319,8 +329,24 @@ window.Takt = window.Takt || {};
     T.figure.mount($('done-fig'), (T.POSES || {}).kindhaltung || T.POSE_DEFAULT);
     run = null;
     $('done-sub').textContent = T.fmt(entry.activeSec) + ' trainiert \u00b7 ' + v.workTotal + ' \u00dcbungen';
+    $('done-adj').innerHTML = T.adjustSummary(entry.adjustments, exIndex).map(function (t) { return '<li>' + T.esc(t) + '</li>'; }).join('');
+    noteEntryId = entry.id;
+    $('done-note').value = '';
     $('b-again').setAttribute('data-start', wid);
     show('done');
+  }
+
+  /* Atem-Uebungen, bei denen mindestens die Haelfte der Zeit gelaufen ist (Abzeichen "Atemprofi") */
+  function breathDone(steps, spent) {
+    return steps.filter(function (s, i) { return s.kind === 'work' && s.atem && (spent[i] || 0) * 2 >= s.duration; }).length;
+  }
+
+  /* Notiz im Fertig-Screen: wird kurz nach dem Tippen im Protokoll gespeichert */
+  function saveNote() {
+    var e = (data.log || []).filter(function (x) { return x.id === noteEntryId; })[0];
+    if (!e) return;
+    e.note = $('done-note').value.slice(0, 500);
+    T.store.save(data);
   }
 
   function abort() {
@@ -367,6 +393,8 @@ window.Takt = window.Takt || {};
       if (run && window.confirm('Training beenden?')) abort();
     });
     $('b-home').addEventListener('click', function () { renderStart(); show('start'); });
+    $('done-note').addEventListener('input', function () { clearTimeout(noteTimer); noteTimer = setTimeout(saveNote, 400); });
+    $('done-note').addEventListener('blur', function () { clearTimeout(noteTimer); saveNote(); });
     $('tabbar').addEventListener('click', function (e) {
       var b = e.target.closest('[data-tab]');
       if (b) openTab(b.getAttribute('data-tab'));

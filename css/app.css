@@ -439,3 +439,14 @@ body.has-tabbar .start, body.has-tabbar #screen-lib { padding-bottom: calc(100px
 .is-breath.is-paused .phase { color: var(--pink); }
 .is-breath .time { font-size: 40px; letter-spacing: -1px; }
 
+/* ---------- Schritt 4: Fertig-Screen ---------- */
+.finish { padding-top: calc(24px + var(--glass-top) + env(safe-area-inset-top)); padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+.done-adj { list-style: none; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.done-adj:empty { display: none; }
+.done-note { display: block; width: 100%; max-width: 420px; margin-top: var(--s3); text-align: left; }
+.done-note span { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin: 0 2px 6px; }
+.done-note textarea { display: block; width: 100%; background: var(--card); color: var(--text); border: 1px solid transparent; border-radius: 12px;
+  padding: 12px; font: inherit; font-size: 16px; resize: none; outline: none; }
+.done-note textarea:focus { border-color: var(--lila); }
+#done-badges:empty, #done-learn:empty { display: none; }
+

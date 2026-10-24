@@ -309,3 +309,15 @@ test('THEMES nach Design v2', function () {
   Object.keys(Takt.THEMES).forEach(function (k) { c[k] = Takt.THEMES[k].color.toUpperCase(); });
   eq(c, { core: '#C6C5A6', bauch: '#BE7B9D', dehnen: '#A8C4A0', yoga: '#B794C5', beine: '#C4A882', ruecken: '#8AB4C4' });
 });
+
+test('validateWorkout behaelt origin mix', function () {
+  var r = Takt.validateWorkout({ name: 'Mix: Core', theme: 'core', origin: 'mix', blocks: [{ repeat: 1, items: wItems(1, 40) }] });
+  eq([r.workout.origin, r.workout.source], ['mix', 'own']);
+  eq(Takt.validateWorkout({ name: 'X', blocks: [{ repeat: 1, items: wItems(1, 40) }] }).workout.origin, undefined);
+});
+
+test('copyWorkout Mix setzt origin', function () {
+  var m = Takt.makeMix({ themes: ['core'], minutes: 10, seed: 3 }, Takt.EXERCISES);
+  var c = Takt.copyWorkout(m);
+  eq([c.origin, c.source, Takt.validateWorkout(c).workout.origin], ['mix', 'own', 'mix']);
+});
