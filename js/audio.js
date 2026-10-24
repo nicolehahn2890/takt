@@ -8,7 +8,9 @@ window.Takt = window.Takt || {};
   var bounds = {};
   var loading = {};
   var playing = [];
-  var TONES = { tick: [880, 0.15], go: [1320, 0.35], warn: [660, 0.25], rest: [520, 0.3], end: [1320, 0.6] };
+  // [Frequenz, Dauer, Lautstaerke, Einblenden]; Atem-Toene leiser und weich
+  var TONES = { tick: [880, 0.15], go: [1320, 0.35], warn: [660, 0.25], rest: [520, 0.3], end: [1320, 0.6],
+    'in': [660, 0.6, 0.3, 0.12], out: [440, 0.8, 0.3, 0.12] };
 
   function files() { return T.VOICE_FILES || {}; }
 
@@ -26,13 +28,13 @@ window.Takt = window.Takt || {};
     playing = [];
   }
 
-  function beepAt(freq, dur, t) {
+  function beepAt(freq, dur, t, gain, attack) {
     var o = ctx.createOscillator();
     var g = ctx.createGain();
     o.type = 'sine';
     o.frequency.value = freq;
     g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.6, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(gain || 0.6, t + (attack || 0.015));
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     o.connect(g);
     g.connect(ctx.destination);
@@ -100,7 +102,7 @@ window.Takt = window.Takt || {};
       actions.forEach(function (a) {
         if (a.type === 'beep') {
           var tone = TONES[a.tone] || TONES.tick;
-          beepAt(tone[0], tone[1], t);
+          beepAt(tone[0], tone[1], t, tone[2], tone[3]);
           t += tone[1] + 0.06;
         } else if (a.type === 'clip') {
           var buf = buffers[a.key];

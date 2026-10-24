@@ -47,6 +47,7 @@ window.Takt = window.Takt || {};
       steps.push({ kind: 'work', duration: Math.max(1, Math.round(num(w.item.duration, defWork))),
         exId: w.item.exId || null, name: nameOf(w.item),
         bilateral: typeof w.item.bilateral === 'boolean' ? w.item.bilateral : !!(ex && ex.beidseitig),
+        atem: ex && ex.typ === 'atem' && ex.atem ? ex.atem : null,
         workIndex: i, round: w.round, rounds: w.rounds, blockIndex: w.bi });
       var rest = Math.round(num(w.item.rest, defRest));
       if (rest > 0 && i < works.length - 1) {

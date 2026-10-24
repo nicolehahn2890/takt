@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <link rel="icon" href="assets/takt-mark.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icon-180.png">
-<link rel="stylesheet" href="css/app.css?v=34">
+<link rel="stylesheet" href="css/app.css?v=35">
 </head>
 <body>
 
@@ -45,6 +45,7 @@
   <div class="t-mid" id="t-mid">
     <div class="ring">
       <svg viewBox="0 0 300 300" aria-hidden="true"><circle class="track" cx="150" cy="150" r="138"/><circle class="bar" id="t-bar" cx="150" cy="150" r="138"/></svg>
+      <div class="breath" aria-hidden="true"><i id="t-breath"></i></div>
       <div class="ring-in"><div class="phase" id="t-phase"></div><div class="time" id="t-time">0:00</div><div class="of" id="t-of"></div></div>
     </div>
     <div class="ex"><div class="ex-fig-train"><svg id="t-fig" aria-hidden="true"></svg><img id="t-photo" alt="" hidden></div><h1 id="t-ex"></h1><p id="t-desc"></p></div>
@@ -213,26 +214,27 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="data/strings.js?v=34"></script>
-<script src="data/exercises.js?v=34"></script>
-<script src="data/templates.js?v=34"></script>
-<script src="data/poses.js?v=34"></script>
-<script src="data/voice-manifest.js?v=34"></script>
-<script src="js/core.js?v=34"></script>
-<script src="js/store.js?v=34"></script>
-<script src="js/plan.js?v=34"></script>
-<script src="js/workouts.js?v=34"></script>
-<script src="js/stats.js?v=34"></script>
-<script src="js/engine.js?v=34"></script>
-<script src="js/announce.js?v=34"></script>
-<script src="js/audio.js?v=34"></script>
-<script src="js/wake.js?v=34"></script>
-<script src="js/figure.js?v=34"></script>
-<script src="js/photos.js?v=34"></script>
-<script src="js/app.js?v=34"></script>
-<script src="js/library.js?v=34"></script>
-<script src="js/home.js?v=34"></script>
-<script src="js/editor.js?v=34"></script>
-<script src="js/statsview.js?v=34"></script>
+<script src="data/strings.js?v=35"></script>
+<script src="data/exercises.js?v=35"></script>
+<script src="data/templates.js?v=35"></script>
+<script src="data/poses.js?v=35"></script>
+<script src="data/voice-manifest.js?v=35"></script>
+<script src="js/core.js?v=35"></script>
+<script src="js/store.js?v=35"></script>
+<script src="js/plan.js?v=35"></script>
+<script src="js/workouts.js?v=35"></script>
+<script src="js/stats.js?v=35"></script>
+<script src="js/breath.js?v=35"></script>
+<script src="js/engine.js?v=35"></script>
+<script src="js/announce.js?v=35"></script>
+<script src="js/audio.js?v=35"></script>
+<script src="js/wake.js?v=35"></script>
+<script src="js/figure.js?v=35"></script>
+<script src="js/photos.js?v=35"></script>
+<script src="js/app.js?v=35"></script>
+<script src="js/library.js?v=35"></script>
+<script src="js/home.js?v=35"></script>
+<script src="js/editor.js?v=35"></script>
+<script src="js/statsview.js?v=35"></script>
 </body>
 </html>

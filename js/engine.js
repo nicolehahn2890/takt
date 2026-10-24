@@ -46,6 +46,7 @@ window.Takt = window.Takt || {};
     }
     function isWork(i) { return st.steps[i] && st.steps[i].kind === 'work'; }
     function isBi(i) { return isWork(i) && !!st.steps[i].bilateral; }
+    function isAtem(i) { return isWork(i) && !!st.steps[i].atem; }
     /* Seitenwechsel zur Haelfte der aktuellen Dauer, je Durchlauf eines Schritts genau einmal */
     function sideEvent() {
       var i = st.index;
@@ -92,8 +93,9 @@ window.Takt = window.Takt || {};
           var dur = st.durations[st.index];
           // "Noch zehn Sekunden" entfaellt, wenn der Seitenwechsel weniger als 4 s entfernt ist
           var nearSide = isBi(st.index) && Math.abs(dur / 2 - 10) < 4;
-          if (isWork(st.index) && dur >= 20 && prev > 10 && rem <= 10 && rem > 3 && !nearSide) ev.push({ type: 'warn' });
-          if (dur > 3) {
+          // Atem-Uebungen: kein "Noch zehn Sekunden" und kein 3-2-1, die Atem-Toene fuehren
+          if (isWork(st.index) && dur >= 20 && prev > 10 && rem <= 10 && rem > 3 && !nearSide && !isAtem(st.index)) ev.push({ type: 'warn' });
+          if (dur > 3 && !isAtem(st.index)) {
             var n = null;
             [3, 2, 1].forEach(function (k) { if (prev > k && rem <= k) n = k; });
             if (n !== null) ev.push({ type: 'count', n: n });
@@ -178,6 +180,7 @@ window.Takt = window.Takt || {};
           startedAt: st.startedAt,
           pausedSec: Math.round(pausedMs / 1000),
           side: isBi(i) && !st.done ? (st.sideDone === i ? 'rechts' : 'links') : null,
+          elapsedMs: i >= 0 && !st.done ? elapsedMs() : 0,
           activeSec: Math.round(activeMs / 1000)
         };
       },

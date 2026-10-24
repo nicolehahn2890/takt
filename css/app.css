@@ -428,3 +428,14 @@ body.has-tabbar .start, body.has-tabbar #screen-lib { padding-bottom: calc(100px
 .st-top-row span { font-family: var(--font-display); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .st-top small { display: block; color: var(--muted); font-size: 13px; margin-top: 4px; }
 
+/* ---------- Schritt 4: Atem-Modus (atmender Kreis statt Ring) ---------- */
+.breath { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; }
+.breath i { display: block; width: 100%; height: 100%; border-radius: 50%; background: rgba(183,148,197,.18); border: 3px solid var(--lila);
+  transform: scale(.6); transition: transform .3s linear; }
+.is-breath .ring svg { visibility: hidden; }
+.is-breath .breath { display: flex; }
+.is-breath .ex-fig-train { display: none; }
+.is-breath .phase { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--text); min-height: 30px; }
+.is-breath.is-paused .phase { color: var(--pink); }
+.is-breath .time { font-size: 40px; letter-spacing: -1px; }
+

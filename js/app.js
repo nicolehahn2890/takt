@@ -14,7 +14,8 @@ window.Takt = window.Takt || {};
   var needTap = false;
   var wakeWarned = false;
   var enteredAt = 0;       // Zeitpunkt, an dem der Training-Screen erschien
-  var lastStart = null;    // { workout, opts } fuer \u201eNochmal\u201c, auch bei nicht gespeichertem Mix
+  var lastStart = null;
+  var breathIdx = -1, breathLast = -1;   // Atem-Toene: Schritt und zuletzt gepruefte Schrittzeit    // { workout, opts } fuer \u201eNochmal\u201c, auch bei nicht gespeichertem Mix
 
   /* ---------- Hilfen ---------- */
   function show(name) {
@@ -114,8 +115,23 @@ window.Takt = window.Takt || {};
   function loop() {
     if (!run) return;
     handle(run.engine.tick());
+    breathTones();
     render();
     save(false);
+  }
+
+  /* Atem-Modus: Ton zu Beginn von Einatmen/Ausatmen; verpasste Toene (z. B. aus dem Hintergrund) nicht nachholen */
+  function breathTones() {
+    if (!run) return;
+    var v = run.engine.view();
+    if (!v.step || v.step.kind !== 'work' || !v.step.atem || v.done) { breathIdx = -1; return; }
+    if (breathIdx !== v.index) { breathIdx = v.index; breathLast = -1; }
+    if (v.paused) return;
+    var cues = T.breathCues(v.step.atem, breathLast, v.elapsedMs);
+    breathLast = v.elapsedMs;
+    var c = cues[cues.length - 1];
+    var s = data.settings;
+    if (c && v.elapsedMs - c.atMs < 600 && s.sounds !== false && s.announce !== 'silent') T.audio.play([{ type: 'beep', tone: c.tone }]);
   }
 
   function handle(events) {
@@ -230,6 +246,17 @@ window.Takt = window.Takt || {};
     $('t-phase').textContent = phaseText(v);
     $('t-time').textContent = T.fmt(v.remaining);
     $('t-of').textContent = 'von ' + T.fmt(v.duration);
+    // Atem-Modus: atmender Kreis statt Ring, Phase und deren Sekunden in der Mitte
+    var atem = v.step.kind === 'work' && v.step.atem;
+    scr.classList.toggle('is-breath', !!atem);
+    if (atem) {
+      var clock = T.breathClock(v.elapsedMs);
+      var b = clock > 0 ? T.figure.breathAt(atem, clock) : { label: 'Einatmen', left: atem.ein || 0, k: 0 };
+      $('t-breath').style.transform = 'scale(' + (0.6 + 0.4 * b.k).toFixed(3) + ')';
+      if (!v.paused) $('t-phase').textContent = b.label;
+      $('t-time').textContent = String(b.left);
+      $('t-of').textContent = 'noch ' + T.fmt(v.remaining);
+    }
     $('b-toggle-ic').textContent = v.paused ? '\u25b6\ufe0e' : '\u275a\u275a';
     $('b-toggle-label').textContent = v.paused ? 'Weiter' : 'Pause';
 
