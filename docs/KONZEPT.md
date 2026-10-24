@@ -152,7 +152,7 @@ Folgerung: Der Ansage-Weg über Sprachdateien ist bestätigt. Ansagen bei gesper
 - Wake Lock API; wird er verweigert (z. B. Stromsparmodus) oder fehlt er, Hinweis "Bildschirmsperre ausschalten / Stromsparmodus aus".
 - Töne über Web Audio (keine Sounddateien nötig). Der Countdown "3, 2, 1" läuft als Töne, nicht als Sprache (Sprachausgabe startet mit Verzögerung). Vor zeitkritischen Ansagen wird die Sprach-Warteschlange geleert.
 - Ansagen als vorab erzeugte MP3-Dateien, abgespielt über Web Audio mit `navigator.audioSession.type = 'ambient'` (mischt sich mit Spotify, getestet). Die Dateien eines Workouts werden vor dem Start geladen und dekodiert. Der Start-Tipp schaltet den Ton frei (iOS-Regel). Keine Browser-Sprachausgabe (stoppt Spotify).
-- Vor jedem Start Hinweis "Schalter auf Klingeln, Musik vorher starten".
+- ~~Vor jedem Start Hinweis "Schalter auf Klingeln, Musik vorher starten".~~ Entfernt 2026-10-24 (v=43): Töne und Ansagen kommen laut Nicole inzwischen auch bei Stummschalter auf Stumm.
 - Beim Wechsel zu Spotify läuft das Training weiter; Töne kamen im Test auch im Hintergrund.
 - Test-Hilfe (abschaltbar): klein Startuhrzeit und vergangene Zeit anzeigen, damit Nicole die Restzeit mit der iPhone-Uhr vergleichen kann (offene Beobachtung aus Test 2).
 - Offline-fähig und installierbar (PWA: manifest + Service Worker).
@@ -357,6 +357,8 @@ Wünsche von Nicole nach dem ersten Trainieren mit Schritt 4:
 - **Abzeichen fallen kaum auf:** Neue Abzeichen werden jetzt im Vollbild gefeiert (große Plakette in der Gruppenfarbe, Lichtkranz, kurzer Funkenflug, sanfter Dreiklang, „Nächstes Ziel: …“). Nach dem Training kommt die Feier, sobald „Geschafft, super gemacht!“ ausgeklungen ist; mehrere nacheinander („1 von 2“). Im Fertig-Screen stehen sie danach in einer Karte, Antippen zeigt die Feier noch einmal. Editor, eigene Übung und Backup feiern genauso statt nur im Toast; bei „Speichern & Starten“ erst nach dem Training (oder beim Abbrechen). Ein Abzeichen durch die Notiz wird beim Verlassen des Notizfelds gefeiert, nicht mitten im Tippen.
 - **Mix 5 Min.:** neue Stufe (1 Aufwärm-Übung, 4 Übungen, kurzer Abschluss; passt immer in 5 Min.).
 - **Mix nur Vacuum:** eigenes Thema „Vacuum“ (nur Vacuum-Übungen). „Core“ enthält weiterhin auch Vacuum-Übungen.
+
+- **Hinweis „Vor dem Start“ entfernt (v=43):** Töne und Ansagen kommen laut Nicoles iPhone-Test auch, wenn der Stummschalter auf Stumm steht.
 
 Meine Festlegungen (Nicole kann widersprechen): Feier schließt nur über den Knopf (ein versehentlicher Tipp wischt sie nicht weg); Klang nur, wenn Töne an sind; ohne Animation bei „Bewegung reduzieren“.
 
