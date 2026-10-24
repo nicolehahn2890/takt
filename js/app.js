@@ -16,6 +16,7 @@ window.Takt = window.Takt || {};
   var enteredAt = 0;       // Zeitpunkt, an dem der Training-Screen erschien
   var lastStart = null;
   var noteEntryId = null, noteTimer = null;
+  var learnAsk = null;   // offene Frage der lernenden Dauer: { w, s }
   var breathIdx = -1, breathLast = -1;   // Atem-Toene: Schritt und zuletzt gepruefte Schrittzeit    // { workout, opts } fuer \u201eNochmal\u201c, auch bei nicht gespeichertem Mix
 
   /* ---------- Hilfen ---------- */
@@ -333,12 +334,54 @@ window.Takt = window.Takt || {};
     noteEntryId = entry.id;
     $('done-note').value = '';
     $('b-again').setAttribute('data-start', wid);
+    renderLearn(wid);
     show('done');
   }
 
   /* Atem-Uebungen, bei denen mindestens die Haelfte der Zeit gelaufen ist (Abzeichen "Atemprofi") */
   function breathDone(steps, spent) {
     return steps.filter(function (s, i) { return s.kind === 'work' && s.atem && (spent[i] || 0) * 2 >= s.duration; }).length;
+  }
+
+  /* Lernende Dauer: hoechstens eine Frage im Fertig-Screen (ungespeicherte Mixe haben kein Workout) */
+  function renderLearn(wid) {
+    var w = wid ? findWorkout(wid) : null;
+    var s = w ? T.learnSuggestion(data.log, w, data.learn, exIndex) : null;
+    learnAsk = s ? { w: w, s: s } : null;
+    if (!s) { $('done-learn').innerHTML = ''; return; }
+    var q = w.source === 'template' ? 'als eigenes Workout mit ' + s.to + ' s speichern?' : 'auf ' + s.to + ' s setzen?';
+    $('done-learn').innerHTML = '<div class="learn-card">' +
+      '<p class="learn-why">Die letzten 3 Male ' + (s.direction > 0 ? 'verl\u00e4ngert' : 'gek\u00fcrzt') + '</p>' +
+      '<p class="learn-q">' + T.esc(s.name) + ' in \u201a' + T.esc(w.name) + '\u2018 ' + q + '</p>' +
+      '<div class="row"><button class="btn rose" data-learn="yes">Ja</button><button class="btn" data-learn="no">Nein</button></div></div>';
+  }
+
+  /* Antwort auf die Frage: "Ja" aendert nur dieses Workout (Vorlage: Kopie), "Nein" fragt 10 Trainings lang nicht */
+  function answerLearn(yes) {
+    var w = learnAsk.w, s = learnAsk.s, msg;
+    learnAsk = null;
+    if (!data.learn || typeof data.learn !== 'object') data.learn = {};
+    var key = T.learnKey(w.id, s.exId);
+    if (!yes) {
+      data.learn[key] = { snoozeUntil: T.learnCount(data.log, w.id) + T.LEARN_SNOOZE };
+      msg = 'Alles klar, ' + s.name + ' bleibt bei ' + s.from + ' s.';
+    } else if (w.source === 'template') {
+      var res = T.validateWorkout(T.applyLearn(T.copyWorkout(w), s.exId, s.to));
+      if (!res.ok) { toast(res.errors[0].msg); return; }
+      data.workouts.unshift(res.workout);
+      data.learn[key] = { since: data.log.length };
+      $('b-again').setAttribute('data-start', res.workout.id);
+      msg = 'Gespeichert als \u201e' + res.workout.name + '\u201c.';
+    } else {
+      var i = data.workouts.indexOf(w);
+      var c = T.applyLearn(w, s.exId, s.to);
+      c.updatedAt = new Date().toISOString();
+      if (i >= 0) data.workouts[i] = c;
+      data.learn[key] = { since: data.log.length };
+      msg = 'Gespeichert: ' + s.name + ' jetzt ' + s.to + ' s.';
+    }
+    T.store.save(data);
+    $('done-learn').innerHTML = '<p class="learn-ok">' + T.esc(msg) + '</p>';
   }
 
   /* Notiz im Fertig-Screen: wird kurz nach dem Tippen im Protokoll gespeichert */
@@ -395,6 +438,10 @@ window.Takt = window.Takt || {};
     $('b-home').addEventListener('click', function () { renderStart(); show('start'); });
     $('done-note').addEventListener('input', function () { clearTimeout(noteTimer); noteTimer = setTimeout(saveNote, 400); });
     $('done-note').addEventListener('blur', function () { clearTimeout(noteTimer); saveNote(); });
+    $('done-learn').addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-learn]');
+      if (b && learnAsk) answerLearn(b.getAttribute('data-learn') === 'yes');
+    });
     $('tabbar').addEventListener('click', function (e) {
       var b = e.target.closest('[data-tab]');
       if (b) openTab(b.getAttribute('data-tab'));

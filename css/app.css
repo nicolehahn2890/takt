@@ -449,4 +449,11 @@ body.has-tabbar .start, body.has-tabbar #screen-lib { padding-bottom: calc(100px
   padding: 12px; font: inherit; font-size: 16px; resize: none; outline: none; }
 .done-note textarea:focus { border-color: var(--lila); }
 #done-badges:empty, #done-learn:empty { display: none; }
+.btn.rose { background: var(--pink); color: var(--bg); font-weight: 700; }
+.learn-card { width: 100%; max-width: 420px; margin-top: var(--s3); padding: 16px; border-radius: 16px; background: var(--card); text-align: left; }
+.learn-why { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+.finish .learn-q { color: var(--text); font-size: 16px; font-weight: 600; line-height: 1.4; }
+.learn-card .row { justify-content: flex-start; margin-top: 12px; }
+.learn-card .btn { min-width: 88px; }
+.learn-ok { margin-top: var(--s3); font-size: 14px; }
 
