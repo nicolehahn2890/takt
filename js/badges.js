@@ -23,6 +23,19 @@ window.Takt = window.Takt || {};
     return d.getDate() + '. ' + (T.MONTH_SHORT || [])[d.getMonth()] + ' ' + d.getFullYear();
   };
 
+  /* Icon eines Abzeichens als SVG (Linien in currentColor) */
+  T.badgeIcon = function (b) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      ((T.BADGE_ICONS || {})[b.icon] || '') + '</svg>';
+  };
+
+  /* Naechstes Ziel derselben Art (z. B. nach "10 Trainings" die "25 Trainings"), das noch nicht erreicht ist; sonst null */
+  T.badgeNext = function (b, earned) {
+    earned = isObj(earned) ? earned : {};
+    return (T.BADGES || []).filter(function (x) { return x.kind === b.kind && x.n > b.n && !earned[x.id]; })
+      .sort(function (x, y) { return x.n - y.n; })[0] || null;
+  };
+
   /* Runde Plakette mit Icon; erreicht in der Farbe der Gruppe, sonst grau mit Fortschrittsring.
      prog = { have, need } (optional), opts = { tag, cls, style } */
   T.badgeHtml = function (b, on, prog, opts) {
@@ -32,8 +45,7 @@ window.Takt = window.Takt || {};
     var pct = ring ? Math.round(Math.min(1, prog.have / prog.need) * 100) : 0;
     var cls = 'bdg' + (on ? ' on' : '') + (ring ? ' prog' : '') + (opts.cls ? ' ' + opts.cls : '');
     var style = '--bc:' + b.color + (ring ? ';--p:' + pct + '%' : '') + (opts.style ? ';' + opts.style : '');
-    var svg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-      ((T.BADGE_ICONS || {})[b.icon] || '') + '</svg>';
+    var svg = T.badgeIcon(b);
     return '<' + tag + ' class="' + cls + '"' + (tag === 'button' ? ' data-badge="' + T.esc(b.id) + '"' : '') + ' style="' + style + '">' +
       '<i><b>' + svg + '</b></i><span>' + T.esc(b.title) + '</span>' +
       (ring ? '<em>' + T.fmtCount(Math.min(prog.have, prog.need)) + ' von ' + T.fmtCount(prog.need) + '</em>' : '') + '</' + tag + '>';

@@ -262,13 +262,17 @@ window.Takt = window.Takt || {};
     };
   };
 
-  T.MIX_THEMES = { core: ['core', 'vacuum'], bauch: ['bauch'], beine: ['beine-po'], ruecken: ['ruecken'], dehnen: ['dehnen'],
-    yoga: ['yoga'], ganz: ['ganzkoerper', 'oberkoerper'] };
-  T.MIX_LABELS = { core: 'Core', bauch: 'Bauch', beine: 'Beine & Po', ruecken: 'R\u00fccken', dehnen: 'Dehnen', yoga: 'Yoga',
-    ganz: 'Ganzk\u00f6rper' };
-  /* Farbe des Mix: Ganzkoerper hat keine eigene Workout-Farbe */
-  var MIX_COLOR = { core: 'core', bauch: 'bauch', beine: 'beine', ruecken: 'ruecken', dehnen: 'dehnen', yoga: 'yoga', ganz: 'core' };
+  /* Core enthaelt auch die Vacuum-Uebungen (sie sind Core-Uebungen); Vacuum allein nur diese */
+  T.MIX_THEMES = { core: ['core', 'vacuum'], vacuum: ['vacuum'], bauch: ['bauch'], beine: ['beine-po'], ruecken: ['ruecken'],
+    dehnen: ['dehnen'], yoga: ['yoga'], ganz: ['ganzkoerper', 'oberkoerper'] };
+  T.MIX_LABELS = { core: 'Core', vacuum: 'Vacuum', bauch: 'Bauch', beine: 'Beine & Po', ruecken: 'R\u00fccken', dehnen: 'Dehnen',
+    yoga: 'Yoga', ganz: 'Ganzk\u00f6rper' };
+  /* Farbe des Mix: Vacuum und Ganzkoerper haben keine eigene Workout-Farbe */
+  var MIX_COLOR = { core: 'core', vacuum: 'core', bauch: 'bauch', beine: 'beine', ruecken: 'ruecken', dehnen: 'dehnen', yoga: 'yoga',
+    ganz: 'core' };
   var MIX = { warm: 2, main: 5, work: 40, rest: 15, warmWork: 40, coolWork: 60, maxWork: 60, minWork: 20, maxRounds: 4 };
+  /* Kurzer Mix (bis 5 Min.): eine Aufwaerm-Uebung, vier im Hauptteil, kuerzerer Abschluss */
+  var MIX_SHORT = { warm: 1, main: 4, warmWork: 30, coolWork: 40 };
   var LABEL = { warm: 'Aufw\u00e4rmen', main: 'Hauptteil', cool: 'Abschluss' };
 
   function hasTag(e, tags) { return (e.tags || []).some(function (t) { return tags.indexOf(t) >= 0; }); }
@@ -304,6 +308,7 @@ window.Takt = window.Takt || {};
     var themes = (opts.themes || []).filter(function (k) { return Object.prototype.hasOwnProperty.call(T.MIX_THEMES, k); });
     if (!themes.length) themes = ['core'];
     var minutes = Number(opts.minutes) > 0 ? Number(opts.minutes) : 15;
+    var size = minutes <= 5 ? MIX_SHORT : MIX;
     var pool = (exercises || []).filter(mixable);
     var used = [];
     function take(list, n) {
@@ -312,20 +317,20 @@ window.Takt = window.Takt || {};
       return picked;
     }
 
-    var warm = take(pool.filter(function (e) { return hasTag(e, ['aufwaermen']); }), MIX.warm);
+    var warm = take(pool.filter(function (e) { return hasTag(e, ['aufwaermen']); }), size.warm);
     var tags = [].concat.apply([], themes.map(function (k) { return T.MIX_THEMES[k]; }));
-    var main = take(pool.filter(function (e) { return hasTag(e, tags); }), MIX.main);
-    if (main.length < MIX.main) {
+    var main = take(pool.filter(function (e) { return hasTag(e, tags); }), size.main);
+    if (main.length < size.main) {
       var fill = T.MIX_THEMES.core.concat(T.MIX_THEMES.ganz);
-      main = main.concat(take(pool.filter(function (e) { return hasTag(e, fill); }), MIX.main - main.length));
+      main = main.concat(take(pool.filter(function (e) { return hasTag(e, fill); }), size.main - main.length));
     }
     var cool = take(pool.filter(function (e) { return hasTag(e, ['dehnen']) && !hasTag(e, ['aufwaermen']); }), 1);
 
     var blocks = [];
-    if (warm.length) blocks.push({ label: LABEL.warm, repeat: 1, items: warm.map(function (e) { return mixItem(e, MIX.warmWork); }) });
+    if (warm.length) blocks.push({ label: LABEL.warm, repeat: 1, items: warm.map(function (e) { return mixItem(e, size.warmWork); }) });
     var mainBlock = { label: LABEL.main, repeat: 1, items: main.map(function (e) { return mixItem(e, MIX.work); }) };
     if (main.length) blocks.push(mainBlock);
-    if (cool.length) blocks.push({ label: LABEL.cool, repeat: 1, items: [mixItem(cool[0], MIX.coolWork)] });
+    if (cool.length) blocks.push({ label: LABEL.cool, repeat: 1, items: [mixItem(cool[0], size.coolWork)] });
 
     var workout = {
       id: 'mix-' + ((Math.floor(Number(opts.seed)) || 0) >>> 0),

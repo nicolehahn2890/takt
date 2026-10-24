@@ -331,6 +331,8 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
 .row-btns button:active { transform: scale(.96); }
 .chips.wrap { flex-wrap: wrap; overflow: visible; padding-top: 0; }
 .mx-start { margin-top: 10px; }
+#mx-seg button { white-space: nowrap; }
+@media (max-width: 359px) { #mx-seg button { font-size: 13px; } }
 
 /* ---------- Editor und Uebungs-Auswahl (TextField, Chip, Stepper, ExerciseRow) ---------- */
 .inp { width: 100%; background: var(--card); color: var(--text); border: 1px solid transparent; border-radius: 12px; padding: 12px; font: inherit; font-size: 16px; outline: none; transition: border-color .15s; }
@@ -449,6 +451,7 @@ body.has-tabbar .start, body.has-tabbar #screen-lib { padding-bottom: calc(100px
   padding: 12px; font: inherit; font-size: 16px; resize: none; outline: none; }
 .done-note textarea:focus { border-color: var(--lila); }
 #done-badges:empty, #done-learn:empty { display: none; }
+#done-badges { width: 100%; max-width: 420px; }
 .btn.rose { background: var(--pink); color: var(--bg); font-weight: 700; }
 .learn-card { width: 100%; max-width: 420px; margin-top: var(--s3); padding: 16px; border-radius: 16px; background: var(--card); text-align: left; }
 .learn-why { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
@@ -479,13 +482,61 @@ button.bdg:active i { transform: scale(.94); }
 .bdg.on span { color: var(--text); }
 .bdg em { font-style: normal; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; margin-top: -3px; }
 .bdg-info { min-height: 20px; margin-top: var(--s3); font-size: 13px; line-height: 1.5; color: var(--muted); }
-.done-bdg { margin-top: var(--s3); }
-.done-bdg p { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 10px; }
+.done-bdg { margin-top: var(--s3); padding: 14px 16px 16px; border-radius: 18px; background: var(--card); }
+.done-bdg p { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
 .bdg-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
 .bdg-row .bdg { width: 88px; }
 .bdg.pop { animation: bdg-pop .3s ease-out both; }
 @keyframes bdg-pop { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .bdg.pop { animation: none; } }
+
+/* ---------- Abzeichen gross feiern (Vollbild ueber allem, js/celebrate.js) ---------- */
+.moment { position: fixed; inset: 0; z-index: 25; display: flex; align-items: center; justify-content: center; overflow: auto;
+  padding: calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom)); text-align: center;
+  background: var(--bg);
+  background: radial-gradient(circle at 50% 40%, color-mix(in oklab, var(--bc) 30%, transparent), transparent 62%), var(--bg);
+  animation: mo-fade .35s ease-out both; }
+.mo-in { width: 100%; max-width: 360px; margin: auto; }
+.mo-kick { font-size: 14px; font-weight: 700; color: var(--bc); animation: mo-up .4s .05s ease-out both; }
+.mo-medal { position: relative; width: 200px; height: 200px; margin: 18px auto 22px; display: flex; align-items: center; justify-content: center; }
+.mo-rays { position: absolute; inset: -46px; border-radius: 50%; pointer-events: none; opacity: .9;
+  background: repeating-conic-gradient(rgba(255,255,255,.10) 0 5deg, transparent 5deg 22.5deg);
+  background: repeating-conic-gradient(color-mix(in oklab, var(--bc) 45%, transparent) 0 5deg, transparent 5deg 22.5deg);
+  -webkit-mask: radial-gradient(circle, #000 30%, transparent 70%); mask: radial-gradient(circle, #000 30%, transparent 70%);
+  animation: mo-fade .9s .25s ease-out both, mo-spin 30s linear infinite; }
+.mo-halo { position: absolute; inset: 26px; border-radius: 50%; border: 2px solid var(--bc); opacity: 0; pointer-events: none;
+  animation: mo-halo 1.5s .3s ease-out 2; }
+.mo-halo + .mo-halo { animation-delay: .75s; }
+.mo-spark { position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: var(--bc);
+  opacity: 0; pointer-events: none; animation: mo-spark 1s .3s cubic-bezier(.15,.7,.3,1) both; }
+.mo-spark.alt { width: 6px; height: 6px; margin: -3px 0 0 -3px; background: var(--text); animation-delay: .38s; }
+.mo-disc { position: relative; width: 148px; height: 148px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;
+  background: var(--bc); color: var(--bg);
+  box-shadow: 0 0 0 8px rgba(255,255,255,.08), 0 18px 50px rgba(0,0,0,.35);
+  box-shadow: 0 0 0 8px color-mix(in oklab, var(--bc) 24%, transparent), 0 18px 60px color-mix(in oklab, var(--bc) 40%, transparent);
+  animation: mo-pop .6s cubic-bezier(.2,.9,.3,1.15) both; }
+.mo-disc svg { width: 70px; height: 70px; stroke-width: 1.6; }
+.mo-disc::after { content: ''; position: absolute; inset: 0; pointer-events: none; transform: translateX(-130%);
+  background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,.55) 50%, transparent 65%); animation: mo-shine 1.1s .7s ease-in-out both; }
+.mo-title { font-family: var(--font-display); font-size: 30px; font-weight: 600; letter-spacing: -.5px; line-height: 1.15; animation: mo-up .45s .35s ease-out both; }
+.mo-rule { color: var(--muted); font-size: 16px; line-height: 1.45; margin-top: 8px; animation: mo-up .45s .45s ease-out both; }
+.mo-next { display: inline-block; margin-top: 16px; padding: 8px 14px; border-radius: 12px; background: var(--ghost); color: var(--muted); font-size: 14px;
+  animation: mo-up .45s .55s ease-out both; }
+.mo-btn { display: block; width: 100%; max-width: 280px; min-height: var(--btn-h); margin: 28px auto 0; border-radius: 14px; background: var(--bc); color: var(--bg);
+  font-weight: 700; font-size: 17px; transition: transform .15s; animation: mo-up .45s .65s ease-out both; }
+.mo-btn:active { transform: scale(.96); }
+@keyframes mo-fade { from { opacity: 0; } }
+@keyframes mo-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes mo-pop { 0% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; } 100% { opacity: 1; transform: scale(1); } }
+@keyframes mo-halo { from { opacity: .8; transform: scale(.85); } to { opacity: 0; transform: scale(1.6); } }
+@keyframes mo-spin { to { transform: rotate(360deg); } }
+@keyframes mo-shine { to { transform: translateX(130%); } }
+@keyframes mo-spark { 0% { opacity: 0; transform: rotate(var(--a)) translateY(0) scale(.4); } 15% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--a)) translateY(calc(-1 * var(--d))) scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .moment, .moment * { animation: none !important; }
+  .mo-halo, .mo-spark, .mo-disc::after { display: none; }
+}
 
 /* ---------- Schritt 4: Tagebuch und Backup ---------- */
 .diary { list-style: none; background: var(--card); border-radius: 16px; padding: 4px 16px; }

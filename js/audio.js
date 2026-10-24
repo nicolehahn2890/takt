@@ -8,9 +8,11 @@ window.Takt = window.Takt || {};
   var bounds = {};
   var loading = {};
   var playing = [];
-  // [Frequenz, Dauer, Lautstaerke, Einblenden]; Atem-Toene leiser und weich
+  var endAt = 0;   // Ende der zuletzt geplanten Wiedergabe (AudioContext-Zeit)
+  // [Frequenz, Dauer, Lautstaerke, Einblenden]; Atem-Toene leiser und weich; c1-c3 = Klang fuer neue Abzeichen (C-E-G)
   var TONES = { tick: [880, 0.15], go: [1320, 0.35], warn: [660, 0.25], rest: [520, 0.3], end: [1320, 0.6],
-    'in': [660, 0.6, 0.3, 0.12], out: [440, 0.8, 0.3, 0.12] };
+    'in': [660, 0.6, 0.3, 0.12], out: [440, 0.8, 0.3, 0.12],
+    c1: [1047, 0.14, 0.3, 0.01], c2: [1319, 0.14, 0.3, 0.01], c3: [1568, 0.7, 0.3, 0.01] };
 
   function files() { return T.VOICE_FILES || {}; }
 
@@ -26,6 +28,7 @@ window.Takt = window.Takt || {};
   function stopAll() {
     playing.slice().forEach(function (n) { try { n.stop(); } catch (e) { /* schon fertig */ } });
     playing = [];
+    endAt = 0;
   }
 
   function beepAt(freq, dur, t, gain, attack) {
@@ -72,6 +75,9 @@ window.Takt = window.Takt || {};
 
     hasClip: function (key) { return !!files()[key]; },
 
+    /* Sekunden, bis alles Geplante (z. B. "Geschafft, super gemacht!") zu Ende gespielt ist */
+    remaining: function () { return ctx ? Math.max(0, endAt - ctx.currentTime) : 0; },
+
     /* Laedt und dekodiert Sprachdateien; Fehler werden still uebergangen */
     load: function (keys) {
       if (!ctx) return Promise.resolve(0);
@@ -117,6 +123,7 @@ window.Takt = window.Takt || {};
           t += (b.end - b.start) + 0.12;
         }
       });
+      endAt = Math.max(endAt, t);
     }
   };
 })(window.Takt);

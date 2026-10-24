@@ -14,10 +14,13 @@ window.Takt = window.Takt || {};
   var needTap = false;
   var wakeWarned = false;
   var enteredAt = 0;       // Zeitpunkt, an dem der Training-Screen erschien
-  var lastStart = null;
+  var lastStart = null;    // { workout, opts } fuer \u201eNochmal\u201c, auch bei nicht gespeichertem Mix
+  var starting = false;    // Training laedt gerade (bis zu 2,5 s), noch ohne run
   var noteEntryId = null, noteTimer = null;
   var learnAsk = null;   // offene Frage der lernenden Dauer: { w, s }
-  var breathIdx = -1, breathLast = -1;   // Atem-Toene: Schritt und zuletzt gepruefte Schrittzeit    // { workout, opts } fuer \u201eNochmal\u201c, auch bei nicht gespeichertem Mix
+  var breathIdx = -1, breathLast = -1;   // Atem-Toene: Schritt und zuletzt gepruefte Schrittzeit
+  var pendingBadges = [];  // Abzeichen-Ids, die erst nach dem naechsten Training gefeiert werden (z. B. "Speichern & Starten")
+  var noteBadges = [];     // durch die Notiz erreichte Abzeichen, gefeiert beim Verlassen des Notizfelds
 
   /* ---------- Hilfen ---------- */
   function show(name) {
@@ -90,9 +93,11 @@ window.Takt = window.Takt || {};
     wakeOn();
     var steps = T.prepareSteps(w, exIndex, { prepSeconds: data.settings.prepSeconds, intensity: opts.intensity, budgetSec: opts.budgetSec });
     setLoading(true);
+    starting = true;
     var timeout = new Promise(function (res) { setTimeout(res, 2500); });
     Promise.race([T.audio.load(voiceKeys(steps)), timeout]).then(function () {
       setLoading(false);
+      starting = false;
       run = { workout: { id: w.id, name: w.name, theme: w.theme || 'core',
         source: w.source === 'template' || w.source === 'mix' ? w.source : 'own',
         origin: w.origin === 'mix' || w.source === 'mix' ? 'mix' : null,
@@ -319,7 +324,10 @@ window.Takt = window.Takt || {};
       note: ''
     };
     data.log.push(entry);
-    var fresh = checkBadges();
+    // Neu erreichte plus die vor dem Training zurueckgestellten Abzeichen
+    var fresh = pendingBadges.concat(checkBadges().filter(function (id) { return pendingBadges.indexOf(id) < 0; }));
+    pendingBadges = [];
+    noteBadges = [];
     T.store.save(data);
     T.store.clearRun();
     T.wake.off();
@@ -333,6 +341,8 @@ window.Takt = window.Takt || {};
     $('done-sub').textContent = T.fmt(entry.activeSec) + ' trainiert \u00b7 ' + v.workTotal + ' \u00dcbungen';
     $('done-adj').innerHTML = T.adjustSummary(entry.adjustments, exIndex).map(function (t) { return '<li>' + T.esc(t) + '</li>'; }).join('');
     renderFreshBadges(fresh);
+    // Erst "Geschafft, super gemacht!" ausklingen lassen, dann das Abzeichen gross feiern
+    if (fresh.length) setTimeout(function () { celebrate(fresh); }, Math.max(700, T.audio.remaining() * 1000 + 250));
     noteEntryId = entry.id;
     $('done-note').value = '';
     $('b-again').setAttribute('data-start', wid);
@@ -352,22 +362,38 @@ window.Takt = window.Takt || {};
     return r.fresh;
   }
   function badgeById(id) { return (T.BADGES || []).filter(function (b) { return b.id === id; })[0]; }
-  /* Fuer Editor, Bibliothek und Backup: pruefen, speichern, neu erreichte Abzeichen zurueckgeben */
-  function badgesNow() {
+  /* Fuer Editor, Bibliothek und Backup: pruefen, speichern, neu erreichte Abzeichen gross feiern und zurueckgeben.
+     later: erst nach dem naechsten Training feiern (das Training startet gleich) */
+  function badgesNow(later) {
     var f = checkBadges();
     if (f.length) T.store.save(data);
+    celebrate(f, later);
     return f.map(badgeById).filter(Boolean);
   }
 
-  /* Neu erreichte Abzeichen im Fertig-Screen, mit kurzer Einblendung (nur die ab Stelle "from" werden eingeblendet) */
+  function soundsOn() { return data.settings.sounds !== false && data.settings.announce !== 'silent'; }
+
+  /* Vollbild-Feier fuer neue Abzeichen; waehrend eines Trainings (oder solange es laedt) erst im naechsten Fertig-Screen */
+  function celebrate(ids, later) {
+    ids = (ids || []).filter(function (id) { return !!badgeById(id); });
+    if (!ids.length || !T.celebrate) return;
+    if (later || run || starting) {
+      ids.forEach(function (id) { if (pendingBadges.indexOf(id) < 0) pendingBadges.push(id); });
+      return;
+    }
+    T.celebrate.show(ids.map(badgeById), { earned: data.badges, sound: soundsOn() });
+  }
+
+  /* Neu erreichte Abzeichen im Fertig-Screen, mit kurzer Einblendung (nur die ab Stelle "from" werden eingeblendet).
+     Antippen zeigt die grosse Feier noch einmal (ohne Klang). */
   var doneBadges = [];
   function renderFreshBadges(ids, from) {
     from = from || 0;
     doneBadges = ids.slice();
     var list = ids.map(badgeById).filter(Boolean);
-    $('done-badges').innerHTML = list.length ? '<div class="done-bdg"><p>' + (list.length === 1 ? 'Neues Abzeichen' : 'Neue Abzeichen') + '</p><div class="bdg-row">' +
+    $('done-badges').innerHTML = list.length ? '<div class="done-bdg"><p>' + (list.length === 1 ? 'Neues Abzeichen' : list.length + ' neue Abzeichen') + '</p><div class="bdg-row">' +
       list.map(function (b, i) {
-        return T.badgeHtml(b, true, null, i >= from ? { cls: 'pop', style: 'animation-delay:' + ((i - from) * 120) + 'ms' } : null);
+        return T.badgeHtml(b, true, null, { tag: 'button', cls: i >= from ? 'pop' : '', style: i >= from ? 'animation-delay:' + ((i - from) * 120) + 'ms' : '' });
       }).join('') + '</div></div>' : '';
   }
 
@@ -412,14 +438,24 @@ window.Takt = window.Takt || {};
     $('done-learn').innerHTML = '<p class="learn-ok">' + T.esc(msg) + '</p>';
   }
 
-  /* Notiz im Fertig-Screen: wird kurz nach dem Tippen im Protokoll gespeichert */
-  function saveNote() {
+  /* Notiz im Fertig-Screen: wird kurz nach dem Tippen im Protokoll gespeichert.
+     leaving: Notizfeld wurde verlassen; erst dann wird ein dadurch erreichtes Abzeichen gross gefeiert, nicht mitten im Tippen */
+  function saveNote(leaving) {
     var e = (data.log || []).filter(function (x) { return x.id === noteEntryId; })[0];
     if (!e) return;
     e.note = $('done-note').value.slice(0, 500);
     var fresh = checkBadges();   // z. B. "10 Notizen"
     T.store.save(data);
-    if (fresh.length) renderFreshBadges(doneBadges.concat(fresh), doneBadges.length);
+    if (fresh.length) {
+      renderFreshBadges(doneBadges.concat(fresh), doneBadges.length);
+      noteBadges = noteBadges.concat(fresh);
+    }
+    if (leaving && noteBadges.length) {
+      var ids = noteBadges;
+      noteBadges = [];
+      // kurz warten, damit der Tipp, der das Feld verlassen hat (z. B. "Zur Startseite"), noch ankommt
+      setTimeout(function () { celebrate(ids); }, 300);
+    }
   }
 
   function abort() {
@@ -430,6 +466,10 @@ window.Takt = window.Takt || {};
     run = null;
     renderStart();
     show('start');
+    // Zurueckgestellte Abzeichen nicht verschlucken
+    var ids = pendingBadges;
+    pendingBadges = [];
+    celebrate(ids);
   }
 
   /* ---------- Tippen ---------- */
@@ -466,8 +506,12 @@ window.Takt = window.Takt || {};
       if (run && window.confirm('Training beenden?')) abort();
     });
     $('b-home').addEventListener('click', function () { renderStart(); show('start'); });
-    $('done-note').addEventListener('input', function () { clearTimeout(noteTimer); noteTimer = setTimeout(saveNote, 400); });
-    $('done-note').addEventListener('blur', function () { clearTimeout(noteTimer); saveNote(); });
+    $('done-note').addEventListener('input', function () { clearTimeout(noteTimer); noteTimer = setTimeout(function () { saveNote(false); }, 400); });
+    $('done-note').addEventListener('blur', function () { clearTimeout(noteTimer); saveNote(true); });
+    $('done-badges').addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-badge]');
+      if (b && T.celebrate) T.celebrate.show([badgeById(b.getAttribute('data-badge'))], { earned: data.badges, sound: false });
+    });
     $('done-learn').addEventListener('click', function (ev) {
       var b = ev.target.closest('[data-learn]');
       if (b && learnAsk) answerLearn(b.getAttribute('data-learn') === 'yes');

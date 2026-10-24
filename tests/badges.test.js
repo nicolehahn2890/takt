@@ -163,3 +163,20 @@ test('badges Fortschritt', function () {
   eq(Takt.badgeCheck(bd(log), BNOW).progress.first, { have: 1, need: 1 });
   eq(Takt.badgeCheck(bd([], { exercisesOwn: [{ id: 'own-1' }] }), BNOW).progress.ownex5, { have: 1, need: 5 });
 });
+
+test('badgeNext: naechstes offenes Ziel derselben Art', function () {
+  function byId(id) { return Takt.BADGES.filter(function (b) { return b.id === id; })[0]; }
+  eq(Takt.badgeNext(byId('ten'), { first: 'x', ten: 'x' }).id, 't25');
+  eq(Takt.badgeNext(byId('ten'), { first: 'x', ten: 'x', t25: 'x' }).id, 't50', 'schon erreichte werden uebersprungen');
+  eq(Takt.badgeNext(byId('streak3'), {}).id, 'streak7');
+  eq(Takt.badgeNext(byId('t100'), {}), null, 'letzte Stufe');
+  eq(Takt.badgeNext(byId('early'), {}), null, 'ohne Stufen');
+  eq(Takt.badgeNext(byId('min100'), null).id, 'min500');
+});
+
+test('badgeIcon: SVG mit Icon-Pfaden', function () {
+  var b = Takt.BADGES[0];
+  var svg = Takt.badgeIcon(b);
+  ok(/^<svg [^>]*viewBox="0 0 24 24"/.test(svg) && svg.indexOf(Takt.BADGE_ICONS[b.icon]) > 0, svg);
+  ok(Takt.badgeHtml(b, true).indexOf(svg) > 0, 'badgeHtml nutzt badgeIcon');
+});

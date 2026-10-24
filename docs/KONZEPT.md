@@ -166,6 +166,7 @@ Vor dem Start: Schieber. Alle Dauern und Pausen werden anteilig skaliert (auf 5 
 
 ### 5.4 Mix-Modus
 Dialog: Themen wählen (Mehrfach), Anzahl Übungen, Dauer je Übung, Pause, Runden. App zieht zufällig aus der Bibliothek (keine Übung doppelt, beidseitige berücksichtigt). Ergebnis kann gespeichert werden.
+Umgesetzt: Themen Core, Vacuum, Bauch, Beine & Po, Rücken, Dehnen, Yoga, Ganzkörper; Gesamtdauer 5/10/15/20/30 Min. Ein 5-Min.-Mix hat 1 Aufwärm-Übung (30 s), 4 im Hauptteil und 40 s Abschluss.
 
 ### 5.5 Lernende Dauer
 Jede +15/−15-Änderung wird mit Übung + Workout protokolliert. Nach 3 gleichgerichteten Änderungen derselben Übung Vorschlag im Fertig-Screen. Antwort "Nein" stellt die Frage für diese Übung für 10 Trainings zurück.
@@ -341,7 +342,7 @@ Zurückgestellt (aus der Prüfung):
 - „10 Notizen“ erscheint erst beim Verlassen des Notizfelds; wer direkt auf „Zur Startseite“ tippt, dessen Tipp kann einmal ins Leere gehen (Abzeichen steht danach in der Statistik).
 - „5 eigene Übungen“ trägt als Datum den Tag der Prüfung (eigene Übungen merken sich kein Anlegedatum).
 - „Alle Vorlagen“ ist fest auf 12 eingestellt; kommen Vorlagen dazu, muss die Zahl in `data/badges.js` mit.
-- Kleinkram im Code: verrutschter Kommentar in `js/app.js`, doppelte Prüfung in `js/backup.js`, leeres Datum im Laden-Dialog bei kaputtem Zeitstempel, lernende Dauer zählt nach Laden eines älteren Backups etwas später neu.
+- Kleinkram im Code: doppelte Prüfung in `js/backup.js`, leeres Datum im Laden-Dialog bei kaputtem Zeitstempel, lernende Dauer zählt nach Laden eines älteren Backups etwas später neu.
 
 Auf dem iPhone prüfen (Nicole):
 - Atem-Übung mit Spotify: sind die Ein-/Aus-Töne gut hörbar, aber sanft?
@@ -349,6 +350,15 @@ Auf dem iPhone prüfen (Nicole):
 - Fertig-Screen: Notiz tippen, Abzeichen-Einblendung, Frage der lernenden Dauer (3× dieselbe Übung im selben Workout verlängern).
 - Statistik: Abzeichen-Raster mit Icons und Ringen, Antippen, Tagebuch.
 - **Backup sichern in der Home-Bildschirm-App:** öffnet sich das Teilen-Menü mit der Datei, lässt sie sich „In Dateien sichern“? Danach „Backup laden“ mit genau dieser Datei.
+
+### 8.7 Nach dem ersten Benutzen (2026-10-24, v=42)
+
+Wünsche von Nicole nach dem ersten Trainieren mit Schritt 4:
+- **Abzeichen fallen kaum auf:** Neue Abzeichen werden jetzt im Vollbild gefeiert (große Plakette in der Gruppenfarbe, Lichtkranz, kurzer Funkenflug, sanfter Dreiklang, „Nächstes Ziel: …“). Nach dem Training kommt die Feier, sobald „Geschafft, super gemacht!“ ausgeklungen ist; mehrere nacheinander („1 von 2“). Im Fertig-Screen stehen sie danach in einer Karte, Antippen zeigt die Feier noch einmal. Editor, eigene Übung und Backup feiern genauso statt nur im Toast; bei „Speichern & Starten“ erst nach dem Training (oder beim Abbrechen). Ein Abzeichen durch die Notiz wird beim Verlassen des Notizfelds gefeiert, nicht mitten im Tippen.
+- **Mix 5 Min.:** neue Stufe (1 Aufwärm-Übung, 4 Übungen, kurzer Abschluss; passt immer in 5 Min.).
+- **Mix nur Vacuum:** eigenes Thema „Vacuum“ (nur Vacuum-Übungen). „Core“ enthält weiterhin auch Vacuum-Übungen.
+
+Meine Festlegungen (Nicole kann widersprechen): Feier schließt nur über den Knopf (ein versehentlicher Tipp wischt sie nicht weg); Klang nur, wenn Töne an sind; ohne Animation bei „Bewegung reduzieren“.
 
 ## 9. Verifikation
 

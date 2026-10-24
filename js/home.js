@@ -154,8 +154,8 @@ window.Takt = window.Takt || {};
 
   /* ---------- Mix ---------- */
   var mix = { themes: ['core'], minutes: 15, w: null };
-  var MIX_ORDER = ['core', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'];
-  var MIX_MINUTES = [10, 15, 20, 30];
+  var MIX_ORDER = ['core', 'vacuum', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'];
+  var MIX_MINUTES = [5, 10, 15, 20, 30];
   function openMix() {
     var last = api.data().settings.mixLast;
     if (last && Array.isArray(last.themes)) {

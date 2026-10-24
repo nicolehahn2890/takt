@@ -112,7 +112,7 @@ test('mix gleicher seed gleiches Ergebnis', function () {
 });
 
 test('mix keine Uebung doppelt im Hauptblock', function () {
-  ['core', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'].forEach(function (th) {
+  ['core', 'vacuum', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'].forEach(function (th) {
     for (var seed = 1; seed <= 15; seed++) {
       var w = Takt.makeMix({ themes: [th], minutes: 20, seed: seed }, Takt.EXERCISES);
       var main = mixIds(mixBlock(w, 'Hauptteil'));
@@ -124,7 +124,7 @@ test('mix keine Uebung doppelt im Hauptblock', function () {
 });
 
 test('mix Dauer passt', function () {
-  [10, 15, 20, 30].forEach(function (m) {
+  [5, 10, 15, 20, 30].forEach(function (m) {
     for (var seed = 1; seed <= 10; seed++) {
       var s = Takt.workoutSeconds(Takt.makeMix({ themes: ['core', 'ruecken'], minutes: m, seed: seed }, Takt.EXERCISES), wIdx());
       ok(s <= m * 60 && s >= m * 60 * 0.8, m + ' Min. ergibt ' + s + ' s');
@@ -162,6 +162,30 @@ test('mix Name, Thema, Quelle und Aufbau', function () {
   var cool = mixBlock(w, 'Abschluss').items[0];
   ok(idx[cool.exId].tags.indexOf('dehnen') >= 0 && cool.duration === 60, 'Abschluss');
   ok(mixBlock(w, 'Hauptteil').items.every(function (i) { return i.name === idx[i.exId].name; }), 'Name fehlt');
+});
+
+test('mix 5 Min.: kurz aufwaermen, 4 im Hauptteil, passt in 5 Min.', function () {
+  var idx = wIdx();
+  ['core', 'vacuum', 'yoga', 'ganz'].forEach(function (th) {
+    for (var seed = 1; seed <= 10; seed++) {
+      var w = Takt.makeMix({ themes: [th], minutes: 5, seed: seed }, Takt.EXERCISES);
+      eq(w.blocks.map(function (b) { return [b.label, b.items.length]; }), [['Aufwärmen', 1], ['Hauptteil', 4], ['Abschluss', 1]], th + ' ' + seed);
+      var s = Takt.workoutSeconds(w, idx);
+      ok(s <= 300 && s >= 240, th + ' ' + seed + ': ' + s + ' s');
+      ok(mixBlock(w, 'Hauptteil').items.every(function (i) { return i.duration >= 20; }), 'Hauptteil zu kurz');
+    }
+  });
+});
+
+test('mix nur Vacuum: Hauptteil nur Vacuum-Uebungen', function () {
+  var idx = wIdx();
+  for (var seed = 1; seed <= 20; seed++) {
+    var w = Takt.makeMix({ themes: ['vacuum'], minutes: 10, seed: seed }, Takt.EXERCISES);
+    var main = mixIds(mixBlock(w, 'Hauptteil'));
+    eq(main.length, 5);
+    ok(main.every(function (id) { return idx[id].tags.indexOf('vacuum') >= 0; }), 'kein Vacuum: ' + main);
+    eq([w.name, w.theme], ['Mix: Vacuum', 'core']);
+  }
 });
 
 /* ---------- Workouts pruefen und kopieren ---------- */
@@ -292,8 +316,8 @@ test('fitBudget verlaengert nie ueber die geplante Dauer', function () {
 });
 
 test('mix Name passt immer in 40 Zeichen und laesst sich speichern', function () {
-  var keys = ['core', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'];
-  for (var mask = 1; mask < 128; mask++) {
+  var keys = ['core', 'vacuum', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'];
+  for (var mask = 1; mask < 256; mask++) {
     var th = keys.filter(function (k, i) { return mask & (1 << i); });
     var w = Takt.makeMix({ themes: th, minutes: 15, seed: mask }, Takt.EXERCISES);
     ok(w.name.length <= 40, w.name);

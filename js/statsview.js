@@ -136,9 +136,9 @@ window.Takt = window.Takt || {};
   function backupDone(msg) {
     api.data().settings.lastBackup = new Date().toISOString();
     api.save();
-    var fresh = api.badges ? api.badges() : [];
+    if (api.badges) api.badges();   // neue Abzeichen ("Erstes Backup") feiert app.js gross
     render();
-    api.toast(fresh.length ? msg + ' \u00b7 Neues Abzeichen: ' + fresh.map(function (b) { return b.title; }).join(', ') : msg);
+    api.toast(msg);
   }
 
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
