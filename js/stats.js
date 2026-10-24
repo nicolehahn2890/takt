@@ -71,6 +71,8 @@ window.Takt = window.Takt || {};
 
   function weekday(d) { return (d.getDay() + 6) % 7; }
   function daysIn(y, m) { return new Date(y, m + 1, 0).getDate(); }
+  /* "Sa, 24. Okt." (Tagebuch) */
+  T.dayLabel = function (d) { return DAY_SHORT[weekday(d)] + ', ' + d.getDate() + '. ' + MONTH_SHORT[d.getMonth()]; };
 
   T.periodRange = function (kind, offset, now) {
     now = now instanceof Date ? now : new Date();

@@ -6,6 +6,7 @@ window.Takt = window.Takt || {};
   var $ = function (id) { return document.getElementById(id); };
   var api = null;
   var view = { kind: 'week', offset: 0, selected: null, badge: null };
+  var photos = null, photosLoading = null;   // Fotos fuer das Backup, vorab geladen: Teilen braucht einen frischen Tipp
   var RING_C = 2 * Math.PI * 99;
   var KINDS = [['week', 'Woche'], ['month', 'Monat'], ['year', 'Jahr']];
 
@@ -40,7 +41,7 @@ window.Takt = window.Takt || {};
       '<div class="st-ring-in"><b>' + mins(s.seconds) + '<span>Min.</span></b><small>' + (s.count === 1 ? '1 Training' : s.count + ' Trainings') + '</small></div></div>' +
       '<p class="st-compare">' + T.esc(s.compare.text) + '</p>' +
       '<div class="st-chart st-' + view.kind + '"><div class="st-bars">' + bars + '</div><div class="st-axis">' + axis + '</div>' +
-      '<p class="st-sel">' + T.esc(selText) + '</p></div>' + top + badgesHtml();
+      '<p class="st-sel">' + T.esc(selText) + '</p></div>' + top + badgesHtml() + diaryHtml() + backupHtml();
   }
 
   /* Abzeichen als 4er-Raster; Antippen zeigt Name, Bedingung und Datum */
@@ -55,10 +56,122 @@ window.Takt = window.Takt || {};
       '<p class="bdg-info">' + T.esc(info) + '</p></section>';
   }
 
+  /* Tagebuch: die letzten 30 Trainings, neueste oben */
+  function diaryHtml() {
+    var list = (api.data().log || []).filter(function (e) { return T.entryValid(e); })
+      .map(function (e) { return { e: e, t: new Date(e.date).getTime() }; })
+      .filter(function (x) { return isFinite(x.t); })
+      .sort(function (a, b) { return b.t - a.t; }).slice(0, 30);
+    var rows = list.map(function (x) {
+      var sec = T.entrySeconds(x.e);
+      return '<li><small>' + T.esc(T.dayLabel(new Date(x.t))) + '</small><div class="dy-main"><b>' + T.esc(x.e.name || 'Training') + '</b>' +
+        '<span>' + (sec < 60 ? 'unter 1' : mins(sec)) + ' Min.</span></div>' + (x.e.note ? '<p>' + T.esc(x.e.note) + '</p>' : '') + '</li>';
+    }).join('');
+    return '<section class="st-sec"><div class="st-h"><h3>Tagebuch</h3></div>' +
+      (rows ? '<ul class="diary">' + rows + '</ul>' : '<p class="st-empty">Noch keine Trainings.</p>') + '</section>';
+  }
+
+  function backupHtml() {
+    return '<section class="st-sec"><div class="st-h"><h3>Backup</h3></div>' +
+      '<p class="bk-when">' + T.esc(T.backupAgo(api.data().settings.lastBackup, new Date())) + '</p>' +
+      '<p class="bk-txt">Sichert Workouts, eigene \u00dcbungen mit Fotos, Tagebuch, Abzeichen und Einstellungen in einer Datei.</p>' +
+      '<div class="bk-row"><button class="btn main" data-bk="save">Backup sichern</button><button class="btn" data-bk="load">Backup laden</button></div></section>';
+  }
+
+  function preparePhotos() {
+    photos = null;
+    photosLoading = T.photos && T.photos.all ? T.photos.all().catch(function () { return {}; }) : Promise.resolve({});
+    photosLoading.then(function (p) { photos = p; });
+  }
+
+  /* Nur Fotos, die eine eigene Uebung benutzt */
+  function usedPhotos(d, all) {
+    var out = {};
+    (d.exercisesOwn || []).forEach(function (e) { if (e && e.photoId && all[e.photoId]) out[e.photoId] = all[e.photoId]; });
+    return out;
+  }
+
+  function saveBackup(all) {
+    var d = api.data();
+    var b = T.makeBackup(d, usedPhotos(d, all || {}), new Date());
+    var file = null;
+    try { file = new File([b.text], b.filename, { type: 'application/json' }); } catch (e) { file = null; }
+    if (file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file] }).then(backupDone, function (err) {
+        if (!err || err.name !== 'AbortError') download(b);   // Abbrechen zaehlt nicht als Backup
+      });
+      return;
+    }
+    download(b);
+  }
+
+  function download(b) {
+    var url = URL.createObjectURL(new Blob([b.text], { type: 'application/json' }));
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = b.filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+    backupDone();
+  }
+
+  function backupDone() {
+    api.data().settings.lastBackup = new Date().toISOString();
+    api.save();
+    render();
+    api.toast('Backup gesichert');
+  }
+
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+
+  function confirmText(r) {
+    var rep = r.report;
+    var lines = ['Backup vom ' + T.badgeDate(r.data.settings.lastBackup) + ' laden?', '',
+      plural(rep.workouts, 'Workout', 'Workouts') + ', ' + plural(rep.exercisesOwn, 'eigene \u00dcbung', 'eigene \u00dcbungen') + ', ' +
+      plural(rep.log, 'Training', 'Trainings') + ', ' + plural(rep.photos, 'Foto', 'Fotos') + '.'];
+    if (rep.dropped.workouts) lines.push(plural(rep.dropped.workouts, 'ung\u00fcltiges Workout wird', 'ung\u00fcltige Workouts werden') + ' weggelassen.');
+    if (rep.dropped.exercisesOwn) lines.push(plural(rep.dropped.exercisesOwn, 'ung\u00fcltige eigene \u00dcbung wird', 'ung\u00fcltige eigene \u00dcbungen werden') + ' weggelassen.');
+    lines.push('', 'Deine jetzigen Daten werden dabei ersetzt.');
+    return lines.join('\n');
+  }
+
+  /* Erst alles pruefen; dann Fotos schreiben, Daten ersetzen, unbenutzte Fotos loeschen, neu laden */
+  function loadBackup(file) {
+    file.text().then(function (text) {
+      var r = T.readBackup(text);
+      if (!r.ok) { api.toast(r.error); return; }
+      if (!window.confirm(confirmText(r))) return;
+      var ids = Object.keys(r.photos);
+      var put = !ids.length ? Promise.resolve() : T.photos && T.photos.putDataUrl ?
+        Promise.all(ids.map(function (id) { return T.photos.putDataUrl(id, r.photos[id]); })) : Promise.reject(new Error('Fotos'));
+      put.then(function () {
+        if (!T.store.save(r.data)) throw new Error('Speichern');
+        T.store.clearRun();
+        var keep = r.data.exercisesOwn.map(function (e) { return e.photoId; }).filter(Boolean);
+        return T.photos && T.photos.keepOnly ? T.photos.keepOnly(keep).catch(function () { /* egal */ }) : null;
+      }).then(function () { window.location.reload(); }, function () {
+        api.toast('Das Backup konnte nicht geladen werden. Deine Daten sind unver\u00e4ndert.');
+      });
+    }, function () { api.toast('Die Datei konnte nicht gelesen werden.'); });
+  }
+
   function bind() {
+    $('bk-file').addEventListener('change', function () {
+      var f = this.files && this.files[0];
+      this.value = '';
+      if (f) loadBackup(f);
+    });
     $('stats-body').addEventListener('click', function (e) {
-      var b = e.target.closest('[data-kind],[data-nav],[data-bar],[data-badge]');
+      var b = e.target.closest('[data-kind],[data-nav],[data-bar],[data-badge],[data-bk]');
       if (!b || b.disabled) return;
+      if (b.hasAttribute('data-bk')) {
+        if (b.getAttribute('data-bk') === 'load') $('bk-file').click();
+        else if (photos) saveBackup(photos);
+        else photosLoading.then(saveBackup);
+        return;
+      }
       if (b.hasAttribute('data-badge')) { var id = b.getAttribute('data-badge'); view.badge = view.badge === id ? null : id; }
       else if (b.hasAttribute('data-kind')) { view.kind = b.getAttribute('data-kind'); view.offset = 0; view.selected = null; }
       else if (b.hasAttribute('data-nav')) { view.offset = Math.min(0, view.offset + Number(b.getAttribute('data-nav'))); view.selected = null; }
@@ -69,6 +182,6 @@ window.Takt = window.Takt || {};
 
   T.statsView = {
     init: function (a) { api = a; bind(); },
-    open: function () { view.selected = null; view.badge = null; render(); api.show('stats'); }
+    open: function () { view.selected = null; view.badge = null; preparePhotos(); render(); api.show('stats'); }
   };
 })(window.Takt);

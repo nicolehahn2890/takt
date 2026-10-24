@@ -62,6 +62,25 @@ window.Takt = window.Takt || {};
   }
 
   var urls = {};
+  function forget(id) { if (urls[id]) { URL.revokeObjectURL(urls[id]); delete urls[id]; } }
+
+  function toDataUrl(blob) {
+    return new Promise(function (resolve) {
+      if (!blob) { resolve(null); return; }
+      var r = new FileReader();
+      r.onload = function () { resolve(typeof r.result === 'string' ? r.result : null); };
+      r.onerror = function () { resolve(null); };
+      r.readAsDataURL(blob);
+    });
+  }
+
+  function fromDataUrl(u) {
+    var m = /^data:([^;,]+);base64,(.*)$/.exec(String(u || ''));
+    if (!m) throw new Error('Ein Foto im Backup ist besch\u00e4digt.');
+    var bin = atob(m[2]), arr = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return new Blob([arr], { type: m[1] });
+  }
 
   T.photos = {
     MAX: MAX,
@@ -100,8 +119,44 @@ window.Takt = window.Takt || {};
 
     remove: function (id) {
       if (!id) return Promise.resolve();
-      if (urls[id]) { URL.revokeObjectURL(urls[id]); delete urls[id]; }
+      forget(id);
       return tx('readwrite', function (store) { store.delete(id); }).catch(function () { /* egal */ });
+    },
+
+    /* Alle Fotos als { id: dataURL } (fuer das Backup) */
+    all: function () {
+      return tx('readonly', function (store) { return { keys: store.getAllKeys(), vals: store.getAll() }; }).then(function (r) {
+        var keys = r.keys.result || [], vals = r.vals.result || [];
+        return Promise.all(keys.map(function (k, i) { return toDataUrl(vals[i] && vals[i].blob).then(function (u) { return [k, u]; }); }));
+      }).then(function (pairs) {
+        var out = {};
+        pairs.forEach(function (p) { if (p[1]) out[p[0]] = p[1]; });
+        return out;
+      });
+    },
+
+    /* Foto aus dem Backup unter seiner alten Id speichern; scheitert, wenn das Bild nicht lesbar ist */
+    putDataUrl: function (id, dataUrl) {
+      var blob;
+      try { blob = fromDataUrl(dataUrl); } catch (e) { return Promise.reject(e); }
+      return decode(blob).then(function (d) {
+        var rec = { blob: blob, width: d.img.naturalWidth, height: d.img.naturalHeight };
+        URL.revokeObjectURL(d.url);
+        forget(id);
+        return tx('readwrite', function (store) { store.put(rec, id); });
+      });
+    },
+
+    /* Alle Fotos loeschen, die nicht in ids stehen */
+    keepOnly: function (ids) {
+      var keep = {};
+      (ids || []).forEach(function (id) { if (id) keep[id] = true; });
+      return tx('readwrite', function (store) {
+        var req = store.getAllKeys();
+        req.onsuccess = function () {
+          (req.result || []).forEach(function (k) { if (!keep[k]) { forget(k); store.delete(k); } });
+        };
+      });
     }
   };
 })(window.Takt);

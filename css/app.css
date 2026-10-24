@@ -483,3 +483,18 @@ button.bdg:active i { transform: scale(.94); }
 @keyframes bdg-pop { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .bdg.pop { animation: none; } }
 
+/* ---------- Schritt 4: Tagebuch und Backup ---------- */
+.diary { list-style: none; background: var(--card); border-radius: 16px; padding: 4px 16px; }
+.diary li { padding: 12px 0; border-top: 1px solid var(--line); }
+.diary li:first-child { border-top: 0; }
+.diary small { display: block; font-size: 13px; color: var(--muted); }
+.dy-main { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 2px; }
+.dy-main b { font-size: 16px; font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.dy-main span { flex: none; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.diary p { margin-top: 4px; font-size: 14px; line-height: 1.45; color: var(--muted); overflow-wrap: anywhere; white-space: pre-line; }
+.st-empty { color: var(--muted); font-size: 14px; }
+.bk-when { font-size: 16px; font-weight: 600; }
+.bk-txt { margin-top: 4px; font-size: 14px; line-height: 1.45; color: var(--muted); }
+.bk-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: var(--s3); }
+.bk-row .btn { flex: 1 1 140px; }
+
