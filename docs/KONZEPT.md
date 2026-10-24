@@ -248,7 +248,7 @@ Projekt Homeworkout/
 | 1 | Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Sprachdateien für feste Sätze (gewählte Stimme), Training-Screen (Ring) mit einem Test-Workout, Test-Hilfe Uhrzeit (Repo + Pages gibt es schon) | Erledigt 2026-10-22 (live, 52 Tests grün, Code-Review ohne kritische Funde, iPhone-Test bestanden, siehe 3.3) | ~220k |
 | 2 | Bibliothek (110 Übungen mit animierter Figur statt Bildern, Katja-Ansagen), Übungs-Screens, eigene Übungen mit Foto/Video | Erledigt 2026-10-22 (live, 81 Tests grün, zwei Prüfungen ohne kritische Funde). iPhone-Test durch Nicole steht aus | ~450k |
 | 3 | Workout-Editor, Start-Screen, 12 Vorlagen, Zeit-Budget, Intensität, Mix-Modus | Erledigt 2026-10-23 (live v=15, 121 Tests grün, klickbarer Entwurf von Nicole abgenommen, zwei Prüfungen, wichtige Funde behoben). iPhone-Test durch Nicole steht aus | ~290k |
-| 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Teilen, Export/Import | Alle Extras nutzbar | ~220k |
+| 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Backup (Teilen per Link entfällt vorerst) | Erledigt 2026-10-24 (live v=41, 201 Tests grün, Prüfung ohne kritische Funde; Abzeichen auf Nicoles Wunsch mit Icons + Fortschritt, 22 Stück). iPhone-Test steht aus, siehe 8.6 | ~250k + ~70k Abzeichen v2 |
 | 5 | PWA (Manifest, Service Worker, Icons), Querformat, Feinschliff, Installations-Hinweis beim ersten Start, Abschlusstest auf dem iPhone | Installierbar, offline, auf dem Homescreen | ~120k |
 
 Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzungen. Jeder Schritt endet mit Test und Push.
@@ -322,6 +322,33 @@ Zurückgestellt:
 - Ein Training, das genau während des Updates lief, zählt die Zeit der Übungen vor dem Update nicht (einmalig).
 - Ungenutzter Zurück-Knopf der Bibliothek im Code.
 - Auf dem iPhone prüfen: Leiste unten beim Tippen in der Suche über der Tastatur.
+
+### 8.6 Schritt 4 (2026-10-24) – umgesetzt und bewusst zurückgestellt
+
+Seitenwechsel (Ton + „Seite wechseln. Rechts.“, „Links.“ nach dem Namen), Atem-Modus (atmender Kreis, sanfte Töne für Ein- und Ausatmen, kein 3-2-1), Fertig-Screen (trainierte Zeit, Anpassungen in Worten, Notiz, neue Abzeichen, Frage der lernenden Dauer), lernende Dauer (3× gleiche Richtung im selben Workout → Frage; Nein = 10 Trainings Ruhe; Vorlage → Kopie), Abzeichen (22, runde Plaketten mit Icon aus Tabler Icons, Fortschrittsring „4 von 10“, Raster in der Statistik), Tagebuch (letzte 30 Trainings mit Notiz) und Backup (Datei mit allem inkl. Fotos sichern und laden). Teilen per Link ist auf Nicoles Wunsch weggefallen (nur Backup). Gefühl-Abfrage weggelassen. Spec: `docs/superpowers/specs/2026-10-24-schritt-4-design.md`, Plan mit allen Entscheidungen: `docs/superpowers/plans/2026-10-24-schritt-4.md`. Abzeichen auch im Design System (`docs/design_handoff_takt_redesign/design-system/`, Baustein AchievementBadge, Vorschau `guidelines/achievement-badges.html`).
+
+Behoben nach der Prüfung: „Backup sichern“ meldet nur noch echten Erfolg (Knopf erst aktiv, wenn die Fotos geladen sind; in der Home-Bildschirm-App ohne Teilen-Menü ehrlicher Hinweis statt Download).
+
+Zurückgestellt (aus der Prüfung):
+- Nach Rückkehr aus dem Hintergrund kann der Seitenwechsel die Ansage des Übungsnamens abschneiden (Bildschirm zeigt den Namen).
+- Neuladen genau in der Sekunde des Seitenwechsels: „Seite wechseln“ kann ein zweites Mal kommen.
+- „Ja“ bei der lernenden Dauer einer Vorlage feiert „Eigenes Workout gebaut“ erst beim nächsten Training.
+- Volle Speicher (privater Modus): Lernfrage, Notiz und Backup-Zeitpunkt melden trotzdem Erfolg.
+- Backup laden: scheitert das Speichern der Daten, liegen die Fotos aus der Datei schon im Fotospeicher (keine Daten verloren, Meldung ungenau).
+- Ist der Fotospeicher blockiert, wird das Backup ohne Fotos gesichert, ohne Hinweis.
+- Sehr kurze beidseitige Übung (10–11 s): Seitenwechsel-Ansage und 3-2-1-Töne liegen dicht beieinander.
+- Atem-Ton nach 2 s kann bei langen Übungsnamen kurz in die Namensansage fallen.
+- „10 Notizen“ erscheint erst beim Verlassen des Notizfelds; wer direkt auf „Zur Startseite“ tippt, dessen Tipp kann einmal ins Leere gehen (Abzeichen steht danach in der Statistik).
+- „5 eigene Übungen“ trägt als Datum den Tag der Prüfung (eigene Übungen merken sich kein Anlegedatum).
+- „Alle Vorlagen“ ist fest auf 12 eingestellt; kommen Vorlagen dazu, muss die Zahl in `data/badges.js` mit.
+- Kleinkram im Code: verrutschter Kommentar in `js/app.js`, doppelte Prüfung in `js/backup.js`, leeres Datum im Laden-Dialog bei kaputtem Zeitstempel, lernende Dauer zählt nach Laden eines älteren Backups etwas später neu.
+
+Auf dem iPhone prüfen (Nicole):
+- Atem-Übung mit Spotify: sind die Ein-/Aus-Töne gut hörbar, aber sanft?
+- Beidseitige Übung: „Links.“ nach dem Namen, in der Mitte Ton + „Seite wechseln. Rechts.“
+- Fertig-Screen: Notiz tippen, Abzeichen-Einblendung, Frage der lernenden Dauer (3× dieselbe Übung im selben Workout verlängern).
+- Statistik: Abzeichen-Raster mit Icons und Ringen, Antippen, Tagebuch.
+- **Backup sichern in der Home-Bildschirm-App:** öffnet sich das Teilen-Menü mit der Datei, lässt sie sich „In Dateien sichern“? Danach „Backup laden“ mit genau dieser Datei.
 
 ## 9. Verifikation
 
