@@ -1,7 +1,7 @@
 # Homeworkout-Timer-App – Konzept und Umsetzungsplan
 
 Name: **Takt** – "Dein Training, dein Takt" · Repo `nicolehahn2890/takt` (öffentlich) · Live: https://nicolehahn2890.github.io/takt/
-Stand: 2026-10-24 (live v=44) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
+Stand: 2026-10-24 (live v=45) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
 
 Dieses Dokument beschreibt den aktuellen Stand. Pläne und Specs unter `docs/superpowers/` sind Momentaufnahmen ihres Datums; weicht etwas ab, gilt dieses Dokument. Gestaltung: `docs/design_handoff_takt_redesign/design-system/DESIGN_GUIDE.md`.
 
@@ -44,7 +44,7 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 
 | Thema | Realität | Umgang |
 |---|---|---|
-| Musik + Ansage | Auf dem iPhone getestet (3.1, 3.2): Browser-Stimme stoppt Spotify; Töne und Sprachdateien über Web Audio mischen sich mit Spotify, ohne es leiser zu machen. Stummschalter: in Test 1 war bei Stumm alles still; seit 2026-10-24 kommen Töne und Ansagen laut Nicole auch bei Stumm | Ansagen als Sprachdateien über Web Audio im Modus ambient; der Hinweis "Schalter auf Klingeln" ist entfernt (v=43); Absenken der Musik erst mit Capacitor |
+| Musik + Ansage | Auf dem iPhone getestet (3.1, 3.2): Browser-Stimme stoppt Spotify; Töne und Sprachdateien über Web Audio mischen sich mit Spotify, ohne es leiser zu machen. Stummschalter auf Stumm: über den Lautsprecher ist alles still, mit Kopfhörern kommen Töne und Ansagen (iPhone-Test 2026-10-24). iOS-Regel für Töne, die sich mit anderer Musik mischen; ein Modus, der den Schalter übergeht, hält Spotify an | Ansagen als Sprachdateien über Web Audio im Modus ambient; ohne Kopfhörer muss der Schalter auf Klingeln stehen (Hinweis auf der Startseite seit v=43 entfernt, siehe 8.7); den Schalter übergehen und Musik absenken geht erst mit Capacitor |
 | Musikquelle | YouTube im Handy-Browser stoppt beim App-Wechsel (ohne Premium) | Spotify-App nutzen (oder Laptop/Tablet); in der App steht dazu kein Hinweis mehr (entfernt v=43) |
 | App im Hintergrund | Wechselt man zur Spotify-App, pausiert iOS die Web-App oder lädt sie beim Zurückkehren neu | Laufzustand (Schritt, Startzeitstempel) wird laufend gespeichert und beim Zurückkehren nahtlos fortgesetzt; Bildschirm bleibt per Wake Lock an |
 | Speicher auf iPhone | Safari-Tab und installierte App haben getrennte Speicher; Safari kann Daten nach 7 Tagen ohne Nutzung löschen; Teil-Links öffnen immer in Safari | Backup als Datei in der Statistik (Schritt 4); Installations-Hinweis beim ersten Start folgt in Schritt 5; Teilen per Link entfällt vorerst |
@@ -68,7 +68,7 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 
 **Entscheidungen danach (Nicole, 2026-10-22):**
 - Ansagen vorerst mit der Browser-Stimme (Roboterstimme). Fertige Sprachdateien mit natürlicher Stimme bleiben eine Option für später.
-- Immer Modus "mit Musik": Die App mischt sich in die Musik, der Stummschalter muss auf Klingeln stehen. Die App erinnert vor jedem Start daran. Kein eigener "Ohne Musik"-Modus. (Überholt 2026-10-24: Töne kommen inzwischen auch bei Stumm, die Erinnerung ist entfernt.)
+- Immer Modus "mit Musik": Die App mischt sich in die Musik, der Stummschalter muss auf Klingeln stehen. Die App erinnert vor jedem Start daran. Kein eigener "Ohne Musik"-Modus. (Gilt weiter ohne Kopfhörer; mit Kopfhörern ist auch bei Stumm alles hörbar. Die Erinnerung auf der Startseite ist seit v=43 entfernt.)
 - Test 2 klärt: Gibt es einen Audio-Modus, bei dem die Browser-Stimme Spotify nicht stoppt? Zum Vergleich wird dieselbe Ansage als Datei abgespielt.
 
 ### 3.2 Ergebnis iPhone-Test 2 (2026-10-22, gleiches iPhone)
@@ -103,7 +103,7 @@ Folgerung: Der Ansage-Weg über Sprachdateien ist bestätigt. Ansagen bei gesper
 
 ## 4. Produkt – Screens und Verhalten
 
-Stand v=44. Was noch fehlt oder bewusst wegfällt, ist markiert.
+Stand v=45. Was noch fehlt oder bewusst wegfällt, ist markiert.
 
 ### 4.1 Home (Startseite)
 - Kopf: Logo-Figur, „Takt“, „Dein Training, dein Takt“. Darunter Minuten und Anzahl Trainings dieser Woche.
@@ -158,7 +158,7 @@ Stand v=44. Was noch fehlt oder bewusst wegfällt, ist markiert.
 - Wake Lock API; wird er verweigert (z. B. Stromsparmodus) oder fehlt er, Hinweis "Bildschirmsperre ausschalten / Stromsparmodus aus".
 - Töne über Web Audio (keine Sounddateien nötig). Der Countdown "3, 2, 1" läuft als Töne, nicht als Sprache (Sprachausgabe startet mit Verzögerung). Vor zeitkritischen Ansagen wird die Sprach-Warteschlange geleert.
 - Ansagen als vorab erzeugte MP3-Dateien, abgespielt über Web Audio mit `navigator.audioSession.type = 'ambient'` (mischt sich mit Spotify, getestet). Die Dateien eines Workouts werden vor dem Start geladen und dekodiert. Der Start-Tipp schaltet den Ton frei (iOS-Regel). Keine Browser-Sprachausgabe (stoppt Spotify).
-- ~~Vor jedem Start Hinweis "Schalter auf Klingeln, Musik vorher starten".~~ Entfernt 2026-10-24 (v=43): Töne und Ansagen kommen laut Nicole inzwischen auch bei Stummschalter auf Stumm.
+- Vor jedem Start Hinweis "Schalter auf Klingeln, Musik vorher starten": entfernt 2026-10-24 (v=43), siehe 8.7. Der Schalter muss ohne Kopfhörer trotzdem auf Klingeln stehen.
 - Beim Wechsel zu Spotify läuft das Training weiter; Töne kamen im Test auch im Hintergrund.
 - Test-Hilfe (abschaltbar): klein Startuhrzeit und vergangene Zeit anzeigen, damit Nicole die Restzeit mit der iPhone-Uhr vergleichen kann (offene Beobachtung aus Test 2).
 - Offline-fähig und installierbar (PWA: Manifest + Service Worker): Schritt 5.
@@ -272,9 +272,9 @@ Dazu `takt_run_v1` (laufendes Training, wird bis 30 Min. fortgesetzt) und Indexe
 | 0a | Mockup des Training-Screens (statisches HTML, 2 Varianten) im Browser zeigen | Erledigt: Variante A (Ring) | ~40k |
 | 0b | Spike auf Nicoles iPhone (Pflicht, Hauptgerät): Mini-Seite mit Sprachansage, Ton, Bildschirm-an, Spotify nebenbei, Stummschalter, App-Wechsel | Erledigt: Test 1 und 2, Ergebnis in 3.1 und 3.2 | ~30k |
 | 1 | Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Sprachdateien für feste Sätze (gewählte Stimme), Training-Screen (Ring) mit einem Test-Workout, Test-Hilfe Uhrzeit (Repo + Pages gibt es schon) | Erledigt 2026-10-22 (live, 52 Tests grün, Code-Review ohne kritische Funde, iPhone-Test bestanden, siehe 3.3) | ~220k |
-| 2 | Bibliothek (110 Übungen mit animierter Figur statt Bildern, Katja-Ansagen; seit 2026-10-23 145), Übungs-Screens, eigene Übungen mit Foto/Video | Erledigt 2026-10-22 (live, 81 Tests grün, zwei Prüfungen ohne kritische Funde). iPhone-Test durch Nicole steht aus | ~450k |
-| 3 | Workout-Editor, Start-Screen, 12 Vorlagen, Zeit-Budget, Intensität, Mix-Modus | Erledigt 2026-10-23 (live v=15, 121 Tests grün, klickbarer Entwurf von Nicole abgenommen, zwei Prüfungen, wichtige Funde behoben). iPhone-Test durch Nicole steht aus | ~290k |
-| 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Backup (Teilen per Link entfällt vorerst) | Erledigt 2026-10-24 (live v=41, 201 Tests grün, Prüfung ohne kritische Funde; Abzeichen auf Nicoles Wunsch mit Icons + Fortschritt, 22 Stück). Nachbesserungen nach dem ersten Benutzen v=42–44 (8.7), 205 Tests grün. iPhone-Test steht aus, siehe 8.6 | ~250k + ~70k Abzeichen v2 |
+| 2 | Bibliothek (110 Übungen mit animierter Figur statt Bildern, Katja-Ansagen; seit 2026-10-23 145), Übungs-Screens, eigene Übungen mit Foto/Video | Erledigt 2026-10-22 (live, 81 Tests grün, zwei Prüfungen ohne kritische Funde). iPhone-Test bestanden 2026-10-24 (Figuren flüssig, Ansage anhören, eigenes Foto, Suche mit Tastatur) | ~450k |
+| 3 | Workout-Editor, Start-Screen, 12 Vorlagen, Zeit-Budget, Intensität, Mix-Modus | Erledigt 2026-10-23 (live v=15, 121 Tests grün, klickbarer Entwurf von Nicole abgenommen, zwei Prüfungen, wichtige Funde behoben). iPhone-Test bestanden 2026-10-24 (Editor, Kopie einer Vorlage, Anpassen) | ~290k |
+| 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Backup (Teilen per Link entfällt vorerst) | Erledigt 2026-10-24 (live v=41, 201 Tests grün, Prüfung ohne kritische Funde; Abzeichen auf Nicoles Wunsch mit Icons + Fortschritt, 22 Stück). Nachbesserungen nach dem ersten Benutzen v=42–44 (8.7), 205 Tests grün. iPhone-Test 2026-10-24 bestanden bis auf die lernende Dauer (noch nicht geprüft), siehe 8.6 | ~250k + ~70k Abzeichen v2 |
 | 5 | PWA (Manifest, Service Worker, Icons), Querformat, Feinschliff, Installations-Hinweis beim ersten Start, Abschlusstest auf dem iPhone | Installierbar, offline, auf dem Homescreen | ~120k |
 
 Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzungen. Jeder Schritt endet mit Test und Push.
@@ -347,7 +347,7 @@ Zurückgestellt:
 - Bereich-Sekunden können wegen Rundung je Übung ein paar Sekunden über der Trainingszeit liegen (nach Minuten unsichtbar).
 - Ein Training, das genau während des Updates lief, zählt die Zeit der Übungen vor dem Update nicht (einmalig).
 - Ungenutzter Zurück-Knopf der Bibliothek im Code.
-- Auf dem iPhone prüfen: Leiste unten beim Tippen in der Suche über der Tastatur.
+- Auf dem iPhone prüfen: Leiste unten beim Tippen in der Suche über der Tastatur. (Geprüft 2026-10-24: passt.)
 
 ### 8.6 Schritt 4 (2026-10-24) – umgesetzt und bewusst zurückgestellt
 
@@ -369,7 +369,9 @@ Zurückgestellt (aus der Prüfung):
 - „Alle Vorlagen“ ist fest auf 12 eingestellt; kommen Vorlagen dazu, muss die Zahl in `data/badges.js` mit.
 - Kleinkram im Code: doppelte Prüfung in `js/backup.js`, leeres Datum im Laden-Dialog bei kaputtem Zeitstempel, lernende Dauer zählt nach Laden eines älteren Backups etwas später neu.
 
-Auf dem iPhone prüfen (Nicole):
+iPhone-Test (Nicole, 2026-10-24): Backup sichern und laden in der Home-Bildschirm-App, Seitenwechsel, Notiz, Tagebuch, Abzeichen-Feier und Statistik bestanden; Atem-Töne „etwas leise“ (lauter gemacht in v=45). **Noch offen:** lernende Dauer (3× dieselbe Übung im selben Workout mit +15 verlängern, dann kommt die Frage im Fertig-Screen).
+
+Ursprüngliche Checkliste:
 - Atem-Übung mit Spotify: sind die Ein-/Aus-Töne gut hörbar, aber sanft?
 - Beidseitige Übung: „Links.“ nach dem Namen, in der Mitte Ton + „Seite wechseln. Rechts.“
 - Fertig-Screen: Notiz tippen, Abzeichen-Einblendung, Frage der lernenden Dauer (3× dieselbe Übung im selben Workout verlängern).
@@ -383,7 +385,8 @@ Wünsche von Nicole nach dem ersten Trainieren mit Schritt 4:
 - **Mix 5 Min.:** neue Stufe (1 Aufwärm-Übung, 4 Übungen, kurzer Abschluss; passt immer in 5 Min.).
 - **Mix nur Vacuum:** eigenes Thema „Vacuum“ (nur Vacuum-Übungen). „Core“ enthält weiterhin auch Vacuum-Übungen.
 
-- **Hinweis „Vor dem Start“ entfernt (v=43):** Töne und Ansagen kommen laut Nicoles iPhone-Test auch, wenn der Stummschalter auf Stumm steht.
+- **Hinweis „Vor dem Start“ entfernt (v=43):** Anlass war die Beobachtung, dass Töne und Ansagen auch bei Stumm kommen. Später am selben Tag geklärt: Das gilt nur mit Kopfhörern; über den Lautsprecher bleibt Takt bei Stumm still (iOS-Regel, siehe Abschnitt 3).
+- **Atem-Töne lauter (v=45):** Nicole fand sie etwas leise; Lautstärke von 0,3 auf 0,5 (andere Töne 0,6), weiter weich eingeblendet.
 - **Unterlagen abgeglichen (v=44):** Konzept, README, Design-Guide und Code-Kommentare auf den aktuellen Stand gebracht; keine Änderung am Verhalten.
 
 Meine Festlegungen (Nicole kann widersprechen): Feier schließt nur über den Knopf (ein versehentlicher Tipp wischt sie nicht weg); Klang nur, wenn Töne an sind; ohne Animation bei „Bewegung reduzieren“.

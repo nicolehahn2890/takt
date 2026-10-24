@@ -9,9 +9,9 @@ window.Takt = window.Takt || {};
   var loading = {};
   var playing = [];
   var endAt = 0;   // Ende der zuletzt geplanten Wiedergabe (AudioContext-Zeit)
-  // [Frequenz, Dauer, Lautstaerke, Einblenden]; Atem-Toene leiser und weich; c1-c3 = Klang fuer neue Abzeichen (C-E-G)
+  // [Frequenz, Dauer, Lautstaerke, Einblenden]; Atem-Toene etwas leiser und weich eingeblendet; c1-c3 = Klang fuer neue Abzeichen (C-E-G)
   var TONES = { tick: [880, 0.15], go: [1320, 0.35], warn: [660, 0.25], rest: [520, 0.3], end: [1320, 0.6],
-    'in': [660, 0.6, 0.3, 0.12], out: [440, 0.8, 0.3, 0.12],
+    'in': [660, 0.6, 0.5, 0.12], out: [440, 0.8, 0.5, 0.12],
     c1: [1047, 0.14, 0.3, 0.01], c2: [1319, 0.14, 0.3, 0.01], c3: [1568, 0.7, 0.3, 0.01] };
 
   function files() { return T.VOICE_FILES || {}; }

@@ -4,7 +4,7 @@
 
 Screens: **Home** (weekly stat, Mix / + Neu, Meine Workouts, Vorlagen by theme) · **Vorschau** of a template · **Anpassen** sheet (time + intensity) · **Mix** sheet (themes + total time) · **Training** (ring timer or breathing circle, figure, next-up, transport) · **Geschafft** (summary, new badges, note) · **Bibliothek** (search, chips, 145 exercises) · **Übungs-Detail** · eigene Übung / Workout-Editor · **Statistik** (week/month/year, Abzeichen, Tagebuch, Backup). A bottom tab bar switches Home / Bibliothek / Statistik.
 
-> **Status (2026-10-24, live v=44):** this guide is kept in sync with the app. Where it disagrees with `css/app.css`, the CSS wins; please fix the guide. The folders `assets/figure/`, `assets/photos/` and the logo alternates named in the index live in the Claude Design project; in the repo only `assets/badges/` is bundled here, the logo is `assets/takt-mark.svg` at the repo root.
+> **Status (2026-10-24):** this guide is kept in sync with the app. Where it disagrees with `css/app.css`, the CSS wins; please fix the guide. The folders `assets/figure/`, `assets/photos/` and the logo alternates named in the index live in the Claude Design project; in the repo only `assets/badges/` is bundled here, the logo is `assets/takt-mark.svg` at the repo root.
 
 ## Sources
 - GitHub: **https://github.com/nicolehahn2890/takt** (branch `main`) — `css/app.css`, `index.html`, `js/app.js`, `js/library.js`, `js/figure.js`, `data/*.js`, `mockups/editor/index.html` (workout-editor prototype, matches the three screenshots supplied in chat), `docs/KONZEPT.md`. Explore the repo further for anything this system doesn't cover (editor, picker, Mix logic, voice lines).
