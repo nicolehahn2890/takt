@@ -451,6 +451,8 @@ body.has-tabbar .start, body.has-tabbar #screen-lib { padding-bottom: calc(100px
   padding: 12px; font: inherit; font-size: 16px; resize: none; outline: none; }
 .done-note textarea:focus { border-color: var(--lila); }
 #done-badges:empty, #done-learn:empty { display: none; }
+/* Nur kurz reingeschaut (zaehlt nicht): ohne Notiz */
+.is-short .done-note { display: none; }
 #done-badges { width: 100%; max-width: 420px; }
 .btn.rose { background: var(--pink); color: var(--bg); font-weight: 700; }
 .learn-card { width: 100%; max-width: 420px; margin-top: var(--s3); padding: 16px; border-radius: 16px; background: var(--card); text-align: left; }

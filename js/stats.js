@@ -216,4 +216,13 @@ window.Takt = window.Takt || {};
       return ((e && e.name) || '\u00dcbung') + ' ' + n + '\u00d7 ' + (net[k] > 0 ? 'verl\u00e4ngert' : 'gek\u00fcrzt');
     });
   };
+
+  /* Ein Training zaehlt erst, wenn mindestens die Haelfte der geplanten Zeit trainiert wurde:
+     Durchklicken oder kurz Reinschauen landet nicht im Tagebuch, in der Statistik oder bei den Abzeichen */
+  T.TRAINING_MIN_SHARE = 0.5;
+  T.trainingCounts = function (activeSec, plannedSec) {
+    var a = Number(activeSec), p = Number(plannedSec);
+    if (!isFinite(a) || !isFinite(p) || a <= 0 || p <= 0) return false;
+    return a >= p * T.TRAINING_MIN_SHARE;
+  };
 })(window.Takt);

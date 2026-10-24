@@ -148,9 +148,17 @@ window.Takt = window.Takt || {};
   function handle(events) {
     (events || []).forEach(function (ev) {
       if (!run) return;
-      T.audio.play(T.announce(ev, { steps: run.engine.steps, settings: data.settings, hasClip: T.audio.hasClip }));
+      var acts = T.announce(ev, { steps: run.engine.steps, settings: data.settings, hasClip: T.audio.hasClip });
+      // Nur kurz reingeschaut: kein "Geschafft, super gemacht!", nur der Schlusston
+      if (ev.type === 'done' && !runCounts()) acts = acts.filter(function (a) { return a.type !== 'clip'; });
+      T.audio.play(acts);
       if (ev.type === 'done') finish();
     });
+  }
+
+  /* Zaehlt das laufende Training als absolviert? (mindestens die Haelfte der geplanten Zeit trainiert) */
+  function runCounts() {
+    return T.trainingCounts(run.engine.view().activeSec, T.totalSeconds(run.engine.steps));
   }
 
   function save(force) {
@@ -324,9 +332,11 @@ window.Takt = window.Takt || {};
       startedAt: v.startedAt ? new Date(v.startedAt).toISOString() : null,
       note: ''
     };
-    data.log.push(entry);
+    // Unter der Haelfte der geplanten Zeit kein Eintrag: kein Tagebuch, keine Statistik, keine Abzeichen, keine Lern-Frage
+    var counts = T.trainingCounts(entry.activeSec, entry.plannedSec);
+    if (counts) data.log.push(entry);
     // Neu erreichte plus die vor dem Training zurueckgestellten Abzeichen
-    var fresh = pendingBadges.concat(checkBadges().filter(function (id) { return pendingBadges.indexOf(id) < 0; }));
+    var fresh = pendingBadges.concat((counts ? checkBadges() : []).filter(function (id) { return pendingBadges.indexOf(id) < 0; }));
     pendingBadges = [];
     noteBadges = [];
     T.store.save(data);
@@ -339,15 +349,18 @@ window.Takt = window.Takt || {};
     $('screen-done').style.setProperty('--theme', themeColor(run.workout.theme));
     T.figure.mount($('done-fig'), (T.POSES || {}).kindhaltung || T.POSE_DEFAULT);
     run = null;
-    $('done-sub').textContent = T.fmt(entry.activeSec) + ' trainiert \u00b7 ' + v.workTotal + ' \u00dcbungen';
-    $('done-adj').innerHTML = T.adjustSummary(entry.adjustments, exIndex).map(function (t) { return '<li>' + T.esc(t) + '</li>'; }).join('');
+    $('screen-done').classList.toggle('is-short', !counts);
+    $('done-title').textContent = counts ? 'Geschafft!' : 'Kurz reingeschaut';
+    $('done-sub').textContent = T.fmt(entry.activeSec) + ' trainiert \u00b7 ' + (counts ? (v.workTotal === 1 ? '1 \u00dcbung' : v.workTotal + ' \u00dcbungen') :
+      'z\u00e4hlt erst ab der H\u00e4lfte der geplanten Zeit (' + T.fmt(Math.ceil(entry.plannedSec * T.TRAINING_MIN_SHARE)) + ')');
+    $('done-adj').innerHTML = counts ? T.adjustSummary(entry.adjustments, exIndex).map(function (t) { return '<li>' + T.esc(t) + '</li>'; }).join('') : '';
     renderFreshBadges(fresh);
     // Erst "Geschafft, super gemacht!" ausklingen lassen, dann das Abzeichen gross feiern
     if (fresh.length) setTimeout(function () { celebrate(fresh); }, Math.max(700, T.audio.remaining() * 1000 + 250));
-    noteEntryId = entry.id;
+    noteEntryId = counts ? entry.id : null;
     $('done-note').value = '';
     $('b-again').setAttribute('data-start', wid);
-    renderLearn(wid);
+    if (counts) renderLearn(wid); else { learnAsk = null; $('done-learn').innerHTML = ''; }
     show('done');
   }
 

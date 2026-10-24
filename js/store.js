@@ -134,6 +134,16 @@ window.Takt = window.Takt || {};
       var st = storageOf(s);
       if (!st) return;
       try { st.removeItem(RUN_KEY); } catch (e) { /* egal */ }
+    },
+    /* Alles zuruecksetzen (wie neu installiert); Fotos loescht der Aufrufer in IndexedDB. true = geklappt */
+    reset: function (s) {
+      var st = storageOf(s);
+      if (!st) return false;
+      try {
+        st.removeItem(KEY);
+        st.removeItem(RUN_KEY);
+        return st.getItem(KEY) === null;
+      } catch (e) { return false; }
     }
   };
 })(window.Takt);

@@ -142,3 +142,14 @@ test('adjustSummary netto', function () {
   eq(Takt.adjustSummary(adj, idx), ['Plank 2× verlängert', 'Crunch 1× gekürzt', 'Übung 1× verlängert']);
   eq(Takt.adjustSummary(null, idx), []);
 });
+
+test('trainingCounts: zaehlt ab der Haelfte der geplanten Zeit', function () {
+  eq(Takt.trainingCounts(300, 600), true, 'genau die Haelfte');
+  eq(Takt.trainingCounts(299, 600), false, 'knapp darunter');
+  eq(Takt.trainingCounts(620, 600), true, 'mit +15 laenger als geplant');
+  eq(Takt.trainingCounts(12, 545), false, 'durchgeklickt');
+  eq(Takt.trainingCounts(45, 45), true, 'kurzes Workout ganz gemacht');
+  eq(Takt.trainingCounts(0, 600), false, 'nichts trainiert');
+  eq(Takt.trainingCounts(30, 0), false, 'nichts geplant');
+  eq(Takt.trainingCounts('x', 600), false, 'kaputte Zahl');
+});

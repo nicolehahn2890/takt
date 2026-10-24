@@ -102,3 +102,18 @@ test('validateOwn baut eine eigene Uebung', function () {
 test('validateOwn behaelt die Id beim Bearbeiten', function () {
   eq(Takt.store.validateOwn({ id: 'own-abc', name: 'Neu' }).exercise.id, 'own-abc');
 });
+
+test('reset loescht Daten und laufendes Training', function () {
+  var s = FakeStorage();
+  var d = Takt.store.defaults();
+  d.workouts.push({ id: 'w-1', name: 'X' });
+  d.badges.first = '2026-10-24T08:00:00.000Z';
+  Takt.store.save(d, s);
+  Takt.store.saveRun({ v: 1 }, s);
+  s.setItem('fremd', 'bleibt');
+  eq(Takt.store.reset(s), true);
+  eq(s.getItem('takt_v1'), null);
+  eq(s.getItem('takt_run_v1'), null);
+  eq(s.getItem('fremd'), 'bleibt', 'nur Takt-Keys');
+  eq(Takt.store.load(s), Takt.store.defaults());
+});

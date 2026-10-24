@@ -86,7 +86,25 @@ window.Takt = window.Takt || {};
       '<p class="bk-when">' + T.esc(T.backupAgo(api.data().settings.lastBackup, new Date())) + '</p>' +
       '<p class="bk-txt">Sichert Workouts, eigene \u00dcbungen mit Fotos, Tagebuch, Abzeichen und Einstellungen in einer Datei.</p>' +
       '<div class="bk-row"><button class="btn main" data-bk="save"' + (photos ? '>Backup sichern' : ' disabled>Wird vorbereitet \u2026') + '</button>' +
-      '<button class="btn" data-bk="load">Backup laden</button></div></section>';
+      '<button class="btn" data-bk="load">Backup laden</button></div></section>' +
+      '<section class="st-sec"><div class="st-h"><h3>Zur\u00fccksetzen</h3></div>' +
+      '<p class="bk-txt">L\u00f6scht alles auf diesem Ger\u00e4t: Workouts, eigene \u00dcbungen mit Fotos, Notizen, Tagebuch, Abzeichen und Einstellungen. ' +
+      'Vorlagen und Bibliothek bleiben. Sichere vorher ein Backup.</p>' +
+      '<div class="bk-row"><button class="btn danger" data-bk="reset">Alles l\u00f6schen</button></div></section>';
+  }
+
+  /* Alles loeschen (wie neu installiert): zwei Rueckfragen, dann Fotos, Daten und laufendes Training weg, neu laden */
+  function resetAll() {
+    var last = T.backupAgo(api.data().settings.lastBackup, new Date());
+    if (!window.confirm('Takt komplett zur\u00fccksetzen?\n\nGel\u00f6scht werden alle Workouts, eigenen \u00dcbungen mit Fotos, Notizen, ' +
+      'das Tagebuch, die Abzeichen und die Einstellungen. Vorlagen und Bibliothek bleiben.\n\n' + last +
+      '. Ohne Backup l\u00e4sst sich das nicht r\u00fcckg\u00e4ngig machen.')) return;
+    if (!window.confirm('Wirklich alles l\u00f6schen?')) return;
+    // Erst die Daten: klappt das nicht, bleibt alles wie es war. Danach die Fotos; bleiben sie liegen, sind sie unsichtbar
+    // (keine Uebung verweist mehr darauf, kein Backup nimmt sie mit)
+    if (!T.store.reset()) { api.toast('Zur\u00fccksetzen hat nicht geklappt. Deine Daten sind unver\u00e4ndert.'); return; }
+    var gone = T.photos && T.photos.keepOnly ? T.photos.keepOnly([]).catch(function () { /* egal */ }) : Promise.resolve();
+    gone.then(function () { window.location.reload(); });
   }
 
   function preparePhotos() {
@@ -186,6 +204,7 @@ window.Takt = window.Takt || {};
       if (!b || b.disabled) return;
       if (b.hasAttribute('data-bk')) {
         if (b.getAttribute('data-bk') === 'load') $('bk-file').click();
+        else if (b.getAttribute('data-bk') === 'reset') resetAll();
         else if (photos) saveBackup(photos);
         return;
       }

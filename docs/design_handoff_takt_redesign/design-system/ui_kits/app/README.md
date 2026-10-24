@@ -8,4 +8,4 @@ Files: `data.jsx` (templates from the editor mockup, step builder), `StartScreen
 Figures render via `assets/figure/*.js` (copied verbatim from the repo).
 Not recreated: workout editor, exercise picker, own-exercise form, Mix sheet (only toasts).
 
-Snapshot of Design v2 (2026-10-23). Added in the app since then and not in this kit: bottom tab bar, Statistik page, breathing circle and side switch in training, finish screen with note, badges and celebration, Mix with Vacuum and 5 Min. The „Vor dem Start“ hint on Start was removed from the app in v=43.
+Snapshot of Design v2 (2026-10-23). Added in the app since then and not in this kit: bottom tab bar, Statistik page, breathing circle and side switch in training, finish screen with note, badges and celebration, Mix with Vacuum and 5 Min. The „Vor dem Start“ hint on Start has new text since v=46: „Ohne Kopfhörer: Schalter am iPhone auf Klingeln, sonst bleibt Takt stumm.“
