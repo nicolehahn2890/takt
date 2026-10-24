@@ -7,3 +7,5 @@ Flow: Start → tap a template card → Vorschau → Start / Anpassen (sheet) �
 Files: `data.jsx` (templates from the editor mockup, step builder), `StartScreen`, `PreviewScreen`, `AdjustSheet`, `TrainingScreen`, `DoneScreen`, `LibraryScreen`, `ExerciseScreen`.
 Figures render via `assets/figure/*.js` (copied verbatim from the repo).
 Not recreated: workout editor, exercise picker, own-exercise form, Mix sheet (only toasts).
+
+Snapshot of Design v2 (2026-10-23). Added in the app since then and not in this kit: bottom tab bar, Statistik page, breathing circle and side switch in training, finish screen with note, badges and celebration, Mix with Vacuum and 5 Min. The „Vor dem Start“ hint on Start was removed from the app in v=43.

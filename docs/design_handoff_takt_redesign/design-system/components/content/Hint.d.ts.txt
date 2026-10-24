@@ -2,7 +2,7 @@ import { ReactNode, CSSProperties } from 'react';
 /** Muted helper paragraph, optionally led by a short pink label ("Tipp"). */
 export interface HintProps {
   children?: ReactNode;
-  /** short lead-in, e.g. "Tipp" or "Vor dem Start" */
+  /** short lead-in, e.g. "Tipp" */
   label?: string;
   style?: CSSProperties;
 }

@@ -1,4 +1,4 @@
-/* Takt: Startseite (Wochen-Minuten, Meine Workouts, Vorlagen nach Thema), Vorlagen-Ansicht und Anpassen-Fenster.
+/* Takt: Startseite (Wochen-Minuten, Meine Workouts, Vorlagen nach Thema), Vorlagen-Ansicht, Anpassen- und Mix-Fenster.
    Bekommt von app.js ein api-Objekt: data(), save(), exIndex(), find(id), start(workout, opts), show(name), toast(msg). */
 window.Takt = window.Takt || {};
 (function (T) {

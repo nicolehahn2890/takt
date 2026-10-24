@@ -1,5 +1,7 @@
 # Handoff: Takt Redesign v2 (Design System „Takt“)
 
+> **Status:** applied on 2026-10-23 (live v=22). This file is the original handoff and stays as a record. It is not the current state: `app.css` in this folder is outdated, the live styles are `css/app.css` in the repo, and the current design rules are in `design-system/DESIGN_GUIDE.md`. Do not copy `app.css` over the repo's CSS again.
+
 ## Overview
 Visual update of the Takt PWA (repo `nicolehahn2890/takt`, live at https://nicolehahn2890.github.io/takt/). The structure, screens, copy and logic stay the same. What changes:
 - new palette (Background / Surface / Elevated, Rosé / Lavendel / Salbei)

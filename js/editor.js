@@ -1,5 +1,6 @@
 /* Takt: Workout-Editor und \u00dcbungs-Auswahl.
-   Bekommt von app.js ein api-Objekt: data(), save(), exIndex(), find(id), start(workout, opts), show(name), toast(msg), home(). */
+   Bekommt von app.js ein api-Objekt: data(), save(), exIndex(), find(id), start(workout, opts), show(name), toast(msg), home(),
+   badges(later) (prueft, speichert und feiert neue Abzeichen). */
 window.Takt = window.Takt || {};
 (function (T) {
   'use strict';

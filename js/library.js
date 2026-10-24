@@ -1,5 +1,5 @@
 /* Takt: Bibliothek, Uebungs-Detail und eigene Uebungen.
-   Bekommt von app.js ein api-Objekt: data(), save(), reindex(), show(name), toast(msg), home(). */
+   Bekommt von app.js ein api-Objekt: data(), save(), reindex(), show(name), toast(msg), home(), badges(). */
 window.Takt = window.Takt || {};
 (function (T) {
   'use strict';

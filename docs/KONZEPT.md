@@ -1,7 +1,9 @@
 # Homeworkout-Timer-App – Konzept und Umsetzungsplan
 
 Name: **Takt** – "Dein Training, dein Takt" · Repo `nicolehahn2890/takt` (öffentlich) · Live: https://nicolehahn2890.github.io/takt/
-Stand: 2026-10-22 · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
+Stand: 2026-10-24 (live v=44) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
+
+Dieses Dokument beschreibt den aktuellen Stand. Pläne und Specs unter `docs/superpowers/` sind Momentaufnahmen ihres Datums; weicht etwas ab, gilt dieses Dokument. Gestaltung: `docs/design_handoff_takt_redesign/design-system/DESIGN_GUIDE.md`.
 
 ---
 
@@ -42,13 +44,13 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 
 | Thema | Realität | Umgang |
 |---|---|---|
-| Musik + Ansage | Auf dem iPhone getestet (3.1, 3.2): Browser-Stimme stoppt Spotify; Töne und Sprachdateien über Web Audio mischen sich mit Spotify, ohne es leiser zu machen; Stummschalter auf Stumm macht alles still | Ansagen als Sprachdateien über Web Audio im Modus ambient; vor jedem Start Hinweis "Schalter auf Klingeln"; Absenken der Musik erst mit Capacitor |
-| Musikquelle | YouTube im Handy-Browser stoppt beim App-Wechsel (ohne Premium) | Empfehlung in der App: Spotify-App (oder Laptop/Tablet) |
-| App im Hintergrund | Wechselt man zur Spotify-App, pausiert iOS die Web-App oder lädt sie beim Zurückkehren neu | Laufzustand (Schritt, Startzeitstempel) wird laufend gespeichert und beim Zurückkehren nahtlos fortgesetzt; Hinweis "Musik vor dem Start einschalten, dann App vorne lassen"; Bildschirm bleibt per Wake Lock an |
-| Speicher auf iPhone | Safari-Tab und installierte App haben getrennte Speicher; Safari kann Daten nach 7 Tagen ohne Nutzung löschen; Teil-Links öffnen immer in Safari | Installation auf dem Homescreen wird beim ersten Start empfohlen; Backup-Export prominent; Import auch per "Code einfügen", nicht nur per Link |
+| Musik + Ansage | Auf dem iPhone getestet (3.1, 3.2): Browser-Stimme stoppt Spotify; Töne und Sprachdateien über Web Audio mischen sich mit Spotify, ohne es leiser zu machen. Stummschalter: in Test 1 war bei Stumm alles still; seit 2026-10-24 kommen Töne und Ansagen laut Nicole auch bei Stumm | Ansagen als Sprachdateien über Web Audio im Modus ambient; der Hinweis "Schalter auf Klingeln" ist entfernt (v=43); Absenken der Musik erst mit Capacitor |
+| Musikquelle | YouTube im Handy-Browser stoppt beim App-Wechsel (ohne Premium) | Spotify-App nutzen (oder Laptop/Tablet); in der App steht dazu kein Hinweis mehr (entfernt v=43) |
+| App im Hintergrund | Wechselt man zur Spotify-App, pausiert iOS die Web-App oder lädt sie beim Zurückkehren neu | Laufzustand (Schritt, Startzeitstempel) wird laufend gespeichert und beim Zurückkehren nahtlos fortgesetzt; Bildschirm bleibt per Wake Lock an |
+| Speicher auf iPhone | Safari-Tab und installierte App haben getrennte Speicher; Safari kann Daten nach 7 Tagen ohne Nutzung löschen; Teil-Links öffnen immer in Safari | Backup als Datei in der Statistik (Schritt 4); Installations-Hinweis beim ersten Start folgt in Schritt 5; Teilen per Link entfällt vorerst |
 | Stimmqualität | Safari bietet auf dem iPhone nur einfache, roboterhafte Anna-Stimmen | Natürliche Stimme als vorab erzeugte Dateien (edge-tts); Lizenz vor Veröffentlichung prüfen |
-| Übungsbilder | Freie Datenbank (free-exercise-db, Public Domain) ist englisch, überwiegend Studio-Kraft; Dehnen/Bodyweight teilweise, Vacuum/Yoga fehlen | Ich schreibe die deutsche Bibliothek selbst, verknüpfe passende Bilder (werden ins Repo kopiert, damit offline), Rest bekommt Icons; eigene Fotos jederzeit möglich |
-| Trainingsinhalte | Ich bin kein Trainer | Vorlagen aus etablierten Standardübungen; Nicole prüft; Hinweis in der App "kein medizinischer Rat" (wichtig, sobald andere sie nutzen) |
+| Übungsbilder | Freie Datenbank (free-exercise-db, Public Domain) ist englisch, überwiegend Studio-Kraft; Dehnen/Bodyweight teilweise, Vacuum/Yoga fehlen | Deutsche Bibliothek selbst geschrieben; statt Bildern hat jede Übung eine animierte Figur (`js/figure.js`), Atem-Übungen einen Atem-Kreis; eigene Fotos jederzeit möglich |
+| Trainingsinhalte | Ich bin kein Trainer | Vorlagen aus etablierten Standardübungen; Nicole prüft; Hinweis in der App "kein medizinischer Rat" (noch offen, wichtig, sobald andere sie nutzen) |
 
 ### 3.1 Ergebnis iPhone-Test 1 (2026-10-22, iPhone mit iOS 18.7, Safari)
 
@@ -66,7 +68,7 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 
 **Entscheidungen danach (Nicole, 2026-10-22):**
 - Ansagen vorerst mit der Browser-Stimme (Roboterstimme). Fertige Sprachdateien mit natürlicher Stimme bleiben eine Option für später.
-- Immer Modus "mit Musik": Die App mischt sich in die Musik, der Stummschalter muss auf Klingeln stehen. Die App erinnert vor jedem Start daran. Kein eigener "Ohne Musik"-Modus.
+- Immer Modus "mit Musik": Die App mischt sich in die Musik, der Stummschalter muss auf Klingeln stehen. Die App erinnert vor jedem Start daran. Kein eigener "Ohne Musik"-Modus. (Überholt 2026-10-24: Töne kommen inzwischen auch bei Stumm, die Erinnerung ist entfernt.)
 - Test 2 klärt: Gibt es einen Audio-Modus, bei dem die Browser-Stimme Spotify nicht stoppt? Zum Vergleich wird dieselbe Ansage als Datei abgespielt.
 
 ### 3.2 Ergebnis iPhone-Test 2 (2026-10-22, gleiches iPhone)
@@ -101,49 +103,53 @@ Folgerung: Der Ansage-Weg über Sprachdateien ist bestätigt. Ansagen bei gesper
 
 ## 4. Produkt – Screens und Verhalten
 
-### 4.1 Start
-- Oben: Streak (Tage in Folge), Minuten diese Woche und die Abzeichen-Reihe (siehe 5.8).
-- "Meine Workouts" (eigene + bearbeitete Vorlagen), je Karte: Name, Dauer, Thema-Farbe, Start-Knopf.
-- "Vorlagen" nach Thema gruppiert.
-- Großer Knopf **"Mix"** (Zufalls-Workout, siehe 5.4) und **"Neu"**.
-- Vor jedem Start ein Mini-Dialog: **Zeit-Budget** (Schieber "Ich habe … Minuten") und **Intensität** (leicht/normal/hart). Standardwerte merken.
+Stand v=44. Was noch fehlt oder bewusst wegfällt, ist markiert.
+
+### 4.1 Home (Startseite)
+- Kopf: Logo-Figur, „Takt“, „Dein Training, dein Takt“. Darunter Minuten und Anzahl Trainings dieser Woche.
+- Kacheln **„Mix“** (Zufalls-Workout, siehe 5.4) und **„+ Neu“** (Editor).
+- „Meine Workouts“ (eigene, kopierte Vorlagen, gespeicherte Mixe): Karte mit Name, Thema, Dauer, Anzahl Übungen, Figuren-Streifen, „Start“ und „Anpassen“. Antippen öffnet den Editor.
+- „Vorlagen“ nach Thema, je „Kurz“ und „Lang“. Antippen öffnet die Vorschau mit „Start“, „Anpassen“ und „Bearbeiten (als Kopie)“.
+- „Start“ startet sofort. **„Anpassen“** öffnet ein Fenster mit Zeit-Budget (Schieber) und Intensität (leicht/normal/hart); die letzten Werte werden je Workout gemerkt.
+- Unten die Leiste Home / Bibliothek / Statistik. Abzeichen stehen in der Statistik, nicht auf der Startseite. Eine eigene Anzeige der Serie (Tage in Folge) gibt es nicht; sie zeigt sich über die Abzeichen „3/7/14/30 Tage in Folge“ mit Fortschritt.
 
 ### 4.2 Workout-Editor
-- Name, Thema (Farbe), Standard-Pause (z. B. 10 s), Standard-Dauer (z. B. 40 s).
-- Liste aus **Blöcken**. Ein Block hat "Wiederholen: 1–10x" und eine Liste von Einträgen.
-- Eintrag: Übung (aus Bibliothek oder frei getippt), Dauer, Pause danach (leer = Standard), Markierung "beidseitig".
-- Reihenfolge per Pfeile hoch/runter (Drag & Drop ist auf dem Handy unzuverlässig, kommt evtl. V2).
-- Gesamtdauer live oben.
-- Vorlagen sind schreibgeschützt; "Bearbeiten" erstellt eine Kopie unter "Meine Workouts".
+- Name, Thema (Farbe), Werte für neue Übungen: Dauer 40 s, Pause 15 s (mit ±).
+- Liste aus **Blöcken** mit Runden 1–10 (z. B. Hauptteil 3×). Eintrag: Übung aus der Bibliothek (Auswahl mit Suche und Filtern, auch eigene Übungen), Dauer, Pause danach (leer = Standard), beidseitig (aus der Bibliothek).
+- Reihenfolge per Pfeile hoch/runter (Drag & Drop ist auf dem Handy unzuverlässig, evtl. V2). Gesamtdauer oben.
+- „Speichern“, „Speichern & Starten“, „Löschen“. Vorlagen sind schreibgeschützt; „Bearbeiten (als Kopie)“ legt eine Kopie unter „Meine Workouts“ an.
 
 ### 4.3 Übungsbibliothek
-- Suche + Filter nach Tags (Core, Vacuum, Bauch, Rücken, Beine/Po, Dehnen, Yoga, Atmung, Ganzkörper).
-- Übungs-Detail: Name, Beschreibung (2–4 Sätze), Hinweise, Bild/Icon, Video-Link, eigene Notiz, Markierungen beidseitig / Atem-Übung.
-- Eigene Übung anlegen: Name, Beschreibung, Foto (wird auf max. 600 px verkleinert), Video-Link.
+- 145 Übungen. Suche und Filter: Alle, Core, Bauch, Rücken, Beine & Po, Dehnen, Yoga, Atmung & Vacuum, Ganzkörper, Eigene.
+- Übungs-Detail: animierte Figur (oder eigenes Foto), Alias, Markierungen (Themen, beidseitig, Hilfsmittel), Beschreibung, Hinweis, Atem-Rhythmus, „Ansage anhören“, Video-Link, eigene Notiz.
+- Eigene Übung: Name, Beschreibung, Themen, beidseitig, Foto (auf max. 600 px verkleinert), Video-Link; bearbeiten und löschen.
 
 ### 4.4 Training (der wichtigste Screen)
-- Vollbild, Hintergrund in Thema-Farbe, Timer riesig (Minuten:Sekunden), ringförmiger Fortschritt.
-- Übungsname groß, darunter Bild/Icon (abschaltbar) und Kurzbeschreibung klein.
-- Leiste "Als Nächstes: …" mit Dauer.
-- **Tipp-Zonen**: ganze Fläche tippen = Pause/Weiter. Links/rechts große Knöpfe: "Zurück", "Überspringen". Unten: "+15 s", "−15 s".
-- Pausen zeigen Countdown und Vorschau der nächsten Übung mit Bild.
-- Beidseitige Übungen: Zeit wird geteilt, Mitte: Ansage "Seite wechseln" + Ton.
-- Atem-Übungen: statt Ring ein atmender Kreis mit "Einatmen / Halten / Ausatmen" und Sekunden, Rhythmus pro Übung einstellbar (z. B. 4-4-6).
-- Ansagen (Sprachdateien): Übungsname beim Start, "Noch zehn Sekunden", "Pause", "Als Nächstes …", "Seite wechseln", "Geschafft"; "3, 2, 1" als Töne. Selbst eingetippte Übungen: Ton statt Name, Name groß auf dem Bildschirm. Umfang in Einstellungen wählbar (voll / nur Übungsname / nur Töne / still).
-- Bildschirm bleibt an (Wake Lock). Querformat (Tablet/TV) nutzt zwei Spalten.
+- Ring mit Restzeit in der Mitte (darüber Runde, „Links“/„Rechts“ oder „Pause“), darunter kleine Figur, Übungsname und Kurzbeschreibung; Fortschritt als Punkte oben; Leiste „Als Nächstes“ mit Dauer.
+- Steuerung: Zurück, −15 s, Pause/Weiter (groß, Themenfarbe), +15 s, Nächste. Tipp auf die Mitte = Pause/Weiter. ✕ beendet nach Rückfrage.
+- Pausen zeigen „Durchatmen“ und die nächste Übung mit Figur.
+- Beidseitige Übungen: Zeit wird geteilt, „Links“ / „Rechts“, in der Mitte Ton + „Seite wechseln. Rechts.“ (5.6).
+- Atem-Übungen: statt Ring ein atmender Kreis mit „Einatmen / Halten / Ausatmen“ und Sekunden, sanfte Töne; der Rhythmus kommt aus der Bibliothek (im Editor nicht änderbar).
+- Ansagen und Töne siehe 5.10. Eigene Übungen: Ton statt Name, Name groß auf dem Bildschirm.
+- Bildschirm bleibt an (Wake Lock). Nach Neuladen oder App-Wechsel läuft das Training an der richtigen Stelle weiter (bis 30 Min. danach).
+- Querformat mit zwei Spalten (Tablet/TV): Schritt 5.
 
 ### 4.5 Fertig
-- Dauer, Übungen, Anpassungen (z. B. "Plank 2x verlängert").
-- Gefühl per Emoji (1 Tipp), optional Notiz.
-- Lernende Dauer: Wurde eine Übung in 3 Trainings verlängert/verkürzt, Frage: "Plank standardmäßig auf 60 s setzen?" (Ja/Nein).
-- Knöpfe: "Nochmal", "Teilen" (Link), "Zur Startseite".
+- Figur, „Geschafft!“, trainierte Zeit und Anzahl Übungen, Anpassungen in Worten („Plank 2× verlängert“).
+- Neue Abzeichen: zuerst große Feier im Vollbild, danach als Karte (5.8, 8.7).
+- Frage der lernenden Dauer, falls fällig (5.5).
+- Freiwillige Notiz, wird beim Tippen gespeichert.
+- „Nochmal“ und „Zur Startseite“. Gefühl-Abfrage und „Teilen“ entfallen (Nicole, 2026-10-24).
 
-### 4.6 Einstellungen
-- Ansagen: Ansage-Umfang, Testknopf. Die Stimme ist fest (vorab erzeugte Dateien).
-- Töne an/aus, Vibration an/aus (Android).
-- Standard-Dauer/-Pause für neue Einträge.
-- Backup: Export (JSON-Datei) / Import.
-- Über die App, Hinweis "kein medizinischer Rat".
+### 4.6 Statistik
+- Woche / Monat / Jahr: Ring als Vergleich mit gleich vielen Tagen der Vorperiode, Balken, häufigster Bereich.
+- Abzeichen (22) als Raster mit Fortschritt; Antippen zeigt Bedingung und Datum.
+- Tagebuch: die letzten 30 Trainings mit Notiz.
+- Backup sichern und laden (Datei mit allem inkl. Fotos), Hinweis „Letztes Backup: vor … Tagen“.
+
+### 4.7 Einstellungen
+- Keine eigene Seite (bewusst zurückgestellt). Feste Werte: Vorbereitung 5 s, Ansagen voll, Töne an, Test-Hilfe Uhrzeit im Training an (`debugClock`, vor einer Veröffentlichung aus).
+- Offen für später: Ansage-Umfang, Töne an/aus, Standard-Dauer/-Pause, „Über die App“ mit Hinweis „kein medizinischer Rat“ (wichtig, sobald andere die App nutzen).
 
 ## 5. Funktionen V1 im Detail
 
@@ -155,90 +161,109 @@ Folgerung: Der Ansage-Weg über Sprachdateien ist bestätigt. Ansagen bei gesper
 - ~~Vor jedem Start Hinweis "Schalter auf Klingeln, Musik vorher starten".~~ Entfernt 2026-10-24 (v=43): Töne und Ansagen kommen laut Nicole inzwischen auch bei Stummschalter auf Stumm.
 - Beim Wechsel zu Spotify läuft das Training weiter; Töne kamen im Test auch im Hintergrund.
 - Test-Hilfe (abschaltbar): klein Startuhrzeit und vergangene Zeit anzeigen, damit Nicole die Restzeit mit der iPhone-Uhr vergleichen kann (offene Beobachtung aus Test 2).
-- Offline-fähig und installierbar (PWA: manifest + Service Worker).
-- Export/Import als JSON.
+- Offline-fähig und installierbar (PWA: Manifest + Service Worker): Schritt 5.
+- Export/Import als JSON: umgesetzt als Backup in der Statistik (Schritt 4).
 
 ### 5.2 Vorschau + sanfter Übergang
 Nächste Übung immer sichtbar; bei 10 s "noch 10 Sekunden", bei 3 s Countdown; in der Pause Bild der nächsten Übung.
 
 ### 5.3 Zeit-Budget
-Vor dem Start: Schieber. Alle Dauern und Pausen werden anteilig skaliert (auf 5 s gerundet, Minimum 10 s pro Übung). Blöcke werden nicht gestrichen – nur gekürzt. Ist das Budget kleiner als Übungen × 10 s, fallen Wiederholungen von Blöcken weg (letzte zuerst).
+Im Fenster „Anpassen“: Schieber ab 5 Min. Erst werden alle Dauern und Pausen anteilig gekürzt (auf 5 s gerundet, mindestens 10 s je Übung, nie länger als geplant). Reicht das nicht, fallen Runden weg (zuerst die letzte Runde des Blocks mit den meisten Runden), dann die Pausen, zuletzt Übungen von hinten.
 
 ### 5.4 Mix-Modus
-Dialog: Themen wählen (Mehrfach), Anzahl Übungen, Dauer je Übung, Pause, Runden. App zieht zufällig aus der Bibliothek (keine Übung doppelt, beidseitige berücksichtigt). Ergebnis kann gespeichert werden.
-Umgesetzt: Themen Core, Vacuum, Bauch, Beine & Po, Rücken, Dehnen, Yoga, Ganzkörper; Gesamtdauer 5/10/15/20/30 Min. Ein 5-Min.-Mix hat 1 Aufwärm-Übung (30 s), 4 im Hauptteil und 40 s Abschluss.
+Fenster „Mix“: Themen antippen (mehrere möglich): Core, Vacuum, Bauch, Beine & Po, Rücken, Dehnen, Yoga, Ganzkörper; Gesamtdauer 5, 10, 15, 20 oder 30 Min. Takt zieht zufällig aus der Bibliothek (nur Zeit-Übungen mit Figur, ohne Hilfsmittel außer Matte und Wand, keine Übung doppelt): 2 Aufwärm-Übungen (je 40 s), 5 im Hauptteil, 1 Dehn-Übung als Abschluss (60 s), Pause 15 s. Runden (bis 4) und Arbeitszeit im Hauptteil (20–60 s) werden so gewählt, dass die Gesamtdauer passt und nie überschritten wird. Ein 5-Min.-Mix hat 1 Aufwärm-Übung (30 s), 4 im Hauptteil und 40 s Abschluss. „Core“ enthält auch die Vacuum-Übungen, „Vacuum“ nur diese. Danach „Neu mischen“, „Speichern“ (unter „Meine Workouts“) oder „Starten“.
 
 ### 5.5 Lernende Dauer
-Jede +15/−15-Änderung wird mit Übung + Workout protokolliert. Nach 3 gleichgerichteten Änderungen derselben Übung Vorschlag im Fertig-Screen. Antwort "Nein" stellt die Frage für diese Übung für 10 Trainings zurück.
+Jede +15/−15-Änderung wird mit Übung und Workout protokolliert. Wurde dieselbe Übung im **selben Workout** in den letzten 3 Trainings dieses Workouts jedes Mal verlängert (oder jedes Mal gekürzt), fragt der Fertig-Screen z. B. „Plank in ‚Morgen-Core‘ auf 60 s setzen?“. „Ja“ ändert nur dieses Workout (bei einer Vorlage entsteht eine Kopie), „Nein“ stellt die Frage für die nächsten 10 Trainings dieses Workouts zurück. Trainings über „Anpassen“ und ungespeicherte Mixe zählen nicht. Details: Spec Schritt 4.
 
 ### 5.6 Seitenwechsel
 Übung "beidseitig" → Dauer halbiert pro Seite, Ansage und Ton in der Mitte, Anzeige "Links" / "Rechts".
 
 ### 5.7 Teilen per Link
-Workout als JSON → gzip (CompressionStream) → base64url → `index.html#w=…`. Empfänger öffnet den Link, sieht Vorschau, "Speichern". Weil Links auf dem iPhone in Safari statt in der installierten App öffnen, gibt es zusätzlich "Code kopieren / Code einfügen" (derselbe Text ohne URL). Fremde Übungen (nicht in Bibliothek) kommen als Inline-Übungen mit, Fotos werden nicht mitgeschickt.
+**Entfällt vorerst** (Nicole, 2026-10-24: nur Backup). Ursprüngliche Idee, falls später andere Takt nutzen: Workout als JSON → gzip (CompressionStream) → base64url → `index.html#w=…`. Empfänger öffnet den Link, sieht Vorschau, "Speichern". Weil Links auf dem iPhone in Safari statt in der installierten App öffnen, gibt es zusätzlich "Code kopieren / Code einfügen" (derselbe Text ohne URL). Fremde Übungen (nicht in Bibliothek) kommen als Inline-Übungen mit, Fotos werden nicht mitgeschickt.
 
-### 5.8 Tagebuch light
-Trainingsprotokoll (Datum, Workout, Dauer, Gefühl). Startseite zeigt Streak und Wochenminuten. Liste der letzten 30 Trainings in den Einstellungen.
+### 5.8 Tagebuch und Abzeichen
+**Tagebuch** in der Statistik: die letzten 30 Trainings (Datum, Workout, Minuten, Notiz), neueste oben. Keine Gefühl-Abfrage. Die Startseite zeigt die Minuten dieser Woche.
 
-**Abzeichen (wie Apple Health, Wunsch von Nicole 2026-10-22):** kleine Erfolge, die man sammelt und die sich aus dem Protokoll ergeben, z. B. "Erstes Training", "3 Tage in Folge", "7 Tage in Folge", "10 Trainings", "100 Minuten", "Frühaufsteherin" (Training vor 8 Uhr), "Nachteule" (nach 21 Uhr), "Alle 6 Themen ausprobiert", "Eigenes Workout gebaut", "Mix-Meisterin" (5 Mix-Workouts), "Atemprofi" (10 Atem-Übungen). Anzeige: Reihe runder Abzeichen auf der Startseite im Peach-Stil (grau = noch gesperrt, farbig = erreicht), Detailansicht mit Datum. Neues Abzeichen wird im Fertig-Screen mit kleiner Feier-Animation gezeigt. Regeln liegen als Liste in `data/badges.js`, damit neue Abzeichen nur Inhalt sind.
+**Abzeichen** (Wunsch von Nicole 2026-10-22, umgesetzt in Schritt 4): 22 Stück in 6 Gruppen (Trainings, Minuten, Tage in Folge, Tageszeit, Abwechslung, Entdecken). Runde Plaketten mit Icon, erreicht in der Gruppenfarbe, gesperrt grau mit Fortschrittsring „4 von 10“. Raster in der Statistik, Antippen zeigt Bedingung und Datum. Neue Abzeichen werden im Vollbild gefeiert (8.7) und stehen danach als Karte im Fertig-Screen. Einmal erreicht bleibt erreicht. Die Regeln liegen als Liste in `data/badges.js`, neue Abzeichen sind nur Inhalt.
 
 ### 5.9 Intensitäts-Regler
 leicht: Arbeit ×0,8, Pause ×1,5 · normal: ×1/×1 · hart: Arbeit ×1,2, Pause ×0,6. Reihenfolge: erst Intensität, dann Zeit-Budget. Das Budget ist eine harte Obergrenze: "15 Minuten" ergibt nie mehr als 15 Minuten.
 
 ### 5.10 Ansagen und Stimme
-Eine feste natürliche Stimme: **Katja** (`de-DE-KatjaNeural`, gewählt von Nicole am 2026-10-22 aus 3 Proben: Katja, Seraphina, Florian). Feste Sätze ("Noch zehn Sekunden", "Pause", "Als Nächstes", "Seite wechseln", "Links", "Rechts", "Geschafft", Begrüßung) und alle Übungsnamen der Bibliothek liegen als einzelne MP3-Dateien in `assets/voice/`. Erzeugt werden sie einmalig per Script `tools/make_voice.py` (edge-tts) aus `data/strings.js` und `data/exercises.js`; neue Bibliotheksübung = Script erneut laufen lassen. Selbst eingetippte Übungen haben keine Datei: Ton + Name groß. Einstellungen: Ansage-Umfang (voll / nur Übungsname / nur Töne / still). EN/ES später: dieselben Dateien in anderer Sprache erzeugen.
+Eine feste natürliche Stimme: **Katja** (`de-DE-KatjaNeural`, gewählt von Nicole am 2026-10-22 aus 3 Proben: Katja, Seraphina, Florian). Feste Sätze („Mach dich bereit.“, „Los geht's!“, „Pause.“, „Als Nächstes:“, „Noch zehn Sekunden.“, „Seite wechseln.“, „Links.“, „Rechts.“, „Geschafft, super gemacht!“, Liste in `data/strings.js`) und alle Übungsnamen der Bibliothek liegen als einzelne MP3-Dateien in `assets/voice/`. Erzeugt werden sie einmalig per Script `tools/make_voice.py` (edge-tts) aus `data/strings.js` und `data/exercises.js`; neue Bibliotheksübung = Script erneut laufen lassen. Eigene Übungen haben keine Datei: Ton + Name groß. „3, 2, 1“ als Töne; Töne für Atem-Übungen und ein Dreiklang für neue Abzeichen. Ansage-Umfang (voll / nur Übungsname / nur Töne / still) ist im Code vorbereitet, aber noch ohne Einstellung (immer voll). EN/ES später: dieselben Dateien in anderer Sprache erzeugen.
 
 ## 6. Inhalte
 
-### 6.1 Übungsbibliothek (ca. 100 Übungen, deutsch)
-Felder: `id, name, alias[], beschreibung, hinweis, tags[], beidseitig, typ ('zeit'|'atem'), atem {ein, halten, aus, haltenLeer}, bild (Pfad im Repo oder null), icon, quelle`.
-Verteilung (Richtwert): Vacuum/Atmung 10, Core/Taille 20, Bauch 15, Rücken (stark) 15, Beine/Po 20, Dehnen/Mobility 20, Yoga 10. Bilder: passende Übungen aus free-exercise-db (Public Domain, Unlicense) ins Repo kopieren (`assets/ex/…jpg`, verkleinert auf 600 px); für den Rest ein neutrales Linien-Icon je Tag.
+### 6.1 Übungsbibliothek (145 Übungen, deutsch)
+Felder: `id, name, alias[], beschreibung, hinweis, tags[], beidseitig, typ ('zeit'|'atem'), atem {ein, halten, aus, haltenLeer}, hilfsmittel[], bild (derzeit immer null), icon, quelle`.
+139 Übungen haben eine animierte Figur (`data/poses.js`), die 6 Atem-Übungen den Atem-Kreis. Bilder aus free-exercise-db werden nicht genutzt (Figur statt Bild). Ursprünglich 110 Übungen, am 2026-10-23 kamen 36 dazu (davon 12 Vacuum-Varianten), eine fiel weg.
+Themen (eine Übung kann mehrere haben): Core 42, Beine/Po 32, Dehnen 28, Rücken 22, Bauch 20, Yoga 19, Vacuum 17, Ganzkörper 11, Aufwärmen 10, Oberkörper 8, Atmung 7.
 
 ### 6.2 Vorlagen (12)
-Je Thema kurz (~10 Min) und lang (~20 Min): Vacuum/Core/Taille, Sixpack/Bauch, Dehnen/Mobility/Rücken, Yoga/Atmung, Beine/Po, Starker Rücken. Jede Vorlage: Aufwärmen (2–3 Übungen), Hauptteil als Block mit Wiederholung, Abschluss (Dehnen/Atmung). Nicole prüft die Vorlagen vor Veröffentlichung.
+Je Thema „Kurz“ (~10 Min) und „Lang“ (~20 Min): Vacuum & Core, Bauch, Dehnen & Rücken, Yoga & Atmung, Beine & Po, Starker Rücken. Jede Vorlage: Aufwärmen (2–3 Übungen), Hauptteil als Block mit Wiederholung, Abschluss (Dehnen/Atmung). Nicole prüft die Vorlagen vor einer Veröffentlichung.
 
 ## 7. Technik
 
 **Grundsatz:** Kein Framework, kein Build-Schritt, wie Peach – aber mehrere Dateien, damit Inhalte und Logik getrennt bleiben (Voraussetzung für Capacitor und für andere Nutzer).
 
 ```
-Projekt Homeworkout/
-  index.html          Oberfläche (Screens als <section>, ein Script-Einstieg)
-  css/app.css         Peach-Design-Tokens, Layout, Querformat
-  js/app.js           Router, Screens, Rendering (reines DOM, keine Lib)
-  js/timer.js         Ablauf-Engine: baut aus Workout + Budget + Intensität die Schrittliste, läuft auf Zeitstempeln, feuert Events (start, tick, warn10, countdown, rest, side, done)
-  js/voice.js         Web Audio: Töne + Sprachdateien laden, dekodieren, abspielen; Audio-Modus ambient
-  js/store.js         localStorage (Workouts, Settings, Log, Anpassungen), IndexedDB nur für Fotos, Export/Import
-  js/share.js         Link-Kodierung/Dekodierung
-  js/mix.js           Mix-Modus, Zeit-Budget, Intensität (reine Funktionen, testbar)
-  data/exercises.js   Bibliothek (als JS mit globaler Variable, damit die App auch per Doppelklick auf index.html und in Capacitor ohne Server läuft)
-  data/templates.js   Vorlagen (ebenso)
-  data/strings.js     Ansagetexte und Oberflächentexte DE (EN/ES vorbereitet)
-  data/badges.js      Abzeichen-Regeln (Name, Bedingung, Icon)
-  assets/voice/*.mp3  Sprachdateien (feste Sätze + Übungsnamen), natürliche Stimme
-  tools/make_voice.py erzeugt die Sprachdateien mit edge-tts (läuft auf Nicoles PC, nicht in der App)
-  assets/ex/*.jpg     Übungsbilder (Public Domain)
-  assets/icons/*.svg  Tag-Icons
-  assets/app-icon-180.png, -192.png, -512.png   App-Icons als PNG (iOS ignoriert SVG-Icons); einmalig per Script aus dem SVG erzeugt
-  assets/fonts/DMSans*.woff2   Schrift im Repo (OFL-Lizenz), damit die App offline gleich aussieht
-  manifest.webmanifest, sw.js   PWA; Service-Worker-Scope und IndexedDB-Name eindeutig (gleiche Origin wie Peach auf github.io)
-  docs/KONZEPT.md     dieses Dokument
+Projekt Homeworkout/  (Repo takt)
+  index.html          alle Screens als <section>, Skripte und CSS mit ?v= (Cache-Nummer)
+  css/app.css         Gestaltung (Design v2)
+  js/core.js          Namensraum und kleine Helfer
+  js/store.js         localStorage (takt_v1, takt_run_v1), Prüfung eigener Übungen
+  js/plan.js          Workout -> Schrittliste (prep, work, rest)
+  js/workouts.js      Intensität, Zeit-Budget, Workouts prüfen/kopieren, Mix
+  js/engine.js        Timer-Engine auf Zeitstempeln (Ereignisse step, warn, count, side, done)
+  js/announce.js      welche Ansage / welcher Ton je Ereignis
+  js/audio.js         Web Audio: Töne + Sprachdateien, Modus ambient
+  js/breath.js        Atem-Modus (Atem-Uhr, Töne)
+  js/learn.js         lernende Dauer
+  js/stats.js         Statistik-Rechnung
+  js/badges.js        Abzeichen-Regeln und Plaketten
+  js/backup.js        Backup schreiben und lesen
+  js/wake.js          Bildschirm bleibt an
+  js/figure.js        animierte Figur
+  js/photos.js        Fotos eigener Übungen (IndexedDB)
+  js/app.js           Training, Fertig-Screen, Verdrahtung
+  js/home.js          Startseite, Vorlagen-Vorschau, Anpassen, Mix
+  js/editor.js        Workout-Editor und Übungs-Auswahl
+  js/library.js       Bibliothek, Übungs-Detail, eigene Übungen
+  js/statsview.js     Statistik-Seite mit Abzeichen, Tagebuch, Backup
+  js/celebrate.js     Vollbild-Feier für neue Abzeichen
+  data/*.js           Inhalte als JS (laufen ohne Server): exercises, poses, templates, strings, voice-manifest, badges, badge-icons
+  assets/voice/*.mp3  Sprachdateien (Katja)
+  assets/takt-mark.svg, icon-180.png   Logo und App-Symbol
+  tools/              make_voice.py (Sprachdateien mit edge-tts, auf Nicoles PC), ascii_js.py, galerie.html, voice-lines.js
+  tests/              node tests/run.js
+  docs/               dieses Konzept, Design-Handoff, Pläne und Specs
+  spike*/, mockups/   frühere iPhone-Tests und Entwürfe
+Geplant (Schritt 5): manifest.webmanifest, sw.js, weitere App-Icons, Schrift lokal
 ```
 
 **Datenmodell (localStorage-Key `takt_v1`, nie umbenennen):**
 ```
-{ workouts: [ { id, name, theme, defaultWork, defaultRest, blocks: [ { repeat, items: [ { exId|null, name, duration, rest|null, bilateral } ] } ], source: 'own'|'template'|'shared', createdAt, updatedAt } ],
-  exercisesOwn: [ …wie Bibliothek, plus photoId ],
-  settings: { lang, voiceName, announce: 'full'|'name'|'beeps'|'silent', sounds, vibrate, defaultWork, defaultRest, intensity, budgetLast, showImages },
-  log: [ { id, workoutId, name, date, plannedSec, actualSec, feeling, adjustments: [ {exId, delta} ] } ],
-  learn: { [exId]: { plus: n, minus: n, snoozeUntilLog: n } } }
+{ version: 1,
+  workouts: [ { id, name, theme, defaultWork, defaultRest, blocks: [ { label, repeat, items: [ { exId|null, name, duration, rest|null, bilateral } ] } ],
+                source: 'own', origin?: 'mix', createdAt, updatedAt } ],
+  exercisesOwn: [ …wie Bibliothek, quelle: 'eigen', videoUrl, photoId ],
+  settings: { announce: 'full'|'name'|'beeps'|'silent', sounds, prepSeconds, debugClock, budgetLast: { [workoutId]: { minutes, intensity } },
+              mixLast: { themes, minutes }, lastBackup,
+              lang, defaultWork, defaultRest, intensity, showImages },   // die letzten fünf vorgesehen, noch ungenutzt
+  log: [ { id, workoutId, name, date, plannedSec, actualSec, activeSec, theme, areaSec, adjustments: [ { exId, delta } ],
+           source: 'template'|'own'|'mix', origin, adjusted, breathCount, startedAt, note } ],
+  learn: { [workoutId + '|' + exId]: { since, snoozeUntil } },
+  notes: { [exId]: Notiz },
+  badges: { [badgeId]: isoDatum } }
 ```
+Dazu `takt_run_v1` (laufendes Training, wird bis 30 Min. fortgesetzt) und IndexedDB `takt_photos_v1` (Fotos). Vorlagen liegen in `data/templates.js` (`source: 'template'`), nicht im Speicher.
 
-**Browser-APIs:** Web Audio (Oszillator-Töne und Sprachdateien), Audio Session (`navigator.audioSession.type = 'ambient'`), Screen Wake Lock (bei `visibilitychange` erneut anfordern, Fehler abfangen), CompressionStream (Safari ab 16.4; Fallback: nur base64), IndexedDB (Fotos als Blob), Service Worker (Cache-first für App-Dateien, Bilder nachladen). Kein `fetch` auf lokale Dateien, Daten kommen als JS.
+**Browser-APIs:** Web Audio (Oszillator-Töne und Sprachdateien), Audio Session (`navigator.audioSession.type = 'ambient'`), Screen Wake Lock (bei `visibilitychange` erneut anfordern, Fehler abfangen), IndexedDB (Fotos), Web Share mit Datei (Backup; sonst Download). Service Worker: Schritt 5. Kein `fetch` auf lokale Daten, Inhalte kommen als JS.
 
-**Design:** Peach-Tokens übernehmen: Hintergrund `#1a1418`, Header-Gradient `160deg #2e1a28→#1a1418`, Pink `#C8729A`, Lila `#B88CC0`, Font DM Sans, Pixel-Art-Logo (Pfirsich mit Stoppuhr). Thema-Farben: Vacuum/Core `#C0BEA0`, Bauch `#C8729A`, Dehnen `#A8C4A0`, Yoga `#B88CC0`, Beine/Po `#C4A882`, Rücken `#8AB4C4`. Regeln aus Peach übernehmen: kein `°`-Zeichen in JS-Strings, Sonderzeichen meiden.
+**Design:** Design v2 (2026-10-23, aus Claude Design): Farben Hintergrund `#171217`, Fläche `#241B23`, Rosé `#BE7B9D`, Lavendel `#B794C5`, Salbei `#C6C5A6`; Schriften Outfit (Überschriften, Zahlen) und DM Sans, beide von Google Fonts; die Übungsfigur ist das Logo. Thema-Farben: Vacuum & Core `#C6C5A6`, Bauch `#BE7B9D`, Dehnen `#A8C4A0`, Yoga `#B794C5`, Beine & Po `#C4A882`, Rücken `#8AB4C4`. Maßgeblich: `docs/design_handoff_takt_redesign/design-system/DESIGN_GUIDE.md`. Regeln: kein `°`-Zeichen, in `js/` nur ASCII (Umlaute als `\u`-Escape, `python tools/ascii_js.py`; die Tests prüfen beides), keine Emojis.
 
-**Deployment:** Neues öffentliches Repo `nicolehahn2890/takt` (Privatkonto, wie Peach), GitHub Pages von `main`, Live-URL https://nicolehahn2890.github.io/takt/. Repo und Pages werden schon in Schritt 1 angelegt, damit ab dann auf dem iPhone über HTTPS getestet wird (Wake Lock und Service Worker brauchen HTTPS). Commit + Push nach jedem funktionierenden Schritt, vorher prüfen: keine Keys im Commit.
+**Deployment:** Öffentliches Repo `nicolehahn2890/takt` (Privatkonto, wie Peach), GitHub Pages von `main`, Live-URL https://nicolehahn2890.github.io/takt/. Bei jeder Änderung an App-Dateien `?v=` in `index.html` hochzählen (iPhone-Cache). Commit + Push nach jedem funktionierenden Schritt, vorher prüfen: keine Keys im Commit.
 
 ## 8. Umsetzungsschritte (einzeln abstimmen)
 
@@ -247,16 +272,16 @@ Projekt Homeworkout/
 | 0a | Mockup des Training-Screens (statisches HTML, 2 Varianten) im Browser zeigen | Erledigt: Variante A (Ring) | ~40k |
 | 0b | Spike auf Nicoles iPhone (Pflicht, Hauptgerät): Mini-Seite mit Sprachansage, Ton, Bildschirm-an, Spotify nebenbei, Stummschalter, App-Wechsel | Erledigt: Test 1 und 2, Ergebnis in 3.1 und 3.2 | ~30k |
 | 1 | Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Sprachdateien für feste Sätze (gewählte Stimme), Training-Screen (Ring) mit einem Test-Workout, Test-Hilfe Uhrzeit (Repo + Pages gibt es schon) | Erledigt 2026-10-22 (live, 52 Tests grün, Code-Review ohne kritische Funde, iPhone-Test bestanden, siehe 3.3) | ~220k |
-| 2 | Bibliothek (110 Übungen mit animierter Figur statt Bildern, Katja-Ansagen), Übungs-Screens, eigene Übungen mit Foto/Video | Erledigt 2026-10-22 (live, 81 Tests grün, zwei Prüfungen ohne kritische Funde). iPhone-Test durch Nicole steht aus | ~450k |
+| 2 | Bibliothek (110 Übungen mit animierter Figur statt Bildern, Katja-Ansagen; seit 2026-10-23 145), Übungs-Screens, eigene Übungen mit Foto/Video | Erledigt 2026-10-22 (live, 81 Tests grün, zwei Prüfungen ohne kritische Funde). iPhone-Test durch Nicole steht aus | ~450k |
 | 3 | Workout-Editor, Start-Screen, 12 Vorlagen, Zeit-Budget, Intensität, Mix-Modus | Erledigt 2026-10-23 (live v=15, 121 Tests grün, klickbarer Entwurf von Nicole abgenommen, zwei Prüfungen, wichtige Funde behoben). iPhone-Test durch Nicole steht aus | ~290k |
-| 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Backup (Teilen per Link entfällt vorerst) | Erledigt 2026-10-24 (live v=41, 201 Tests grün, Prüfung ohne kritische Funde; Abzeichen auf Nicoles Wunsch mit Icons + Fortschritt, 22 Stück). iPhone-Test steht aus, siehe 8.6 | ~250k + ~70k Abzeichen v2 |
+| 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Backup (Teilen per Link entfällt vorerst) | Erledigt 2026-10-24 (live v=41, 201 Tests grün, Prüfung ohne kritische Funde; Abzeichen auf Nicoles Wunsch mit Icons + Fortschritt, 22 Stück). Nachbesserungen nach dem ersten Benutzen v=42–44 (8.7), 205 Tests grün. iPhone-Test steht aus, siehe 8.6 | ~250k + ~70k Abzeichen v2 |
 | 5 | PWA (Manifest, Service Worker, Icons), Querformat, Feinschliff, Installations-Hinweis beim ersten Start, Abschlusstest auf dem iPhone | Installierbar, offline, auf dem Homescreen | ~120k |
 
 Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzungen. Jeder Schritt endet mit Test und Push.
 
 ### 8.1 Offene Kleinigkeiten aus Schritt 1 (aus den Code-Reviews, bewusst zurückgestellt)
 
-- Kein `apple-touch-icon` / Favicon, Google Fonts extern statt lokal, Test-Hilfe `debugClock` vor Veröffentlichung auf `false` → Schritt 5 (PWA).
+- Google Fonts extern statt lokal, Test-Hilfe `debugClock` vor Veröffentlichung auf `false` → Schritt 5 (PWA). (Favicon und `apple-touch-icon` gibt es seit Design v2.)
 - Bei jeder Änderung `?v=` in `index.html` hochzählen (iPhone-Cache); MP3s und Manifest haben keine Version.
 - Schließen-Knopf 38 px und Start-Knopf ca. 42 px kleiner als 44 px Touch-Ziel; `safe-area-inset-left/right` im Querformat; `-webkit-text-size-adjust`.
 - Wake Lock: Wettlauf, wenn `off()` während einer laufenden Anfrage kommt.
@@ -290,7 +315,7 @@ Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzu
 - Block-Namen lassen sich im Editor nicht ändern, obwohl der Knopf „+ Block (z. B. Abschluss)“ heißt.
 - „Für neue Übungen“: Die Standard-Pause ändert auch bestehende Einträge, die keine eigene Pause haben.
 - Touch-Ziele unter 44 px: „Anpassen“-Link (34 px), „Speichern“ im Editor-Kopf, Themen-Chips, ± Knöpfe (42 px).
-- Mix für Dehnen oder Yoga beginnt mit sportlichen Aufwärm-Übungen (z. B. Hampelmann); Nicole fragen, ob das so bleiben soll.
+- Mix für Dehnen, Yoga oder Vacuum beginnt mit sportlichen Aufwärm-Übungen (z. B. Hampelmann, Schattenboxen); Nicole fragen, ob das so bleiben soll.
 - Anpassen: kleinstes Budget immer 5 Min. (bei langen Dehn-Vorlagen werden die Übungen dann sehr kurz).
 - `validateWorkout`/`copyWorkout` kennen nur die Bibliothek, nicht eigene Übungen (heute egal, weil der Editor den Namen immer mitspeichert).
 - Hintergrund scrollt auf iOS hinter offenen Fenstern mit; Escape schließt Fenster nicht.
@@ -351,7 +376,7 @@ Auf dem iPhone prüfen (Nicole):
 - Statistik: Abzeichen-Raster mit Icons und Ringen, Antippen, Tagebuch.
 - **Backup sichern in der Home-Bildschirm-App:** öffnet sich das Teilen-Menü mit der Datei, lässt sie sich „In Dateien sichern“? Danach „Backup laden“ mit genau dieser Datei.
 
-### 8.7 Nach dem ersten Benutzen (2026-10-24, v=42)
+### 8.7 Nach dem ersten Benutzen (2026-10-24, v=42–44)
 
 Wünsche von Nicole nach dem ersten Trainieren mit Schritt 4:
 - **Abzeichen fallen kaum auf:** Neue Abzeichen werden jetzt im Vollbild gefeiert (große Plakette in der Gruppenfarbe, Lichtkranz, kurzer Funkenflug, sanfter Dreiklang, „Nächstes Ziel: …“). Nach dem Training kommt die Feier, sobald „Geschafft, super gemacht!“ ausgeklungen ist; mehrere nacheinander („1 von 2“). Im Fertig-Screen stehen sie danach in einer Karte, Antippen zeigt die Feier noch einmal. Editor, eigene Übung und Backup feiern genauso statt nur im Toast; bei „Speichern & Starten“ erst nach dem Training (oder beim Abbrechen). Ein Abzeichen durch die Notiz wird beim Verlassen des Notizfelds gefeiert, nicht mitten im Tippen.
@@ -359,6 +384,7 @@ Wünsche von Nicole nach dem ersten Trainieren mit Schritt 4:
 - **Mix nur Vacuum:** eigenes Thema „Vacuum“ (nur Vacuum-Übungen). „Core“ enthält weiterhin auch Vacuum-Übungen.
 
 - **Hinweis „Vor dem Start“ entfernt (v=43):** Töne und Ansagen kommen laut Nicoles iPhone-Test auch, wenn der Stummschalter auf Stumm steht.
+- **Unterlagen abgeglichen (v=44):** Konzept, README, Design-Guide und Code-Kommentare auf den aktuellen Stand gebracht; keine Änderung am Verhalten.
 
 Meine Festlegungen (Nicole kann widersprechen): Feier schließt nur über den Knopf (ein versehentlicher Tipp wischt sie nicht weg); Klang nur, wenn Töne an sind; ohne Animation bei „Bewegung reduzieren“.
 
@@ -366,12 +392,12 @@ Meine Festlegungen (Nicole kann widersprechen): Feier schließt nur über den Kn
 
 - Pro Schritt: `node --check` auf alle JS-Dateien; Agent `html-app-tester` (statische Prüfung); Vorschau im eingebauten Browser (`python -m http.server` im Projektordner, Handy-Viewport emuliert). Auf dem iPhone immer über die Live-URL (HTTPS), nie über die lokale IP.
 - Timer-Logik (Schrittliste, Budget, Intensität, Mix) als reine Funktionen, getestet mit `node tests/run.js` (eigener kleiner Test-Runner, prüft auch: kein Grad-Zeichen, in `js/` nur ASCII).
-- Auf dem iPhone (Nicole): Sprachansage, Wake Lock, Installation auf Homescreen, Spotify nebenbei, App-Wechsel und Zurückkehren, Link/Code-Teilen (z. B. an den Laptop).
+- Auf dem iPhone (Nicole): Sprachansage, Wake Lock, Installation auf Homescreen, Spotify nebenbei, App-Wechsel und Zurückkehren, Backup sichern und laden.
 - Ende: Vorlagen inhaltlich von Nicole abgenommen.
 
 ## 10. Offene Entscheidungen und meine Festlegungen
 
-**Entschieden (Nicole, 2026-10-22):** Name **Takt**, Repo `takt` öffentlich, Hauptgerät iPhone, Workouts werden am selben iPhone gebaut und trainiert (kein Geräte-Transport nötig, Teilen/Export bleibt in Schritt 4).
+**Entschieden (Nicole, 2026-10-22):** Name **Takt**, Repo `takt` öffentlich, Hauptgerät iPhone, Workouts werden am selben iPhone gebaut und trainiert (kein Geräte-Transport nötig, Teilen/Export bleibt in Schritt 4; dort umgesetzt als Backup, Teilen entfällt vorerst).
 
 **Training-Screen (Schritt 0a, entschieden 2026-10-22):** Variante **A · Ring** – großer Ring mit Zeit in der Mitte, darunter kleines Bild, Übungsname und Kurzbeschreibung, Leiste "Als Nächstes". Steuerung wie im Mockup: Zurück, −15, Pause (groß, Thema-Farbe), +15, Weiter; Tipp auf die Mitte = Pause/Weiter. Vorlage: `mockups/training-a.html`.
 
@@ -380,11 +406,11 @@ Meine Festlegungen (Nicole kann widersprechen): Feier schließt nur über den Kn
 **Meine Festlegungen (änderbar):**
 - Mehrere Dateien statt einer HTML-Datei (wegen Capacitor, Bibliothek, Wartbarkeit).
 - Reihenfolge im Editor per Pfeile, kein Drag & Drop in V1.
-- Fotos auf 600 px verkleinert in IndexedDB; Fotos werden beim Link-Teilen nicht mitgeschickt.
+- Fotos auf 600 px verkleinert in IndexedDB; sie kommen mit ins Backup.
 - Alles zeitbasiert, keine Wiederholungs-Übungen.
 - Vorlagen schreibgeschützt, Bearbeiten erzeugt Kopie.
-- Nur Dunkelmodus in V1 (Peach-Stil).
-- Stimme (Extra 10) in V1 = eine feste natürliche Stimme als Sprachdateien + einstellbarer Ansage-Umfang (Entscheidung nach Test 2). Englisch/Spanisch kommt später, indem dieselben Dateien in anderer Sprache erzeugt werden.
+- Nur Dunkelmodus in V1 (Design v2).
+- Stimme (Extra 10) in V1 = eine feste natürliche Stimme als Sprachdateien + einstellbarer Ansage-Umfang (Entscheidung nach Test 2; der Umfang ist im Code vorbereitet, eine Einstellung fehlt noch). Englisch/Spanisch kommt später, indem dieselben Dateien in anderer Sprache erzeugt werden.
 - Zeit-Budget ist eine harte Obergrenze; Intensität wird davor angewendet.
 - Countdown "3, 2, 1" als Töne, nicht als Sprache.
 

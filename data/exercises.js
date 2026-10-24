@@ -1,4 +1,4 @@
-/* Takt: Übungsbibliothek (110 Übungen). Haltungen der Figur: data/poses.js.
+/* Takt: Übungsbibliothek (145 Übungen, davon 6 Atem-Übungen ohne Figur). Haltungen der Figur: data/poses.js.
    Nach Änderungen an Namen: python tools/make_voice.py */
 window.Takt = window.Takt || {};
 (function (T) {

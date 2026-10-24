@@ -1,5 +1,7 @@
 # Prompt für Claude Code
 
+> **Erledigt am 2026-10-23 (v=22).** Nicht noch einmal ausführen: Schritt 1 würde die heutige `css/app.css` mit dem veralteten Stand aus dem Handoff überschreiben. Aktuelle Gestaltungsregeln: `design-system/DESIGN_GUIDE.md`.
+
 Lege den Ordner `design_handoff_takt_redesign/` in dein Takt-Repo (z. B. unter `docs/`) und kopiere dann diesen Text in Claude Code:
 
 ---

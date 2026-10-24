@@ -1,4 +1,5 @@
-/* Takt: Workouts als reine Logik: Intensitaet, Zeit-Budget, Ablauf vorbereiten */
+/* Takt: Workouts als reine Logik: Intensitaet, Zeit-Budget, Ablauf vorbereiten, Themen und Wochen-Minuten,
+   Workouts pruefen und kopieren, Mix */
 window.Takt = window.Takt || {};
 (function (T) {
   'use strict';

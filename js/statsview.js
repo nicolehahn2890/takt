@@ -1,5 +1,6 @@
-/* Takt: Statistik-Seite (Woche/Monat/Jahr, Ring als Vergleich zur Vorperiode, Balken, haeufigster Bereich).
-   Rechnet mit Takt.periodStats; bekommt von app.js ein api-Objekt: data(), show(name). */
+/* Takt: Statistik-Seite (Woche/Monat/Jahr, Ring als Vergleich zur Vorperiode, Balken, haeufigster Bereich),
+   Abzeichen, Tagebuch und Backup. Rechnet mit Takt.periodStats; bekommt von app.js ein api-Objekt:
+   data(), save(), show(name), toast(msg), badges(). */
 window.Takt = window.Takt || {};
 (function (T) {
   'use strict';

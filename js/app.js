@@ -1,4 +1,5 @@
-/* Takt: App. Screens Start, Training, Fertig; verdrahtet Engine, Ansagen, Ton, Speicher. */
+/* Takt: App. Training und Fertig-Screen; verdrahtet Engine, Ansagen, Ton, Speicher, Abzeichen (Feier: js/celebrate.js)
+   und gibt Startseite, Editor, Bibliothek und Statistik ihr api-Objekt. */
 window.Takt = window.Takt || {};
 (function (T) {
   'use strict';

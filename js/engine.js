@@ -1,5 +1,5 @@
 /* Takt: Timer-Engine. Rechnet immer aus Zeitstempeln, zaehlt nie hoch.
-   Liefert Ereignisse: step, warn, count, done. Keine Browser-Abhaengigkeit. */
+   Liefert Ereignisse: step, warn, count, side (Seitenwechsel), done. Keine Browser-Abhaengigkeit. */
 window.Takt = window.Takt || {};
 (function (T) {
   'use strict';
