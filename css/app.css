@@ -46,7 +46,6 @@ body:has(.start:not([hidden])) { background: linear-gradient(160deg, var(--bg2),
   background: var(--card); border: 0;
   border-radius: 18px; padding: 16px;
 }
-.card-main { flex: 1; min-width: 0; }
 .card h3 { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
 .card p { color: var(--muted); font-size: 13px; margin-top: 3px; display: flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
 article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--theme); flex: none; }
@@ -213,7 +212,6 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
 .err:empty { display: none; }
 .preview { display: block; max-width: 100%; max-height: 220px; border-radius: 14px; margin-top: 8px; }
 .card.nav { width: 100%; text-align: left; color: var(--text); }
-.chev { width: 32px; height: 32px; border-radius: 10px; background: var(--ghost); display: grid; place-items: center; font-size: 22px; color: var(--muted); padding-bottom: 2px; flex: none; }
 
 /* Sehr wenig Hoehe (iPhone SE im Safari-Browser): Beschreibung einzeilig */
 @media (max-height: 600px) {
@@ -366,6 +364,8 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
 .en small { color: var(--muted); font-size: 12px; }
 .e2 { display: flex; gap: 8px; margin-top: 8px; }
 .e2 .val { flex: 1; min-width: 0; }
+/* Letzte Uebung: keine Pause danach, das Training endet */
+.val-end { justify-content: center; min-height: 44px; }
 .add { width: 100%; min-height: 44px; border-radius: 12px; background: var(--ghost); color: var(--lila); font-weight: 700; margin-top: 4px; }
 .addblk { width: 100%; min-height: var(--btn-h); border-radius: 14px; background: var(--ghost); font-weight: 600; }
 .pk .lib-text { flex: 1; }

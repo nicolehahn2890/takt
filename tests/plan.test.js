@@ -99,8 +99,12 @@ test('Bibliotheksname schlaegt gespeicherten Namen (nach Umbenennen)', function 
   eq([s[0].name, s[1].name, s[3].name], ['Plank', 'Plank', 'Geloeschte']);
 });
 
-test('buildSteps bilateral aus Bibliothek', function () {
+test('buildSteps bilateral aus Bibliothek, gespeicherter Wert nur fuer fehlende Uebungen', function () {
+  // z. B. eigene Uebung nachtraeglich auf beidseitig gestellt: die Bibliothek gilt, nicht der alte gespeicherte Wert
   var w = { defaultWork: 30, defaultRest: 0, blocks: [{ repeat: 1, items: [
-    { exId: 'seitstuetz', duration: 20 }, { exId: 'plank', duration: 20 }, { exId: 'seitstuetz', duration: 20, bilateral: false }] }] };
-  eq(Takt.buildSteps(w, exIdx(), {}).map(function (s) { return s.bilateral; }), [true, false, false]);
+    { exId: 'seitstuetz', duration: 20 }, { exId: 'plank', duration: 20 }, { exId: 'seitstuetz', duration: 20, bilateral: false },
+    { exId: 'plank', duration: 20, bilateral: true }, { exId: 'own-weg', duration: 20, bilateral: true }, { exId: 'own-weg2', duration: 20 }] }] };
+  eq(Takt.buildSteps(w, exIdx(), {}).map(function (s) { return s.bilateral; }), [true, false, true, false, true, false]);
+  var own = { id: 'own-x', name: 'Eigene', beidseitig: true };
+  eq(Takt.itemBilateral({ exId: 'own-x', bilateral: false }, Takt.indexExercises([own])), true);
 });

@@ -24,10 +24,11 @@ window.Takt = window.Takt || {};
     dehnen: 'Dehnen', yoga: 'Yoga', ganzkoerper: 'Ganzk\u00f6rper', oberkoerper: 'Oberk\u00f6rper', aufwaermen: 'Aufw\u00e4rmen' };
   var HILF_LABEL = { band: 'Band', stuhl: 'Stuhl', tisch: 'Tisch', sofa: 'Sofa', wand: 'Wand', matte: 'Matte', stab: 'Besenstiel' };
 
-  /* Suche ohne Gross/Klein und ohne Umlaut-Unterschied */
+  /* Suche ohne Gross/Klein und ohne Umlaut-Unterschied: "Bruecke" und "Brucke" finden dasselbe wie mit Umlaut */
   function norm(s) {
     return String(s || '').toLowerCase()
       .replace(/\u00e4/g, 'a').replace(/\u00f6/g, 'o').replace(/\u00fc/g, 'u').replace(/\u00df/g, 'ss')
+      .replace(/ae/g, 'a').replace(/oe/g, 'o').replace(/ue/g, 'u')
       .replace(/[^a-z0-9]+/g, ' ').trim();
   }
 
@@ -215,6 +216,23 @@ window.Takt = window.Takt || {};
     window.scrollTo(0, 0);
   }
 
+  /* Workouts mit dieser Uebung auf den neuen Stand bringen (Name, beidseitig): so bleibt nach einem spaeteren
+     Loeschen der aktuelle Name stehen. Gibt die alten Werte zurueck, falls das Speichern scheitert. */
+  function syncWorkouts(d, ex) {
+    var old = [];
+    (Array.isArray(d.workouts) ? d.workouts : []).forEach(function (w) {
+      (w && Array.isArray(w.blocks) ? w.blocks : []).forEach(function (b) {
+        (b && Array.isArray(b.items) ? b.items : []).forEach(function (it) {
+          if (!it || it.exId !== ex.id) return;
+          old.push({ item: it, name: it.name, bilateral: it.bilateral });
+          it.name = ex.name;
+          it.bilateral = !!ex.beidseitig;
+        });
+      });
+    });
+    return old;
+  }
+
   function saveOwn() {
     clearErrors();
     var input = {
@@ -245,9 +263,11 @@ window.Takt = window.Takt || {};
       var d = api.data();
       var before = d.exercisesOwn || [];
       d.exercisesOwn = before.filter(function (x) { return x.id !== ex.id; }).concat([ex]);
+      var synced = syncWorkouts(d, ex);
       if (!api.save()) {
         // nichts gespeichert: alten Stand behalten, neues Foto wieder entfernen
         d.exercisesOwn = before;
+        synced.forEach(function (s) { s.item.name = s.name; s.item.bilateral = s.bilateral; });
         if (isNew && photoId) T.photos.remove(photoId);
         btn.disabled = false;
         api.toast(SAVE_FAIL);
@@ -309,8 +329,6 @@ window.Takt = window.Takt || {};
   T.library = {
     init: function (a) { api = a; bind(); },
     open: openLib,
-    openEx: openEx,
-    norm: norm,
     CHIPS: CHIPS,
     matches: matchesWith
   };

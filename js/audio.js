@@ -75,6 +75,12 @@ window.Takt = window.Takt || {};
 
     hasClip: function (key) { return !!files()[key]; },
 
+    /* Sprachdatei geladen und abspielbereit? Im Training zaehlt nur das (sonst kaeme "Als Naechstes:" ohne Namen) */
+    ready: function (key) { return !!buffers[key]; },
+
+    /* Alles Geplante sofort beenden (z. B. Training mit dem Kreuz beendet) */
+    stop: function () { stopAll(); },
+
     /* Sekunden, bis alles Geplante (z. B. "Geschafft, super gemacht!") zu Ende gespielt ist */
     remaining: function () { return ctx ? Math.max(0, endAt - ctx.currentTime) : 0; },
 

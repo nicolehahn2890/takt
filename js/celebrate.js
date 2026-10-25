@@ -55,13 +55,11 @@ window.Takt = window.Takt || {};
       try { lastFocus.focus({ preventScroll: true }); } catch (e) { /* egal */ }
     }
     lastFocus = null;
-    var after = opts.onClose;
     opts = {};
-    if (after) after();
   }
 
   T.celebrate = {
-    /* badges: Abzeichen-Objekte; o = { earned: data.badges (fuer "Naechstes Ziel"), sound: true|false, onClose } */
+    /* badges: Abzeichen-Objekte; o = { earned: data.badges (fuer "Naechstes Ziel"), sound: true|false } */
     show: function (badges, o) {
       var list = (badges || []).filter(Boolean);
       if (!list.length || !$('moment')) return;

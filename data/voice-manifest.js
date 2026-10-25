@@ -605,10 +605,6 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_ytw.mp3",
   "text": "Y-T-W"
  },
- "go": {
-  "src": "assets/voice/go.mp3",
-  "text": "Los geht's!"
- },
  "left": {
   "src": "assets/voice/left.mp3",
   "text": "Links."

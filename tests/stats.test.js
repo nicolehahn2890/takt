@@ -120,9 +120,20 @@ test('periodStats leer und alt', function () {
   eq(Takt.periodStats([], 'week', -1, now).compare.text, 'Kein Training');
   var bad = [null, {}, { date: 'kaputt', actualSec: 100 }, { date: D(2026, 10, 20, 8).toISOString(), actualSec: 'x' }, { date: D(2026, 10, 20, 9).toISOString(), actualSec: 600 }];
   var b = Takt.periodStats(bad, 'week', 0, now);
-  eq([b.seconds, b.count, b.top, b.compare.state, b.compare.text, b.ring], [600, 1, null, 'noprev', 'Vorwoche ohne Training', 1]);
+  eq([b.seconds, b.count, b.top, b.compare.state, b.compare.text, b.ring], [600, 1, null, 'noprev', 'Vorwoche ohne Training (bis Donnerstag)', 1]);
   var same = Takt.periodStats([E(D(2026, 10, 19, 8), 1000), E(D(2026, 10, 12, 8), 990)], 'week', 0, now);
-  eq([same.compare.state, same.compare.text], ['same', 'gleich viel wie in der Vorwoche']);
+  eq([same.compare.state, same.compare.text], ['same', 'gleich viel wie in der Vorwoche (bis Donnerstag)']);
+});
+
+test('periodStats am Montag: Vorwoche nur bis Montag verglichen und so benannt', function () {
+  // Vorwoche Di bis So trainiert, diese Woche Montag: der Montag davor war leer
+  var log = [20, 21, 22, 23, 24, 25].map(function (d) { return E(D(2026, 10, d, 10), 1200); }).concat([E(D(2026, 10, 26, 10), 1200)]);
+  var s = Takt.periodStats(log, 'week', 0, D(2026, 10, 26, 18));
+  eq([s.compare.state, s.compare.text], ['noprev', 'Vorwoche ohne Training (bis Montag)']);
+  var m = Takt.periodStats([E(D(2026, 10, 20, 10), 1200), E(D(2026, 11, 2, 10), 1200)], 'month', 0, D(2026, 11, 2, 12));
+  eq(m.compare.text, 'Vormonat ohne Training (bis zum 2.)');
+  var y = Takt.periodStats([E(D(2026, 10, 20, 10), 1200), E(D(2027, 2, 1, 10), 1200)], 'year', 0, D(2027, 2, 15, 12));
+  eq(y.compare.text, 'Vorjahr ohne Training (bis 15. Feb.)');
 });
 
 test('periodStats Bereich Anteil', function () {

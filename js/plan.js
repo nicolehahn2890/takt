@@ -11,6 +11,14 @@ window.Takt = window.Takt || {};
     return map;
   };
 
+  /* Beidseitig wie in der Bibliothek (auch wenn eine eigene Uebung spaeter geaendert wurde);
+     der gespeicherte Wert zaehlt nur, wenn die Uebung fehlt */
+  T.itemBilateral = function (item, exIndex) {
+    var ex = item && item.exId && exIndex ? exIndex[item.exId] : null;
+    if (ex) return !!ex.beidseitig;
+    return !!(item && item.bilateral === true);
+  };
+
   T.buildSteps = function (workout, exIndex, opts) {
     opts = opts || {};
     exIndex = exIndex || {};
@@ -46,7 +54,7 @@ window.Takt = window.Takt || {};
       var ex = w.item.exId ? exIndex[w.item.exId] : null;
       steps.push({ kind: 'work', duration: Math.max(1, Math.round(num(w.item.duration, defWork))),
         exId: w.item.exId || null, name: nameOf(w.item),
-        bilateral: typeof w.item.bilateral === 'boolean' ? w.item.bilateral : !!(ex && ex.beidseitig),
+        bilateral: T.itemBilateral(w.item, exIndex),
         atem: ex && ex.typ === 'atem' && ex.atem ? ex.atem : null,
         workIndex: i, round: w.round, rounds: w.rounds, blockIndex: w.bi });
       var rest = Math.round(num(w.item.rest, defRest));

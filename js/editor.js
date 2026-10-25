@@ -9,6 +9,8 @@ window.Takt = window.Takt || {};
   var ed = null;        // Workout in Bearbeitung (eigene Kopie)
   var dirty = false;
   var isCopy = false;
+  var backTo = null;    // Zurueck fuehrt hierhin (z. B. in die Vorschau der Vorlage), sonst zur Startseite
+  var errShown = false; // Fehler stehen gerade da: bei jeder Aenderung neu pruefen
   var pick = { block: 0, ids: [], chip: 'alle', q: '', scroll: 0 };
   var LIM = { duration: [10, 600], rest: [0, 120], repeat: [1, 10] };
   var NEW = { work: 40, rest: 15 };
@@ -41,8 +43,9 @@ window.Takt = window.Takt || {};
     return { id: null, name: '', theme: 'core', defaultWork: NEW.work, defaultRest: NEW.rest, source: 'own',
       blocks: [{ label: '', repeat: 1, items: [] }] };
   }
-  function begin(w, asCopy) {
+  function begin(w, asCopy, back) {
     ed = w;
+    backTo = back || null;
     if (!Array.isArray(ed.blocks) || !ed.blocks.length) ed.blocks = [{ label: '', repeat: 1, items: [] }];
     if (typeof ed.defaultWork !== 'number') ed.defaultWork = NEW.work;
     if (typeof ed.defaultRest !== 'number') ed.defaultRest = NEW.rest;
@@ -62,21 +65,30 @@ window.Takt = window.Takt || {};
     }
     begin(w ? clone(w) : blank(), false);
   }
-  function openCopy(w) { begin(T.copyWorkout(w), true); }
+  /* back: wohin "Zurueck" fuehrt (Vorschau der Vorlage); ohne: Startseite */
+  function openCopy(w, back) { begin(T.copyWorkout(w), true, back); }
+
+  /* Letzte Uebung des ganzen Workouts in einem Block mit 1 Runde: danach endet das Training, eine Pause gibt es nicht */
+  function isFinal(bi, ii) {
+    var lb = -1;
+    ed.blocks.forEach(function (b, k) { if (b.items.length) lb = k; });
+    return bi === lb && ii === ed.blocks[bi].items.length - 1 && ed.blocks[bi].repeat === 1;
+  }
 
   /* ---------- Darstellung ---------- */
   function entryHtml(it, bi, ii) {
     var last = bi === ed.blocks.length - 1 && ii === ed.blocks[bi].items.length - 1;
     var d = ' data-b="' + bi + '" data-i="' + ii + '"';
+    var rest = isFinal(bi, ii) ? '<div class="val val-end"><span class="sv"><b>Ende</b><small>keine Pause</small></span></div>' :
+      '<div class="val"><button data-act="rest-"' + d + ' aria-label="Pause k\u00fcrzer">&minus;</button><span class="sv"><b>' + restOf(it) +
+      ' s</b><small>Pause danach</small></span><button data-act="rest+"' + d + ' aria-label="Pause l\u00e4nger">+</button></div>';
     return '<div class="ent"><div class="e1"><span class="th">' + thumb(it.exId) + '</span>' +
-      '<div class="en"><b>' + T.esc(itemName(it)) + '</b>' + (it.bilateral ? '<small>beidseitig</small>' : '') + '</div>' +
+      '<div class="en"><b>' + T.esc(itemName(it)) + '</b>' + (T.itemBilateral(it, api.exIndex()) ? '<small>beidseitig</small>' : '') + '</div>' +
       '<button class="ed-ic" data-act="up"' + d + (bi === 0 && ii === 0 ? ' disabled' : '') + ' aria-label="nach oben">&#8593;</button>' +
       '<button class="ed-ic" data-act="down"' + d + (last ? ' disabled' : '') + ' aria-label="nach unten">&#8595;</button>' +
       '<button class="ed-ic" data-act="del"' + d + ' aria-label="entfernen">&#10005;</button></div>' +
       '<div class="e2"><div class="val"><button data-act="dur-"' + d + ' aria-label="k\u00fcrzer">&minus;</button><span class="sv"><b>' + it.duration +
-      ' s</b><small>Dauer</small></span><button data-act="dur+"' + d + ' aria-label="l\u00e4nger">+</button></div>' +
-      '<div class="val"><button data-act="rest-"' + d + ' aria-label="Pause k\u00fcrzer">&minus;</button><span class="sv"><b>' + restOf(it) +
-      ' s</b><small>Pause danach</small></span><button data-act="rest+"' + d + ' aria-label="Pause l\u00e4nger">+</button></div></div></div>';
+      ' s</b><small>Dauer</small></span><button data-act="dur+"' + d + ' aria-label="l\u00e4nger">+</button></div>' + rest + '</div></div>';
   }
   function blockHtml(b, bi) {
     return '<div class="blk"><div class="bh"><b>' + T.esc(b.label || ('Block ' + (bi + 1))) + '</b>' +
@@ -106,8 +118,11 @@ window.Takt = window.Takt || {};
     $('ed-del').hidden = !exists;
     updSum();
   }
-  function changed() { dirty = true; keepScroll(render); }
+  function changed() { dirty = true; keepScroll(render); recheck(); }
+  /* Nach einem gescheiterten Speichern: Meldungen verschwinden, sobald der Fehler behoben ist */
+  function recheck() { if (errShown) showErrors(T.validateWorkout(ed).errors); }
   function showErrors(errors) {
+    errShown = errors.length > 0;
     var nameErr = errors.filter(function (e) { return e.field === 'name'; })[0];
     $('ed-name').classList.toggle('bad', !!nameErr);
     $('ed-err-name').textContent = nameErr ? nameErr.msg : '';
@@ -201,7 +216,7 @@ window.Takt = window.Takt || {};
   function back() {
     if (dirty && !window.confirm('\u00c4nderungen verwerfen?')) return;
     dirty = false;
-    api.home();
+    if (backTo) backTo(); else api.home();
   }
 
   /* ---------- Uebungs-Auswahl ---------- */
@@ -253,6 +268,7 @@ window.Takt = window.Takt || {};
     var k = pick.ids.length;
     dirty = true;
     render();
+    recheck();
     backToEditor();
     api.toast(k === 1 ? '1 \u00dcbung hinzugef\u00fcgt' : k + ' \u00dcbungen hinzugef\u00fcgt');
   }

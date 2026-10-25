@@ -42,7 +42,7 @@ window.Takt = window.Takt || {};
       st.stepStart = t;
       if (st.paused) st.pausedAt = t;
       st.lastWhole = st.durations[i];
-      return [{ type: 'step', index: i, catchUp: false }];
+      return [{ type: 'step', index: i }];
     }
     function isWork(i) { return st.steps[i] && st.steps[i].kind === 'work'; }
     function isBi(i) { return isWork(i) && !!st.steps[i].bilateral; }
@@ -67,7 +67,7 @@ window.Takt = window.Takt || {};
         st.index = 0;
         st.stepStart = t;
         st.lastWhole = st.durations[0];
-        return [{ type: 'step', index: 0, catchUp: false }];
+        return [{ type: 'step', index: 0 }];
       },
 
       tick: function () {
@@ -85,7 +85,7 @@ window.Takt = window.Takt || {};
         var rem = remainingSec();
         if (advanced) {
           st.lastWhole = rem;
-          return [{ type: 'step', index: st.index, catchUp: advanced > 1 }].concat(sideEvent());
+          return [{ type: 'step', index: st.index }].concat(sideEvent());
         }
         var ev = [];
         var prev = st.lastWhole == null ? st.durations[st.index] : st.lastWhole;
@@ -131,6 +131,12 @@ window.Takt = window.Takt || {};
       next: function () {
         if (st.index < 0 || st.done) return [];
         return go(st.index + 1);
+      },
+
+      /* Vorzeitig beenden (Training zaehlt schon): bucht die laufende Uebung und endet wie am Schluss */
+      stop: function () {
+        if (st.index < 0 || st.done) return [];
+        return finish();
       },
 
       prev: function () {

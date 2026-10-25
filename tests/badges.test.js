@@ -66,6 +66,14 @@ test('badges frueh und nacht', function () {
   ok(!r.earned.night, '20:59 noch keine Nachteule');
   r = Takt.badgeCheck(bd([be(2026, 9, 1, 21)]), BNOW);
   ok(r.earned.night, '21:00 Nachteule');
+  // Nach Mitternacht ist es noch Nacht, ab 4 Uhr frueh
+  var past = be(2026, 9, 2, 0); past.date = new Date(2026, 9, 2, 0, 20).toISOString();
+  r = Takt.badgeCheck(bd([past]), BNOW);
+  ok(r.earned.night && !r.earned.early, '0:20 Nachteule, keine Fruehaufsteherin');
+  var lateNight = be(2026, 9, 2, 3); lateNight.date = new Date(2026, 9, 2, 3, 59).toISOString();
+  ok(Takt.badgeCheck(bd([lateNight]), BNOW).earned.night, '3:59 noch Nacht');
+  r = Takt.badgeCheck(bd([be(2026, 9, 2, 4)]), BNOW);
+  ok(r.earned.early && !r.earned.night, '4:00 frueh');
 });
 
 test('badges alle 6 Themen', function () {

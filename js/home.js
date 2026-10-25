@@ -44,7 +44,7 @@ window.Takt = window.Takt || {};
         (b.repeat > 1 ? '<span class="aside">' + b.repeat + ' Runden</span>' : '') + '</div>' +
         b.items.map(function (it) {
           return '<div class="mi"><span class="th">' + (it.exId ? fig(it.exId) : '') + '</span><span class="mn">' + T.esc(itemName(it)) +
-            (it.bilateral ? ' <em>beidseitig</em>' : '') + '</span><em>' + it.duration + ' s</em></div>';
+            (T.itemBilateral(it, api.exIndex()) ? ' <em>beidseitig</em>' : '') + '</span><em>' + it.duration + ' s</em></div>';
         }).join('');
     }).join('');
   }
@@ -115,18 +115,25 @@ window.Takt = window.Takt || {};
     Array.prototype.forEach.call(document.querySelectorAll('.sheet-wrap'), function (s) { s.hidden = true; });
     document.body.style.overflow = '';
   }
-  function openAdjust(w) {
-    if (!w) return;
-    var full = T.totalSeconds(T.prepareSteps(w, api.exIndex(), { prepSeconds: api.data().settings.prepSeconds }));
-    var last = budgetLast()[w.id] || {};
-    var max = Math.max(5, Math.ceil(full / 60));
-    adj = { w: w, max: max, lvl: Object.prototype.hasOwnProperty.call(T.INTENSITY, last.intensity) ? last.intensity : 'normal' };
+  /* Dauern hier wie ueberall ohne die Vorbereitung; das Budget gilt ebenso ohne sie (T.prepareSteps) */
+  function adjSeconds(o) {
+    return T.totalSeconds(T.prepareSteps(adj.w, api.exIndex(), { prepSeconds: 0, intensity: o.intensity, budgetSec: o.budgetSec }));
+  }
+  /* Schieber von 5 Min. bis zur vollen Laenge bei der gewaehlten Intensitaet (ganz rechts = volle Laenge) */
+  function setRange(minutes) {
+    adj.max = Math.max(5, Math.ceil(adjSeconds({ intensity: adj.lvl }) / 60));
     var r = $('adj-range');
     r.min = 5;
-    r.max = max;
-    r.value = (typeof last.minutes === 'number' && last.minutes >= 5 && last.minutes < max) ? last.minutes : max;
+    r.max = adj.max;
+    r.value = (typeof minutes === 'number' && minutes >= 5 && minutes < adj.max) ? minutes : adj.max;
+  }
+  function openAdjust(w) {
+    if (!w) return;
+    var last = budgetLast()[w.id] || {};
+    adj = { w: w, max: 5, lvl: Object.prototype.hasOwnProperty.call(T.INTENSITY, last.intensity) ? last.intensity : 'normal' };
+    setRange(last.minutes);
     $('adj-name').textContent = w.name;
-    $('adj-full').textContent = 'Geplant: ' + T.fmt(full) + ' Min.';
+    $('adj-full').textContent = 'Geplant: ' + T.fmt(secs(w)) + ' Min.';
     updAdjust();
     openSheet('adj');
   }
@@ -141,8 +148,7 @@ window.Takt = window.Takt || {};
     r.style.setProperty('--pct', (span > 0 ? (Number(r.value) - Number(r.min)) / span * 100 : 100) + '%');
     Array.prototype.forEach.call($('adj-seg').children, function (b) { b.classList.toggle('on', b.getAttribute('data-lvl') === adj.lvl); });
     $('adj-note').textContent = NOTE[adj.lvl];
-    var steps = T.prepareSteps(adj.w, api.exIndex(), { prepSeconds: api.data().settings.prepSeconds, intensity: o.intensity, budgetSec: o.budgetSec });
-    $('adj-new').textContent = T.fmt(T.totalSeconds(steps)) + ' Min.';
+    $('adj-new').textContent = T.fmt(adjSeconds(o)) + ' Min.';
   }
   function startAdjusted() {
     var o = adjOpts();
@@ -184,10 +190,14 @@ window.Takt = window.Takt || {};
     $('mx-list').innerHTML = blocksHtml(mix.w);
     drawFigs($('mx-list'));
   }
-  function doMix() {
-    mix.w = T.makeMix({ themes: mix.themes, minutes: mix.minutes, stab: mix.stab, seed: Math.floor(Math.random() * 2147483647) }, T.EXERCISES);
+  /* Auswahl sofort merken (nicht erst beim Mischen): das Fenster oeffnet immer mit der zuletzt gewaehlten */
+  function rememberMix() {
     api.data().settings.mixLast = { themes: mix.themes.slice(), minutes: mix.minutes, stab: mix.stab };
     api.save();
+  }
+  function doMix() {
+    mix.w = T.makeMix({ themes: mix.themes, minutes: mix.minutes, stab: mix.stab, seed: Math.floor(Math.random() * 2147483647) }, T.EXERCISES);
+    rememberMix();
     renderMix();
   }
   function saveMix() {
@@ -214,13 +224,14 @@ window.Takt = window.Takt || {};
       var k = b.getAttribute('data-mix'), i = mix.themes.indexOf(k);
       if (i >= 0) mix.themes.splice(i, 1); else mix.themes.push(k);
       mix.w = null;
+      rememberMix();
       renderMix();
     });
     $('mx-seg').addEventListener('click', function (e) {
       var b = e.target.closest('[data-min]');
-      if (b) { mix.minutes = Number(b.getAttribute('data-min')); mix.w = null; renderMix(); }
+      if (b) { mix.minutes = Number(b.getAttribute('data-min')); mix.w = null; rememberMix(); renderMix(); }
     });
-    $('mx-stab').addEventListener('click', function () { mix.stab = !mix.stab; mix.w = null; renderMix(); });
+    $('mx-stab').addEventListener('click', function () { mix.stab = !mix.stab; mix.w = null; rememberMix(); renderMix(); });
     $('mx-go').addEventListener('click', doMix);
     $('mx-again').addEventListener('click', doMix);
     $('mx-save').addEventListener('click', saveMix);
@@ -236,14 +247,22 @@ window.Takt = window.Takt || {};
     });
     $('tpl-back').addEventListener('click', function () { render(); api.show('start'); });
     $('tpl-adj').addEventListener('click', function () { openAdjust(preview); });
-    $('tpl-copy').addEventListener('click', function () { if (T.editor && preview) T.editor.openCopy(preview); });
+    $('tpl-copy').addEventListener('click', function () {
+      var tpl = preview;
+      if (T.editor && tpl) T.editor.openCopy(tpl, function () { openPreview(tpl.id); });
+    });
     Array.prototype.forEach.call(document.querySelectorAll('.sheet-wrap'), function (s) {
       s.addEventListener('click', function (e) { if (e.target === s || e.target.closest('[data-close]')) closeSheets(); });
     });
     $('adj-range').addEventListener('input', updAdjust);
     $('adj-seg').addEventListener('click', function (e) {
       var b = e.target.closest('[data-lvl]');
-      if (b) { adj.lvl = b.getAttribute('data-lvl'); updAdjust(); }
+      if (!b) return;
+      // Volle Laenge bleibt volle Laenge, sonst bleibt die gewaehlte Minutenzahl (falls sie noch kuerzer ist)
+      var o = adjOpts();
+      adj.lvl = b.getAttribute('data-lvl');
+      setRange(o.budgetSec ? o.budgetSec / 60 : null);
+      updAdjust();
     });
     $('adj-go').addEventListener('click', startAdjusted);
   }
@@ -251,13 +270,8 @@ window.Takt = window.Takt || {};
   T.home = {
     init: function (a) { api = a; bind(); },
     render: render,
-    openPreview: openPreview,
-    openAdjust: openAdjust,
     mix: openMix,
-    openSheet: openSheet,
     closeSheets: closeSheets,
-    blocksHtml: blocksHtml,
-    drawFigs: drawFigs,
-    poseFor: poseFor
+    drawFigs: drawFigs
   };
 })(window.Takt);

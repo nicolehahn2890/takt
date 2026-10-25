@@ -12,7 +12,7 @@ function mkEngine() {
 
 test('engine: start liefert ersten Schritt', function () {
   var m = mkEngine();
-  eq(m.e.start(), [{ type: 'step', index: 0, catchUp: false }]);
+  eq(m.e.start(), [{ type: 'step', index: 0 }]);
   eq(m.e.view().remaining, 30);
 });
 
@@ -39,7 +39,7 @@ test('engine: kein warn wenn ein tick von 12 auf 2 springt', function () {
 test('engine: Wechsel ohne Drift', function () {
   var m = mkEngine(); m.e.start();
   m.c.t = 29000; m.e.tick();
-  m.c.t = 30500; eq(m.e.tick(), [{ type: 'step', index: 1, catchUp: false }]);
+  m.c.t = 30500; eq(m.e.tick(), [{ type: 'step', index: 1 }]);
   eq(m.e.view().remaining, 10);
 });
 
@@ -50,7 +50,7 @@ test('engine: catch-up nach 95 s endet mit done', function () {
 
 test('engine: catch-up ueber zwei Schritte', function () {
   var m = mkEngine(); m.e.start();
-  m.c.t = 45000; eq(m.e.tick(), [{ type: 'step', index: 2, catchUp: true }]);
+  m.c.t = 45000; eq(m.e.tick(), [{ type: 'step', index: 2 }]);
   eq(m.e.view().remaining, 25);
 });
 
@@ -66,7 +66,7 @@ test('engine: Pause haelt die Zeit an', function () {
 
 test('engine: next und prev', function () {
   var m = mkEngine(); m.e.start();
-  m.c.t = 2000; eq(m.e.next(), [{ type: 'step', index: 1, catchUp: false }]);
+  m.c.t = 2000; eq(m.e.next(), [{ type: 'step', index: 1 }]);
   m.c.t = 6000; m.e.prev();
   eq([m.e.view().index, m.e.view().remaining], [1, 10]);
   m.c.t = 7000; m.e.prev();
@@ -90,7 +90,7 @@ test('engine: adjust plus verlaengert und wird notiert', function () {
 
 test('engine: adjust unter null springt weiter', function () {
   var m = mkEngine(); m.e.start();
-  m.c.t = 20000; eq(m.e.adjust(-15), [{ type: 'step', index: 1, catchUp: false }]);
+  m.c.t = 20000; eq(m.e.adjust(-15), [{ type: 'step', index: 1 }]);
   eq(m.e.view().remaining, 10);
 });
 
@@ -255,4 +255,17 @@ test('engine prev im Schritt setzt Seite zurueck', function () {
   m.c.t = 21000; m.e.tick();
   m.c.t = 25000; m.e.prev();
   eq(m.e.view().side, 'links');
+});
+
+test('engine stop: bucht die laufende Uebung und endet wie am Schluss', function () {
+  var m = mkEngine();
+  eq(m.e.stop(), [], 'vor dem Start nichts');
+  m.e.start();
+  m.c.t = 30500; m.e.tick();            // Pause
+  m.c.t = 40500; m.e.tick();            // B laeuft
+  m.c.t = 52400;
+  eq(m.e.stop(), [{ type: 'done' }]);
+  var v = m.e.view();
+  eq([v.done, v.activeSec, m.e.spentSeconds()], [true, 52, [30, 10, 12]]);
+  eq(m.e.stop(), [], 'nur einmal');
 });

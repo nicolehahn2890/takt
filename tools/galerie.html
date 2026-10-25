@@ -33,7 +33,7 @@ p{color:#a8949f;font-size:13px;margin:0 0 10px}
   var q = new URLSearchParams(location.search);
   var tag = q.get('tag') || '';
   var t = q.get('t');
-  var tags = ['', 'vacuum', 'atmung', 'core', 'bauch', 'ruecken', 'beine-po', 'dehnen', 'yoga', 'ganzkoerper', 'oberkoerper'];
+  var tags = ['', 'vacuum', 'atmung', 'core', 'bauch', 'ruecken', 'beine-po', 'dehnen', 'yoga', 'ganzkoerper', 'oberkoerper', 'aufwaermen'];
   document.getElementById('chips').innerHTML = tags.map(function (x) {
     var u = '?tag=' + x + (t ? '&t=' + t : '');
     return '<a href="' + u + '" class="' + (x === tag ? 'on' : '') + '">' + (x || 'alle') + '</a>';

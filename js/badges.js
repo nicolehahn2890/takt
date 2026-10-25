@@ -77,9 +77,11 @@ window.Takt = window.Takt || {};
     }
   }
 
+  /* Bis 4 Uhr zaehlt noch als Nacht: ein Training, das um 0:20 endet, ist Nachteule, nicht Fruehaufsteherin */
+  var NIGHT_END = 4;
   function met(b, st) {
-    if (b.kind === 'before') return st.hour < b.n;
-    if (b.kind === 'from') return st.hour >= b.n;
+    if (b.kind === 'before') return st.hour >= NIGHT_END && st.hour < b.n;
+    if (b.kind === 'from') return st.hour >= b.n || st.hour < NIGHT_END;
     if (b.kind === 'own' || b.kind === 'ownEx' || b.kind === 'backup') return false;
     return have(b.kind, st) >= b.n;
   }

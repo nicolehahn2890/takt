@@ -125,10 +125,18 @@ window.Takt = window.Takt || {};
     return scaled(base, 0);
   };
 
+  /* Das Budget gilt fuer das Training ohne die Vorbereitung, wie alle angezeigten Dauern (Karte, Vorschau, Mix, Editor) */
   T.prepareSteps = function (workout, exIndex, opts) {
     opts = opts || {};
     var steps = T.applyIntensity(T.buildSteps(workout, exIndex, { prepSeconds: opts.prepSeconds }), opts.intensity);
-    return opts.budgetSec ? T.fitBudget(steps, opts.budgetSec) : steps;
+    if (!opts.budgetSec) return steps;
+    var fit = T.fitBudget(steps.filter(function (s) { return s.kind !== 'prep'; }), opts.budgetSec);
+    var first = fit.filter(function (s) { return s.kind === 'work'; })[0];
+    return steps.filter(function (s) { return s.kind === 'prep'; }).map(function (p) {
+      var c = copy(p);
+      if (first) c.rounds = first.rounds;
+      return c;
+    }).concat(fit);
   };
 
   /* Gesamtdauer ohne Vorbereitung */
@@ -206,8 +214,7 @@ window.Takt = window.Takt || {};
           if (!inRange(duration, LIMIT.duration)) err('duration', 'Dauer: 10 bis 600 Sekunden.', bi, ii);
           var rest = it.rest == null ? null : it.rest;
           if (rest !== null && !inRange(rest, LIMIT.rest)) err('rest', 'Pause: 0 bis 120 Sekunden.', bi, ii);
-          return { exId: exId, name: nm, duration: duration, rest: rest,
-            bilateral: typeof it.bilateral === 'boolean' ? it.bilateral : !!(ex && ex.beidseitig) };
+          return { exId: exId, name: nm, duration: duration, rest: rest, bilateral: T.itemBilateral(it, idx) };
         })
       });
     });

@@ -38,6 +38,17 @@ test('learn je Vorkommen bei Runden', function () {
   eq(Takt.learnSuggestion(log, lw(2), {}, LIDX).to, 55);
 });
 
+test('learn fragt nicht, wenn die Uebung mit verschiedenen Dauern vorkommt', function () {
+  // Plank 20 s im Aufwaermen und 60 s im Hauptteil: "Ja" haette auch den Hauptteil auf 25 s gesetzt
+  var w = { id: 'w-lern', name: 'Morgen-Core', source: 'own', defaultWork: 40, defaultRest: 10, blocks: [
+    { repeat: 1, items: [{ exId: 'plank', name: null, duration: 20, rest: null }] },
+    { repeat: 3, items: [{ exId: 'plank', name: null, duration: 60, rest: null }, { exId: 'crunch', name: null, duration: 30, rest: null }] }] };
+  var log = [ll('w-lern', [['plank', 15]]), ll('w-lern', [['plank', 15]]), ll('w-lern', [['plank', 15]])];
+  eq(Takt.learnSuggestion(log, w, {}, LIDX), null);
+  var crunch = [ll('w-lern', [['crunch', 15]]), ll('w-lern', [['crunch', 15]]), ll('w-lern', [['crunch', 15]])];
+  eq(Takt.learnSuggestion(crunch, w, {}, LIDX).exId, 'crunch', 'andere Uebungen im selben Workout fragen weiter');
+});
+
 test('learn Anpassen zaehlt nicht', function () {
   var log = [ll('w-lern', [['plank', 15]]), ll('w-lern', [['plank', 15]], { adjusted: true }), ll('w-lern', [['plank', 15]])];
   eq(Takt.learnSuggestion(log, lw(), {}, LIDX), null);

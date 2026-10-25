@@ -81,9 +81,11 @@ test('prepareSteps Reihenfolge', function () {
   eq(Takt.prepareSteps(w, idx, { prepSeconds: 5, intensity: 'hart' }),
     Takt.applyIntensity(Takt.buildSteps(w, idx, { prepSeconds: 5 }), 'hart'));
   var s = Takt.prepareSteps(w, idx, { prepSeconds: 5, intensity: 'hart', budgetSec: 300 });
-  ok(Takt.totalSeconds(s) <= 300, 'Summe ' + Takt.totalSeconds(s));
-  ok(Takt.totalSeconds(s) >= 270, 'Summe ' + Takt.totalSeconds(s));
+  // Budget ohne Vorbereitung, die 5 s kommen dazu
+  ok(Takt.totalSeconds(s) - 5 <= 300, 'Summe ' + Takt.totalSeconds(s));
+  ok(Takt.totalSeconds(s) - 5 >= 270, 'Summe ' + Takt.totalSeconds(s));
   eq({ kind: s[0].kind, duration: s[0].duration }, { kind: 'prep', duration: 5 });
+  eq(Takt.prepareSteps(w, idx, { prepSeconds: 0, intensity: 'hart', budgetSec: 300 }), s.slice(1));
 });
 
 /* ---------- Mix ---------- */
@@ -467,17 +469,17 @@ test('THEMES hat Farbe und Name fuer alle Workout-Themen', function () {
 test('fitBudget nutzt das Budget aus (mind. 90 %)', function () {
   var idx = wIdx();
   function tpl(id) { return Takt.TEMPLATES.filter(function (w) { return w.id === id; })[0]; }
-  var a = Takt.prepareSteps(tpl('vacuum-core-kurz'), idx, { prepSeconds: 5, intensity: 'normal', budgetSec: 420 });
-  var b = Takt.prepareSteps(tpl('ruecken-lang'), idx, { prepSeconds: 5, intensity: 'leicht', budgetSec: 300 });
+  var a = Takt.prepareSteps(tpl('vacuum-core-kurz'), idx, { prepSeconds: 0, intensity: 'normal', budgetSec: 420 });
+  var b = Takt.prepareSteps(tpl('ruecken-lang'), idx, { prepSeconds: 0, intensity: 'leicht', budgetSec: 300 });
   ok(Takt.totalSeconds(a) <= 420 && Takt.totalSeconds(a) >= 378, 'vacuum-core-kurz 7 Min.: ' + Takt.totalSeconds(a));
   ok(Takt.totalSeconds(b) <= 300 && Takt.totalSeconds(b) >= 270, 'ruecken-lang leicht 5 Min.: ' + Takt.totalSeconds(b));
   var bad = [];
   Takt.TEMPLATES.forEach(function (w) {
     ['leicht', 'normal', 'hart'].forEach(function (lvl) {
-      var full = Takt.totalSeconds(Takt.prepareSteps(w, idx, { prepSeconds: 5, intensity: lvl }));
+      var full = Takt.totalSeconds(Takt.prepareSteps(w, idx, { prepSeconds: 0, intensity: lvl }));
       for (var m = 5; m * 60 < full; m++) {
         var s = Takt.prepareSteps(w, idx, { prepSeconds: 5, intensity: lvl, budgetSec: m * 60 });
-        var t = Takt.totalSeconds(s);
+        var t = Takt.totalSeconds(s) - 5;   // Budget ohne Vorbereitung
         if (t > m * 60 || t < m * 60 * 0.9) bad.push(w.id + ' ' + lvl + ' ' + m + ' Min.: ' + t);
         if (s.some(function (x) { return x.kind === 'work' && x.duration < 10; })) bad.push(w.id + ' ' + lvl + ' ' + m + ' unter 10 s');
       }

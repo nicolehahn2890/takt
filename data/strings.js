@@ -2,7 +2,6 @@
 window.Takt = window.Takt || {};
 Takt.VOICE_LINES = {
   ready: 'Mach dich bereit.',
-  go: 'Los geht\'s!',
   pause: 'Pause.',
   next: 'Als Nächstes:',
   warn10: 'Noch zehn Sekunden.',

@@ -157,24 +157,27 @@ window.Takt = window.Takt || {};
     });
     bars.forEach(function (b) { delete b._end; });
 
+    // Laufender Zeitraum: Vergleich nur bis zum gleichen Tag, das sagt jeder Text dazu
+    // (sonst stuende am Montag "Vorwoche ohne Training", obwohl nur der Montag davor leer war)
     var w = WORDS[kind], compare = { prevSeconds: prevSeconds, pct: null }, ring;
+    var until = current ? untilText(kind, now) : '';
     if (!seconds) {
       compare.state = 'empty';
       compare.text = current ? 'Noch kein Training' : 'Kein Training';
       ring = 0;
     } else if (!prevSeconds) {
       compare.state = 'noprev';
-      compare.text = w.none;
+      compare.text = w.none + until;
       ring = 1;
     } else {
       var pct = Math.round((seconds - prevSeconds) / prevSeconds * 100);
       compare.pct = pct;
       if (Math.abs(pct) <= 2) {
         compare.state = 'same';
-        compare.text = 'gleich viel wie ' + w.same;
+        compare.text = 'gleich viel wie ' + w.same + until;
       } else {
         compare.state = pct > 0 ? 'up' : 'down';
-        compare.text = (pct > 0 ? '+' : '\u2212') + Math.abs(pct) + ' % ' + w.to + (current ? untilText(kind, now) : '');
+        compare.text = (pct > 0 ? '+' : '\u2212') + Math.abs(pct) + ' % ' + w.to + until;
       }
       ring = Math.min(1, seconds / prevSeconds);
     }

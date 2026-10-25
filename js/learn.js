@@ -39,14 +39,17 @@ window.Takt = window.Takt || {};
     // Uebungen des Workouts in Reihenfolge, mit Vorkommen (Runden) und jetziger Dauer des ersten Eintrags
     var order = [], info = {};
     itemsOf(workout).forEach(function (x) {
-      var id = x.item.exId;
-      if (!info[id]) { info[id] = { n: 0, from: durOf(x.item, workout) }; order.push(id); }
+      var id = x.item.exId, d = durOf(x.item, workout);
+      if (!info[id]) { info[id] = { n: 0, from: d, mixed: false }; order.push(id); }
+      if (d !== info[id].from) info[id].mixed = true;
       info[id].n += x.repeat;
     });
     var best = null;
     order.forEach(function (id) {
       var ex = exIndex ? exIndex[id] : null;
-      if (!ex) return;
+      // Kommt die Uebung mit verschiedenen Dauern vor (z. B. Plank 20 s im Aufwaermen, 60 s im Hauptteil),
+      // ist unklar, welche gemeint war: lieber nicht fragen, als alle auf einen Wert zu setzen
+      if (!ex || info[id].mixed) return;
       var st = learn[T.learnKey(workout.id, id)] || {};
       if (typeof st.snoozeUntil === 'number' && count <= st.snoozeUntil) return;
       var since = typeof st.since === 'number' ? st.since : 0;

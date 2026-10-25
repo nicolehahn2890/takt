@@ -11,7 +11,7 @@ function annCtx(mode, opts) {
     hasClip: opts.hasClip || function () { return true; }
   };
 }
-function stepEv(i) { return { type: 'step', index: i, catchUp: false }; }
+function stepEv(i) { return { type: 'step', index: i }; }
 var B = function (tone) { return { type: 'beep', tone: tone }; };
 var C = function (key) { return { type: 'clip', key: key }; };
 
@@ -70,7 +70,7 @@ test('announce sounds aus: Toene fallen weg', function () {
   eq(Takt.announce({ type: 'done' }, ctx), [C('done')]);
 });
 test('VOICE_LINES enthaelt die festen Saetze', function () {
-  eq(Object.keys(Takt.VOICE_LINES).sort(), ['done', 'go', 'left', 'next', 'pause', 'ready', 'right', 'side', 'warn10']);
+  eq(Object.keys(Takt.VOICE_LINES).sort(), ['done', 'left', 'next', 'pause', 'ready', 'right', 'side', 'warn10']);
 });
 
 /* ---------- Schritt 4: Seitenwechsel-Ansagen ---------- */

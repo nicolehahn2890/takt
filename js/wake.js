@@ -5,14 +5,20 @@ window.Takt = window.Takt || {};
   'use strict';
   var lock = null;
   var wanted = false;
+  var pending = null;   // laufende Anfrage (nie zwei gleichzeitig)
 
   function request() {
     if (!('wakeLock' in navigator)) return Promise.resolve(false);
-    return navigator.wakeLock.request('screen').then(function (l) {
+    if (pending) return pending;
+    pending = navigator.wakeLock.request('screen').then(function (l) {
+      pending = null;
+      // Kam inzwischen off() (z. B. Training endete beim Entsperren): gleich wieder freigeben
+      if (!wanted) { try { l.release(); } catch (e) { /* egal */ } return false; }
       lock = l;
       l.addEventListener('release', function () { if (lock === l) lock = null; });
       return true;
-    }).catch(function () { return false; });
+    }).catch(function () { pending = null; return false; });
+    return pending;
   }
 
   document.addEventListener('visibilitychange', function () {
@@ -29,7 +35,6 @@ window.Takt = window.Takt || {};
       wanted = false;
       if (lock) { try { lock.release(); } catch (e) { /* egal */ } }
       lock = null;
-    },
-    active: function () { return !!lock; }
+    }
   };
 })(window.Takt);

@@ -68,8 +68,10 @@ window.Takt = window.Takt || {};
   function setLoading(on) {
     Array.prototype.forEach.call(document.querySelectorAll('[data-start]'), function (b) {
       b.disabled = on;
-      if (on) b.setAttribute('data-label', b.textContent);
-      b.textContent = on ? 'L\u00e4dt \u2026' : (b.getAttribute('data-label') || b.textContent);
+      // Beschriftung nur einmal merken, sonst bliebe "Laedt ..." stehen
+      if (on && !b.hasAttribute('data-label')) b.setAttribute('data-label', b.textContent);
+      if (on) { b.textContent = 'L\u00e4dt \u2026'; return; }
+      if (b.hasAttribute('data-label')) { b.textContent = b.getAttribute('data-label'); b.removeAttribute('data-label'); }
     });
   }
 
@@ -87,7 +89,7 @@ window.Takt = window.Takt || {};
   function startWorkout(ref, opts) {
     var w = typeof ref === 'string' ? findWorkout(ref) : ref;
     if (!w && lastStart && lastStart.workout.id === ref) w = lastStart.workout;
-    if (!w || run) return;
+    if (!w || run || starting) return;   // laedt schon: kein zweiter Start (z. B. ueber Anpassen oder Mix)
     opts = opts || {};
     lastStart = { workout: w, opts: opts };
     T.audio.unlock();
@@ -99,6 +101,8 @@ window.Takt = window.Takt || {};
     Promise.race([T.audio.load(voiceKeys(steps)), timeout]).then(function () {
       setLoading(false);
       starting = false;
+      // Waehrend des Ladens geoeffnete Fenster (Mix, Anpassen) nicht ueber dem Training liegen lassen
+      if (T.home) T.home.closeSheets();
       run = { workout: { id: w.id, name: w.name, theme: w.theme || 'core',
         source: w.source === 'template' || w.source === 'mix' ? w.source : 'own',
         origin: w.origin === 'mix' || w.source === 'mix' ? 'mix' : null,
@@ -146,14 +150,22 @@ window.Takt = window.Takt || {};
   }
 
   function handle(events) {
+    if (!run) return;
+    var acts = [], done = false;
     (events || []).forEach(function (ev) {
-      if (!run) return;
-      var acts = T.announce(ev, { steps: run.engine.steps, settings: data.settings, hasClip: T.audio.hasClip });
-      // Nur kurz reingeschaut: kein "Geschafft, super gemacht!", nur der Schlusston
-      if (ev.type === 'done' && !runCounts()) acts = acts.filter(function (a) { return a.type !== 'clip'; });
-      T.audio.play(acts);
-      if (ev.type === 'done') finish();
+      // Nur geladene Sprachdateien ansagen: fehlt eine, faellt sie samt "Als Naechstes:" weg
+      var a = T.announce(ev, { steps: run.engine.steps, settings: data.settings, hasClip: T.audio.ready });
+      if (ev.type === 'done') {
+        done = true;
+        // Nur kurz reingeschaut: kein "Geschafft, super gemacht!", nur der Schlusston
+        if (!runCounts()) a = a.filter(function (x) { return x.type !== 'clip'; });
+      }
+      acts = acts.concat(a);
     });
+    // Alles aus einem Takt zusammen abspielen: sonst bricht die zweite Ansage die erste ab
+    // (z. B. Seitenwechsel und "Noch zehn Sekunden" nach der Rueckkehr aus einer anderen App)
+    T.audio.play(acts);
+    if (done) finish();
   }
 
   /* Zaehlt das laufende Training als absolviert? (mindestens die Haelfte der geplanten Zeit trainiert) */
@@ -166,7 +178,8 @@ window.Takt = window.Takt || {};
     var t = Date.now();
     if (!force && t - lastSave < 1000) return;
     lastSave = t;
-    T.store.saveRun({ v: 1, workout: run.workout, engine: run.engine.snapshot() });
+    // badges: zurueckgestellte Feiern (z. B. nach "Speichern & Starten"), damit sie ein Neuladen ueberstehen
+    T.store.saveRun({ v: 1, workout: run.workout, engine: run.engine.snapshot(), badges: pendingBadges.slice() });
   }
 
   function buildDots() {
@@ -245,7 +258,6 @@ window.Takt = window.Takt || {};
     if (v.index < 0) return;
     var scr = $('screen-train');
     scr.classList.toggle('is-rest', v.step.kind === 'rest');
-    scr.classList.toggle('is-prep', v.step.kind === 'prep');
     scr.classList.toggle('is-paused', v.paused);
     $('t-sub').textContent = '\u00dcbung ' + v.workPos + ' von ' + v.workTotal + ' \u00b7 noch ' + T.fmt(v.remainingTotal);
     updateDots(v);
@@ -311,9 +323,17 @@ window.Takt = window.Takt || {};
     T.figure.unmount($('t-fig'));
   }
 
+  /* "13 Uebungen", oder "10 von 13 Uebungen", wenn welche uebersprungen wurden oder das Training frueher endete */
+  function exercisesText(steps, spent, total) {
+    var done = steps.filter(function (s, i) { return s.kind === 'work' && (spent[i] || 0) >= 1; }).length;
+    if (done < total) return done + ' von ' + total + ' \u00dcbungen';
+    return total === 1 ? '1 \u00dcbung' : total + ' \u00dcbungen';
+  }
+
   function finish() {
     var v = run.engine.view();
     var steps = run.engine.steps;
+    var spent = run.engine.spentSeconds();
     var entry = {
       id: T.uid('l'),
       workoutId: run.workout.id,
@@ -323,12 +343,12 @@ window.Takt = window.Takt || {};
       actualSec: Math.round((Date.now() - v.startedAt) / 1000),
       activeSec: v.activeSec,
       theme: run.workout.theme || 'core',
-      areaSec: T.areaSeconds(steps, run.engine.spentSeconds(), exIndex),
+      areaSec: T.areaSeconds(steps, spent, exIndex),
       adjustments: run.engine.adjustments.slice(),
       source: run.workout.source || 'own',
       origin: run.workout.origin || null,
       adjusted: !!run.workout.adjusted,
-      breathCount: breathDone(steps, run.engine.spentSeconds()),
+      breathCount: breathDone(steps, spent),
       startedAt: v.startedAt ? new Date(v.startedAt).toISOString() : null,
       note: ''
     };
@@ -351,7 +371,7 @@ window.Takt = window.Takt || {};
     run = null;
     $('screen-done').classList.toggle('is-short', !counts);
     $('done-title').textContent = counts ? 'Geschafft!' : 'Kurz reingeschaut';
-    $('done-sub').textContent = T.fmt(entry.activeSec) + ' trainiert \u00b7 ' + (counts ? (v.workTotal === 1 ? '1 \u00dcbung' : v.workTotal + ' \u00dcbungen') :
+    $('done-sub').textContent = T.fmt(entry.activeSec) + ' trainiert \u00b7 ' + (counts ? exercisesText(steps, spent, v.workTotal) :
       'z\u00e4hlt erst ab der H\u00e4lfte der geplanten Zeit (' + T.fmt(Math.ceil(entry.plannedSec * T.TRAINING_MIN_SHARE)) + ')');
     $('done-adj').innerHTML = counts ? T.adjustSummary(entry.adjustments, exIndex).map(function (t) { return '<li>' + T.esc(t) + '</li>'; }).join('') : '';
     renderFreshBadges(fresh);
@@ -517,7 +537,15 @@ window.Takt = window.Takt || {};
     $('b-minus').addEventListener('click', function () { if (run) act(run.engine.adjust(-15)); });
     $('b-plus').addEventListener('click', function () { if (run) act(run.engine.adjust(15)); });
     $('b-close').addEventListener('click', function () {
-      if (run && window.confirm('Training beenden?')) abort();
+      if (!run) return;
+      // Ab der Haelfte der geplanten Zeit zaehlt das Training wie am Schluss (Tagebuch, Abzeichen), darunter wird es verworfen
+      var v = run.engine.view(), planned = T.totalSeconds(run.engine.steps);
+      var counts = T.trainingCounts(v.activeSec, planned);
+      var q = 'Training beenden?\n\n' + T.fmt(v.activeSec) + ' trainiert, ' + (counts ? 'wird gespeichert.' :
+        'z\u00e4hlt erst ab ' + T.fmt(Math.ceil(planned * T.TRAINING_MIN_SHARE)) + ' und wird nicht gespeichert.');
+      if (!window.confirm(q) || !run) return;
+      T.audio.stop();
+      if (counts) act(run.engine.stop()); else abort();
     });
     $('b-home').addEventListener('click', function () { renderStart(); show('start'); });
     $('done-note').addEventListener('input', function () { clearTimeout(noteTimer); noteTimer = setTimeout(function () { saveNote(false); }, 400); });
@@ -583,6 +611,7 @@ window.Takt = window.Takt || {};
     if (saved && saved.engine && !saved.engine.done) {
       try {
         run = { workout: saved.workout || { id: null, name: 'Training', theme: 'core' }, engine: T.Engine.restore(saved.engine) };
+        pendingBadges = Array.isArray(saved.badges) ? saved.badges.filter(function (id) { return typeof id === 'string'; }) : [];
         enterTraining();
         T.wake.on();
         setNeedTap(true);

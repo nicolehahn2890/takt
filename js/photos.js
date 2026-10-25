@@ -27,6 +27,8 @@ window.Takt = window.Takt || {};
         var result;
         t.oncomplete = function () { resolve(result); };
         t.onerror = function () { reject(t.error); };
+        // Voller Speicher bricht die Transaktion oft nur ab (ohne error): sonst haengt "Speichern" fuer immer
+        t.onabort = function () { reject(new Error('Der Fotospeicher ist voll oder nicht verf\u00fcgbar.')); };
         result = fn(t.objectStore(STORE));
       });
     });
@@ -107,14 +109,6 @@ window.Takt = window.Takt || {};
         urls[id] = URL.createObjectURL(rec.blob);
         return urls[id];
       }).catch(function () { return null; });
-    },
-
-    /* Groesse eines gespeicherten Fotos (fuer Pruefungen) */
-    size: function (id) {
-      return tx('readonly', function (store) { return store.get(id); }).then(function (req) {
-        var rec = req && req.result;
-        return rec ? { width: rec.width, height: rec.height } : null;
-      });
     },
 
     remove: function (id) {

@@ -1,7 +1,7 @@
 # Homeworkout-Timer-App – Konzept und Umsetzungsplan
 
 Name: **Takt** – "Dein Training, dein Takt" · Repo `nicolehahn2890/takt` (öffentlich) · Live: https://nicolehahn2890.github.io/takt/
-Stand: 2026-10-25 (live v=48) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
+Stand: 2026-10-25 (live v=49) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
 
 Dieses Dokument beschreibt den aktuellen Stand. Pläne und Specs unter `docs/superpowers/` sind Momentaufnahmen ihres Datums; weicht etwas ab, gilt dieses Dokument. Gestaltung: `docs/design_handoff_takt_redesign/design-system/DESIGN_GUIDE.md`.
 
@@ -103,7 +103,7 @@ Folgerung: Der Ansage-Weg über Sprachdateien ist bestätigt. Ansagen bei gesper
 
 ## 4. Produkt – Screens und Verhalten
 
-Stand v=48. Was noch fehlt oder bewusst wegfällt, ist markiert.
+Stand v=49. Was noch fehlt oder bewusst wegfällt, ist markiert.
 
 ### 4.1 Home (Startseite)
 - Kopf: Logo-Figur, „Takt“, „Dein Training, dein Takt“. Darunter Minuten und Anzahl Trainings dieser Woche.
@@ -116,18 +116,18 @@ Stand v=48. Was noch fehlt oder bewusst wegfällt, ist markiert.
 
 ### 4.2 Workout-Editor
 - Name, Thema (Farbe), Werte für neue Übungen: Dauer 40 s, Pause 15 s (mit ±).
-- Liste aus **Blöcken** mit Runden 1–10 (z. B. Hauptteil 3×). Eintrag: Übung aus der Bibliothek (Auswahl mit Suche und Filtern, auch eigene Übungen), Dauer, Pause danach (leer = Standard), beidseitig (aus der Bibliothek).
+- Liste aus **Blöcken** mit Runden 1–10 (z. B. Hauptteil 3×). Eintrag: Übung aus der Bibliothek (Auswahl mit Suche und Filtern, auch eigene Übungen), Dauer, Pause danach (leer = Standard; bei der letzten Übung steht „Ende“, danach gibt es keine Pause), beidseitig (immer aus der Bibliothek, auch wenn eine eigene Übung später geändert wird; Name und beidseitig werden in den Workouts nachgezogen).
 - Reihenfolge per Pfeile hoch/runter (Drag & Drop ist auf dem Handy unzuverlässig, evtl. V2). Gesamtdauer oben.
-- „Speichern“, „Speichern & Starten“, „Löschen“. Vorlagen sind schreibgeschützt; „Bearbeiten (als Kopie)“ legt eine Kopie unter „Meine Workouts“ an.
+- „Speichern“, „Speichern & Starten“, „Löschen“. Vorlagen sind schreibgeschützt; „Bearbeiten (als Kopie)“ legt eine Kopie unter „Meine Workouts“ an, „Zurück“ führt dann wieder in die Vorschau. Meldungen wie „Füge mindestens eine Übung hinzu.“ verschwinden, sobald der Fehler behoben ist.
 
 ### 4.3 Übungsbibliothek
-- 150 Übungen (5 davon mit Besenstiel). Suche und Filter: Alle, Core, Bauch, Rücken, Beine & Po, Dehnen, Yoga, Atmung & Vacuum, Ganzkörper, Eigene.
+- 150 Übungen (5 davon mit Besenstiel). Suche (Umlaute auch als ae, oe, ue) und Filter: Alle, Core, Bauch, Rücken, Beine & Po, Dehnen, Yoga, Atmung & Vacuum, Ganzkörper, Eigene.
 - Übungs-Detail: animierte Figur (oder eigenes Foto), Alias, Markierungen (Themen, beidseitig, Hilfsmittel), Beschreibung, Hinweis, Atem-Rhythmus, „Ansage anhören“, Video-Link, eigene Notiz.
 - Eigene Übung: Name, Beschreibung, Themen, beidseitig, Foto (auf max. 600 px verkleinert), Video-Link; bearbeiten und löschen.
 
 ### 4.4 Training (der wichtigste Screen)
 - Ring mit Restzeit in der Mitte (darüber Runde, „Links“/„Rechts“ oder „Pause“), darunter kleine Figur, Übungsname und Kurzbeschreibung; Fortschritt als Punkte oben; Leiste „Als Nächstes“ mit Dauer.
-- Steuerung: Zurück, −15 s, Pause/Weiter (groß, Themenfarbe), +15 s, Nächste. Tipp auf die Mitte = Pause/Weiter. ✕ beendet nach Rückfrage.
+- Steuerung: Zurück, −15 s, Pause/Weiter (groß, Themenfarbe), +15 s, Nächste. Tipp auf die Mitte = Pause/Weiter. ✕ beendet nach Rückfrage, die die trainierte Zeit nennt: Ab der Hälfte der geplanten Zeit wird gespeichert wie am Schluss (Fertig-Screen, Tagebuch, Abzeichen), darunter verworfen (seit v=49, vorher wurde immer verworfen).
 - Pausen zeigen „Durchatmen“ und die nächste Übung mit Figur.
 - Beidseitige Übungen: Zeit wird geteilt, „Links“ / „Rechts“, in der Mitte Ton + „Seite wechseln. Rechts.“ (5.6).
 - Atem-Übungen: statt Ring ein atmender Kreis mit „Einatmen / Halten / Ausatmen“ und Sekunden, sanfte Töne; der Rhythmus kommt aus der Bibliothek (im Editor nicht änderbar).
@@ -136,7 +136,7 @@ Stand v=48. Was noch fehlt oder bewusst wegfällt, ist markiert.
 - Querformat mit zwei Spalten (Tablet/TV): Schritt 5.
 
 ### 4.5 Fertig
-- Figur, „Geschafft!“, trainierte Zeit und Anzahl Übungen, Anpassungen in Worten („Plank 2× verlängert“).
+- Figur, „Geschafft!“, trainierte Zeit und Anzahl Übungen („10 von 13 Übungen“, wenn welche übersprungen wurden oder das Training mit ✕ früher endete), Anpassungen in Worten („Plank 2× verlängert“).
 - Neue Abzeichen: zuerst große Feier im Vollbild, danach als Karte (5.8, 8.7).
 - Frage der lernenden Dauer, falls fällig (5.5).
 - Freiwillige Notiz, wird beim Tippen gespeichert.
@@ -144,7 +144,7 @@ Stand v=48. Was noch fehlt oder bewusst wegfällt, ist markiert.
 - **Zählt nur ab der Hälfte der geplanten Zeit** (Nicole, 2026-10-24): Wer weniger trainiert hat (z. B. durchgeklickt oder kurz reingeschaut), sieht „Kurz reingeschaut“ mit „0:12 trainiert · zählt erst ab der Hälfte der geplanten Zeit (4:33)“. Kein Eintrag im Tagebuch, keine Statistik, keine Abzeichen, keine Lern-Frage, keine Notiz, statt „Geschafft, super gemacht!“ nur der Schlusston. „Trainiert“ ist die Zeit ohne Pausieren, geplant die Dauer vor ±15. Gilt ab v=46, ältere Einträge bleiben.
 
 ### 4.6 Statistik
-- Woche / Monat / Jahr: Ring als Vergleich mit gleich vielen Tagen der Vorperiode, Balken, häufigster Bereich.
+- Woche / Monat / Jahr: Ring als Vergleich mit gleich vielen Tagen der Vorperiode (der Text sagt das dazu, z. B. „Vorwoche ohne Training (bis Montag)“), Balken, häufigster Bereich.
 - Abzeichen (22) als Raster mit Fortschritt; Antippen zeigt Bedingung und Datum.
 - Tagebuch: die letzten 30 Trainings mit Notiz.
 - Backup sichern und laden (Datei mit allem inkl. Fotos), Hinweis „Letztes Backup: vor … Tagen“.
@@ -171,10 +171,10 @@ Stand v=48. Was noch fehlt oder bewusst wegfällt, ist markiert.
 Nächste Übung immer sichtbar; bei 10 s "noch 10 Sekunden", bei 3 s Countdown; in der Pause Bild der nächsten Übung.
 
 ### 5.3 Zeit-Budget
-Im Fenster „Anpassen“: Schieber ab 5 Min. Erst werden alle Dauern und Pausen anteilig gekürzt (auf 5 s gerundet, mindestens 10 s je Übung, nie länger als geplant). Reicht das nicht, fallen Runden weg (zuerst die letzte Runde des Blocks mit den meisten Runden), dann die Pausen, zuletzt Übungen von hinten.
+Im Fenster „Anpassen“: Schieber ab 5 Min. bis zur vollen Länge bei der gewählten Intensität (bei „hart“ also länger). Alle Dauern ohne die 5 s Vorbereitung, wie auf Karte und Vorschau. Erst werden alle Dauern und Pausen anteilig gekürzt (auf 5 s gerundet, mindestens 10 s je Übung, nie länger als geplant). Reicht das nicht, fallen Runden weg (zuerst die letzte Runde des Blocks mit den meisten Runden), dann die Pausen, zuletzt Übungen von hinten.
 
 ### 5.4 Mix-Modus
-Fenster „Mix“: Themen antippen (mehrere möglich): Core, Vacuum, Bauch, Beine & Po, Rücken, Dehnen, Yoga, Ganzkörper; Gesamtdauer 5, 10, 15, 20 oder 30 Min. Schalter „Besenstiel“ unter „Hilfsmittel“ (seit v=48, gemerkt, zu Beginn aus). Takt zieht zufällig aus der Bibliothek (nur Zeit-Übungen mit Figur, ohne Hilfsmittel außer Matte, Wand und mit Schalter Besenstiel, keine Übung doppelt), bei mehreren Themen reihum aus jedem Thema. „Core“ enthält auch die Vacuum-Übungen, „Vacuum“ nur diese. Aufbau seit v=47 (Nicole, 2026-10-25, Hintergrund in 8.8 und 8.9):
+Fenster „Mix“: Themen antippen (mehrere möglich): Core, Vacuum, Bauch, Beine & Po, Rücken, Dehnen, Yoga, Ganzkörper; Gesamtdauer 5, 10, 15, 20 oder 30 Min. Schalter „Besenstiel“ unter „Hilfsmittel“ (seit v=48, zu Beginn aus). Themen, Dauer und Schalter merkt sich das Fenster sofort (seit v=49, vorher erst beim Mischen). Takt zieht zufällig aus der Bibliothek (nur Zeit-Übungen mit Figur, ohne Hilfsmittel außer Matte, Wand und mit Schalter Besenstiel, keine Übung doppelt), bei mehreren Themen reihum aus jedem Thema. „Core“ enthält auch die Vacuum-Übungen, „Vacuum“ nur diese. Aufbau seit v=47 (Nicole, 2026-10-25, Hintergrund in 8.8 und 8.9):
 - **Zirkel** (Core, Bauch, Beine & Po, Rücken, Ganzkörper, Vacuum): 5 Übungen (5 Min.: 4, 30 Min.: 6), Pause 15 s. Runden (bis 4) und Arbeitszeit (20–60 s) füllen die Zeit bis auf 5 %, die Arbeitszeit liegt dabei möglichst nah an 40 s; die Gesamtdauer wird nie überschritten. Beidseitige Übungen bekommen wie in den Vorlagen das Anderthalbfache (40 s, beidseitig 60 s = 30 s je Seite). Ein dünnes Thema wird mit Core und Ganzkörper aufgefüllt.
 - **Bewegungsmuster** (seit v=48): Je Thema kommen feste Muster in dieser Reihenfolge dran, welche Übung es wird, bleibt Zufall. Bauch: Crunch, Stabilität (z. B. Dead Bug), Drehung, untere Bauchmuskeln, seitliche Bauchmuskeln. Beine & Po: Kniebeuge, Hüftstreckung (Brücke, Kickback), Ausfallschritt, Abspreizen, Hüftbeuge, dann Innenschenkel, Wade. Core: Stabilität, Seitstütz, ruhiges Vakuum, Drehung, gegengleich (Bird Dog, Swimmer), dann Brücke. Rücken: Rückenstrecker, Schulterblätter, gegengleich, Hüftbeuge (Good Morning, Standwaage), Schulterblätter. Ganzkörper: Kniebeuge-Sprung, Drücken (Liegestütz), Cardio, Stütz, Cardio, dann Hüftstreckung. Vacuum: halten, mit Bewegung, halten, unter Last, halten. Bei mehreren Themen zählen die Muster der anderen mit. Dehnungen und Mobilisation haben kein Muster und kommen nicht in den Zirkel (vorher z. B. Knie zur Brust im Rücken-Zirkel).
 - **Aufwärmen nur bei Kraft-Themen** (Core, Bauch, Beine & Po, Rücken, Ganzkörper): erst den Puls heben (Laufen auf der Stelle, Hampelmann, Kniehebelauf, Seilspringen, Schattenboxen), dann die Gelenke des Themas bewegen (z. B. Hüftkreisen vor Beine & Po, Schulterkreisen vor Rücken, Katze-Kuh vor Bauch), je 40 s mit 5 s Wechsel; im 5-Min.-Mix nur die Mobilisation (30 s). Dehnen, Vacuum und Yoga ohne Aufwärm-Block.
@@ -185,7 +185,7 @@ Fenster „Mix“: Themen antippen (mehrere möglich): Core, Vacuum, Bauch, Bein
 Danach „Neu mischen“, „Speichern“ (unter „Meine Workouts“) oder „Starten“.
 
 ### 5.5 Lernende Dauer
-Jede +15/−15-Änderung wird mit Übung und Workout protokolliert. Wurde dieselbe Übung im **selben Workout** in den letzten 3 Trainings dieses Workouts jedes Mal verlängert (oder jedes Mal gekürzt), fragt der Fertig-Screen z. B. „Plank in ‚Morgen-Core‘ auf 60 s setzen?“. „Ja“ ändert nur dieses Workout (bei einer Vorlage entsteht eine Kopie), „Nein“ stellt die Frage für die nächsten 10 Trainings dieses Workouts zurück. Trainings über „Anpassen“ und ungespeicherte Mixe zählen nicht. Details: Spec Schritt 4.
+Jede +15/−15-Änderung wird mit Übung und Workout protokolliert. Wurde dieselbe Übung im **selben Workout** in den letzten 3 Trainings dieses Workouts jedes Mal verlängert (oder jedes Mal gekürzt), fragt der Fertig-Screen z. B. „Plank in ‚Morgen-Core‘ auf 60 s setzen?“. „Ja“ ändert nur dieses Workout (bei einer Vorlage entsteht eine Kopie), „Nein“ stellt die Frage für die nächsten 10 Trainings dieses Workouts zurück. Trainings über „Anpassen“ und ungespeicherte Mixe zählen nicht. Kommt eine Übung mit verschiedenen Dauern vor (z. B. Plank 20 s im Aufwärmen, 60 s im Hauptteil), fragt Takt bei ihr nicht (seit v=49; vorher setzte „Ja“ alle auf denselben Wert). Details: Spec Schritt 4.
 
 ### 5.6 Seitenwechsel
 Übung "beidseitig" → Dauer halbiert pro Seite, Ansage und Ton in der Mitte, Anzeige "Links" / "Rechts".
@@ -196,18 +196,18 @@ Jede +15/−15-Änderung wird mit Übung und Workout protokolliert. Wurde diesel
 ### 5.8 Tagebuch und Abzeichen
 **Tagebuch** in der Statistik: die letzten 30 Trainings (Datum, Workout, Minuten, Notiz), neueste oben. Keine Gefühl-Abfrage. Ein Training kommt nur hinein, wenn mindestens die Hälfte der geplanten Zeit trainiert wurde (4.5). Die Startseite zeigt die Minuten dieser Woche.
 
-**Abzeichen** (Wunsch von Nicole 2026-10-22, umgesetzt in Schritt 4): 22 Stück in 6 Gruppen (Trainings, Minuten, Tage in Folge, Tageszeit, Abwechslung, Entdecken). Runde Plaketten mit Icon, erreicht in der Gruppenfarbe, gesperrt grau mit Fortschrittsring „4 von 10“. Raster in der Statistik, Antippen zeigt Bedingung und Datum. Neue Abzeichen werden im Vollbild gefeiert (8.7) und stehen danach als Karte im Fertig-Screen. Einmal erreicht bleibt erreicht. Die Regeln liegen als Liste in `data/badges.js`, neue Abzeichen sind nur Inhalt.
+**Abzeichen** (Wunsch von Nicole 2026-10-22, umgesetzt in Schritt 4): 22 Stück in 6 Gruppen (Trainings, Minuten, Tage in Folge, Tageszeit, Abwechslung, Entdecken). Runde Plaketten mit Icon, erreicht in der Gruppenfarbe, gesperrt grau mit Fortschrittsring „4 von 10“. Raster in der Statistik, Antippen zeigt Bedingung und Datum. Neue Abzeichen werden im Vollbild gefeiert (8.7) und stehen danach als Karte im Fertig-Screen. Einmal erreicht bleibt erreicht. Tageszeit: „Frühaufsteherin“ = Training zwischen 4 und 8 Uhr beendet, „Nachteule“ = zwischen 21 und 4 Uhr (seit v=49; vorher zählte ein Ende um 0:20 als früh). Die Regeln liegen als Liste in `data/badges.js`, neue Abzeichen sind nur Inhalt.
 
 ### 5.9 Intensitäts-Regler
-leicht: Arbeit ×0,8, Pause ×1,5 · normal: ×1/×1 · hart: Arbeit ×1,2, Pause ×0,6. Reihenfolge: erst Intensität, dann Zeit-Budget. Das Budget ist eine harte Obergrenze: "15 Minuten" ergibt nie mehr als 15 Minuten.
+leicht: Arbeit ×0,8, Pause ×1,5 · normal: ×1/×1 · hart: Arbeit ×1,2, Pause ×0,6. Reihenfolge: erst Intensität, dann Zeit-Budget. Das Budget ist eine harte Obergrenze für das Training: "15 Minuten" ergibt nie mehr als 15 Minuten (dazu kommen nur die 5 s Vorbereitung).
 
 ### 5.10 Ansagen und Stimme
-Eine feste natürliche Stimme: **Katja** (`de-DE-KatjaNeural`, gewählt von Nicole am 2026-10-22 aus 3 Proben: Katja, Seraphina, Florian). Feste Sätze („Mach dich bereit.“, „Los geht's!“, „Pause.“, „Als Nächstes:“, „Noch zehn Sekunden.“, „Seite wechseln.“, „Links.“, „Rechts.“, „Geschafft, super gemacht!“, Liste in `data/strings.js`) und alle Übungsnamen der Bibliothek liegen als einzelne MP3-Dateien in `assets/voice/`. Erzeugt werden sie einmalig per Script `tools/make_voice.py` (edge-tts) aus `data/strings.js` und `data/exercises.js`; neue Bibliotheksübung = Script erneut laufen lassen. Wo Katja einen Namen falsch liest, steht ein eigener Ansagetext (`ansage` in `data/exercises.js`): „Stomach Vacuum …“ wird „Bauch-Vakuum …“, sonst „Vacuum“ → „Vakuum“, „90/90 Hüfte“ → „Neunzig neunzig Hüfte“. Eigene Übungen haben keine Datei: Ton + Name groß. „3, 2, 1“ als Töne; Töne für Atem-Übungen und ein Dreiklang für neue Abzeichen. Ansage-Umfang (voll / nur Übungsname / nur Töne / still) ist im Code vorbereitet, aber noch ohne Einstellung (immer voll). EN/ES später: dieselben Dateien in anderer Sprache erzeugen.
+Eine feste natürliche Stimme: **Katja** (`de-DE-KatjaNeural`, gewählt von Nicole am 2026-10-22 aus 3 Proben: Katja, Seraphina, Florian). Feste Sätze („Mach dich bereit.“, „Pause.“, „Als Nächstes:“, „Noch zehn Sekunden.“, „Seite wechseln.“, „Links.“, „Rechts.“, „Geschafft, super gemacht!“, Liste in `data/strings.js`) und alle Übungsnamen der Bibliothek liegen als einzelne MP3-Dateien in `assets/voice/` („Los geht's!“ wurde nie gespielt und ist seit v=49 entfernt). Erzeugt werden sie einmalig per Script `tools/make_voice.py` (edge-tts) aus `data/strings.js` und `data/exercises.js`; neue Bibliotheksübung = Script erneut laufen lassen. Wo Katja einen Namen falsch liest, steht ein eigener Ansagetext (`ansage` in `data/exercises.js`): „Stomach Vacuum …“ wird „Bauch-Vakuum …“, sonst „Vacuum“ → „Vakuum“, „90/90 Hüfte“ → „Neunzig neunzig Hüfte“. Eigene Übungen haben keine Datei: Ton + Name groß. „3, 2, 1“ als Töne; Töne für Atem-Übungen und ein Dreiklang für neue Abzeichen. Ansage-Umfang (voll / nur Übungsname / nur Töne / still) ist im Code vorbereitet, aber noch ohne Einstellung (immer voll). EN/ES später: dieselben Dateien in anderer Sprache erzeugen.
 
 ## 6. Inhalte
 
 ### 6.1 Übungsbibliothek (150 Übungen, deutsch)
-Felder: `id, name, alias[], beschreibung, hinweis, tags[], beidseitig, typ ('zeit'|'atem'), atem {ein, halten, aus, haltenLeer}, hilfsmittel[], bild (derzeit immer null), icon, quelle, position`.
+Felder: `id, name, alias[], beschreibung, hinweis, tags[], beidseitig, typ ('zeit'|'atem'), atem {ein, halten, aus, haltenLeer}, hilfsmittel[], bild, icon, quelle, position, muster, fokus`, wo nötig `ansage` (5.10). `bild` (immer null) und `icon` werden nirgends angezeigt (Reserve, die Figur ersetzt beide).
 Jede Zeit-Übung hat eine Ausgangsposition (`position`, seit v=47): `stehen, stuetz, knien, bauchlage, sitzen, seitenlage, rueckenlage`, in dieser Reihenfolge von oben nach unten (`T.POSITIONS`). Mix und Vorlagen laufen danach.
 Kraft-Übungen haben ein Bewegungsmuster (`muster`, z. B. `kniebeuge`, `huefte-strecken`, `drehen`), Dehnungen und Yoga-Haltungen einen Schwerpunkt (`fokus`, z. B. `beine-hinten`, `wirbelsaeule`, `oben`), beide seit v=48; der Mix wählt danach (5.4).
 Hilfsmittel: Matte, Wand, Stuhl, Band, Tisch, Sofa und seit v=48 Stab (Anzeige „Besenstiel“). Die Figur hält den Stab in beiden Händen (`js/figure.js`, Prop `stab`).
@@ -215,7 +215,7 @@ Hilfsmittel: Matte, Wand, Stuhl, Band, Tisch, Sofa und seit v=48 Stab (Anzeige �
 Themen (eine Übung kann mehrere haben): Core 43, Dehnen 33, Beine/Po 32, Yoga 24, Rücken 23, Bauch 20, Vacuum 17, Ganzkörper 13, Aufwärmen 10, Oberkörper 8, Atmung 7.
 
 ### 6.2 Vorlagen (12)
-Je Thema „Kurz“ (~10 Min) und „Lang“ (~20 Min): Vacuum & Core, Bauch, Dehnen & Rücken, Yoga & Atmung, Beine & Po, Starker Rücken. Jede Vorlage: Aufwärmen (2–3 Übungen), Hauptteil als Block mit Wiederholung, Abschluss (Dehnen/Atmung). Seit v=47 läuft der Hauptteil vom Stehen zum Liegen; in den anderen Blöcken (außer dem Aufwärmen) steht man nicht mitten im Block wieder auf (nur die Reihenfolge geändert, Übungen und Zeiten gleich). Nicole prüft die Vorlagen vor einer Veröffentlichung.
+Je Thema „Kurz“ (~10 Min) und „Lang“ (~20 Min): Vacuum & Core, Bauch, Dehnen & Rücken, Yoga & Atmung, Beine & Po, Starker Rücken. Kraft-Vorlagen (Vacuum & Core, Bauch, Beine & Po, Starker Rücken): Aufwärmen (2–3 Übungen), Hauptteil als Block mit 2–3 Runden, Abschluss (Dehnen/Atmung). Dehnen & Rücken: ein Durchgang ohne Block-Namen. Yoga & Atmung: Ankommen, Sonnengruß (2 Runden), Haltungen, Abschluss. Seit v=47 läuft der Hauptteil vom Stehen zum Liegen; in den anderen Blöcken (außer dem Aufwärmen) steht man nicht mitten im Block wieder auf (nur die Reihenfolge geändert, Übungen und Zeiten gleich). Nicole prüft die Vorlagen vor einer Veröffentlichung.
 
 ## 7. Technik
 
@@ -271,7 +271,7 @@ Geplant (Schritt 5): manifest.webmanifest, sw.js, weitere App-Icons, Schrift lok
   notes: { [exId]: Notiz },
   badges: { [badgeId]: isoDatum } }
 ```
-Dazu `takt_run_v1` (laufendes Training, wird bis 30 Min. fortgesetzt) und IndexedDB `takt_photos_v1` (Fotos). Vorlagen liegen in `data/templates.js` (`source: 'template'`), nicht im Speicher.
+Dazu `takt_run_v1` (laufendes Training samt zurückgestellter Abzeichen-Feiern, wird bis 30 Min. fortgesetzt) und IndexedDB `takt_photos_v1` (Fotos). Vorlagen liegen in `data/templates.js` (`source: 'template'`), nicht im Speicher.
 
 **Browser-APIs:** Web Audio (Oszillator-Töne und Sprachdateien), Audio Session (`navigator.audioSession.type = 'ambient'`), Screen Wake Lock (bei `visibilitychange` erneut anfordern, Fehler abfangen), IndexedDB (Fotos), Web Share mit Datei (Backup; sonst Download). Service Worker: Schritt 5. Kein `fetch` auf lokale Daten, Inhalte kommen als JS.
 
@@ -298,8 +298,8 @@ Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzu
 - Google Fonts extern statt lokal, Test-Hilfe `debugClock` vor Veröffentlichung auf `false` → Schritt 5 (PWA). (Favicon und `apple-touch-icon` gibt es seit Design v2.)
 - Bei jeder Änderung `?v=` in `index.html` hochzählen (iPhone-Cache); MP3s und Manifest haben keine Version.
 - Schließen-Knopf 38 px und Start-Knopf ca. 42 px kleiner als 44 px Touch-Ziel; `safe-area-inset-left/right` im Querformat; `-webkit-text-size-adjust`.
-- Wake Lock: Wettlauf, wenn `off()` während einer laufenden Anfrage kommt.
-- Abbruch mit ✕ stoppt eine laufende Ansage nicht; vor dem Start werden 4 ungenutzte Sätze (go, side, left, right) mitgeladen.
+- Wake Lock: Wettlauf, wenn `off()` während einer laufenden Anfrage kommt. (Erledigt v=49: eine Anfrage, die nach `off()` zurückkommt, wird sofort freigegeben.)
+- (Erledigt v=49:) Abbruch mit ✕ stoppt jetzt eine laufende Ansage. Von den 4 ungenutzten Sätzen war nur „Los geht's!“ (go) übrig (side, left, right sind seit Schritt 4 in Gebrauch); er ist entfernt.
 - „Nochmal“ nach Wiederherstellung ohne Workout-Id wirkungslos; gespeicherter Trainingsstand wird beim Laden nicht auf sein Format geprüft (wichtig, sobald sich das Format in Schritt 2 bis 4 ändert).
 - Banner „Einmal tippen“ nach Rückkehr kann einen Tipp verschlucken, wenn der Ton inzwischen von selbst wieder läuft; Töne können sich bei unterbrochenem Ton stauen.
 - Stille-Beschnitt der Sprachdateien (Rand 0,03 s) könnte leise Wortanfänge kappen → beim iPhone-Test hören.
@@ -310,7 +310,7 @@ Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzu
 
 - Atem-Vorschau in der Bibliothek zeigt winzigen Text; Figur zeichnet 60× pro Sekunde neu, auch in der Pause (Akku); `prefers-reduced-motion` fehlt.
 - Animations-Takt bleibt nach einem Fehler stehen; spät ankommendes Foto kann die aktuelle Figur überschreiben; Vorschau-Adressen werden nicht freigegeben.
-- Fotospeicher: Fehler werden für die Sitzung „eingefroren“, englische Rohmeldung, kein Timeout.
+- Fotospeicher: Fehler werden für die Sitzung „eingefroren“, englische Rohmeldung, kein Timeout. (v=49: Bricht der Speicher ab, z. B. weil er voll ist, kommt eine deutsche Meldung statt endlosem Warten.)
 - „Ansage anhören“ ohne Rückmeldung bei Stummschalter oder Ladefehler.
 - Touch-Ziele der Filter und „+ Eigene“ unter 44 px; Klasse `.bar` kollidiert mit dem Fortschrittsbalken ab 25 Übungen (wichtig für Schritt 3).
 - Eigene Übung: führendes „ · eigene“ in der Liste, Hochformat-Fotos werden beschnitten, fehlendes Foto zeigt leere Kachel, gleiche Datei erneut wählen wirkt nicht, Notiz bei sofortigem Zurück evtl. nicht gespeichert.
@@ -322,7 +322,7 @@ Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzu
 ### 8.3 Offene Kleinigkeiten aus Schritt 3 (bewusst zurückgestellt)
 
 - „Nochmal“ tut nichts, wenn das Workout gelöscht wurde oder ein ungespeicherter Mix nach Neuladen fertig wurde; nach Neuladen startet „Nochmal“ ohne die Anpassung (volle Länge).
-- Während „Lädt …“ (bis 2,5 s) kann ein zweiter Start über „Anpassen“ ausgelöst werden.
+- (Erledigt v=49:) Während „Lädt …“ (bis 2,5 s) konnte ein zweiter Start über „Anpassen“ ausgelöst werden. Jetzt wird er ignoriert, offene Fenster schließen sich beim Start, und die Knöpfe zeigen danach wieder „Start“.
 - „Diese Woche x Min.“ zählt Pausenzeit mit (Zeit seit Start). Klären, ob nur Trainingszeit zählen soll.
 - Löschen eines Workouts setzt bei vollem Speicher nicht zurück.
 - Die Dehnen-Vorlagen haben keinen Block-Namen und zeigen „Block 1“.
@@ -337,7 +337,7 @@ Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzu
 - Startseite springt nach Zurück aus Vorlage oder Editor nach oben.
 - Kaputter Eintrag in `workouts` würde die Startseite leeren. (Ein Training ohne Übungen zählt seit v=46 nicht mehr.)
 - Budget unter Vorbereitung + 10 s kann überschritten werden (über die Oberfläche nicht erreichbar).
-- Tote CSS-Klassen `.ic`, `.is-prep`; Ring-Balken `#t-bar` heißt noch `.bar`.
+- Ring-Balken `#t-bar` heißt noch `.bar`. (Die toten Klassen `.ic`, `.is-prep` sind seit v=49 weg.)
 
 ### 8.4 Design v2 (Teil A, 2026-10-23) – umgesetzt und bewusst zurückgestellt
 
@@ -370,7 +370,7 @@ Seitenwechsel (Ton + „Seite wechseln. Rechts.“, „Links.“ nach dem Namen)
 Behoben nach der Prüfung: „Backup sichern“ meldet nur noch echten Erfolg (Knopf erst aktiv, wenn die Fotos geladen sind; in der Home-Bildschirm-App ohne Teilen-Menü ehrlicher Hinweis statt Download).
 
 Zurückgestellt (aus der Prüfung):
-- Nach Rückkehr aus dem Hintergrund kann der Seitenwechsel die Ansage des Übungsnamens abschneiden (Bildschirm zeigt den Namen).
+- (Erledigt v=49:) Nach Rückkehr aus dem Hintergrund konnte der Seitenwechsel die Ansage des Übungsnamens abschneiden. Jetzt wird alles aus einem Takt nacheinander abgespielt.
 - Neuladen genau in der Sekunde des Seitenwechsels: „Seite wechseln“ kann ein zweites Mal kommen.
 - „Ja“ bei der lernenden Dauer einer Vorlage feiert „Eigenes Workout gebaut“ erst beim nächsten Training.
 - Volle Speicher (privater Modus): Lernfrage, Notiz und Backup-Zeitpunkt melden trotzdem Erfolg.
@@ -429,7 +429,7 @@ Zurückgestellt:
 - Bei Kombinationen läuft jeder Teil für sich vom Stehen zum Liegen, zwischen Zirkel und Dehnen steht man einmal auf. Auch zwischen den Runden eines Zirkels steht man wieder auf (eine Runde geht einmal vom Stehen zum Boden).
 - In kurzen Kombinationen (10 Min.) hat der Dehn-Teil oft nur 2–3 Dehnungen, eine davon kürzer (30 s).
 
-Ansage „Vakuum“ (Nicole, 2026-10-25): „Vacuum mit Fersentippen“ las Katja noch englisch (die anderen 15 Vacuum-Übungen heißen „Stomach Vacuum …“ und werden schon als „Bauch-Vakuum …“ gesprochen). Der Ansagetext ist jetzt „Vakuum mit Fersentippen“, ein Test verhindert „Vacuum“ in Ansagen. Die Sprachdatei erzeugt Nicole auf ihrem PC neu (`python tools/make_voice.py` erzeugt nur diese eine Datei und aktualisiert `data/voice-manifest.js`), weil der Sprachdienst (`speech.platform.bing.com`) aus der Cloud-Sitzung gesperrt ist. Die App lädt die neue Datei von selbst, weil `js/audio.js` den Ansagetext an die Adresse hängt.
+Ansage „Vakuum“ (Nicole, 2026-10-25): „Vacuum mit Fersentippen“ las Katja noch englisch (die anderen 15 Vacuum-Übungen heißen „Stomach Vacuum …“ und werden schon als „Bauch-Vakuum …“ gesprochen). Der Ansagetext ist jetzt „Vakuum mit Fersentippen“, ein Test verhindert „Vacuum“ in Ansagen. Die Sprachdatei hat Nicole am selben Tag auf ihrem PC neu erzeugt (`python tools/make_voice.py` erzeugt nur diese eine Datei und aktualisiert `data/voice-manifest.js`), weil der Sprachdienst (`speech.platform.bing.com`) aus der Cloud-Sitzung gesperrt ist. Die App lädt die neue Datei von selbst, weil `js/audio.js` den Ansagetext an die Adresse hängt.
 
 ### 8.9 Übungen mit Hand und Fuß, Besenstiel (2026-10-25, v=48)
 
@@ -441,7 +441,27 @@ Umgesetzt: `muster` und `fokus` für alle Übungen (6.1), Auswahl nach festen Sc
 
 Meine Festlegungen (Nicole kann widersprechen): Damit kein Muster nur eine einzige Übung hat (sonst käme sie in jedem Mix), gehören Plank und Bärenstand jetzt auch zu Ganzkörper, Swimmer zu Core und Standwaage zu Rücken. Die Stab-Übungen gehören zu Dehnen und Yoga (mit Gurt oder Stab sind sie auch im Yoga üblich). Mit Schalter kann der Schulter-Durchzug auch im Aufwärmen von Rücken und Ganzkörper kommen, im Abschluss Kindhaltung mit Stab (Rücken) oder Brustöffner (Ganzkörper). Der Schalter ist zu Beginn aus.
 
-Die Sprachdateien der 5 Stab-Übungen erzeugt Nicole auf ihrem PC (`python tools/make_voice.py`, der Sprachdienst ist aus der Cloud-Sitzung gesperrt). Solange sie fehlen, ist der Test „jede Übung hat eine Katja-Ansage“ rot und die App gibt bei diesen Übungen nur den Ton.
+Die Sprachdateien der 5 Stab-Übungen hat Nicole am selben Tag auf ihrem PC erzeugt (`python tools/make_voice.py`, der Sprachdienst ist aus der Cloud-Sitzung gesperrt); damit sind alle Tests grün.
+
+### 8.10 Prüfung der ganzen App (2026-10-25, v=49)
+
+Wunsch von Nicole: die komplette App auf Fehler prüfen und alle Unterlagen auf Widersprüche und Veraltetes. Geprüft: alle Tests (auch in 5 Zeitzonen), Querverweise der Daten (150 Übungen, 144 Figuren, Sprachdateien, 12 Vorlagen, 22 Abzeichen), alle Screens im Browser, dazu drei unabhängige Code-Prüfungen (Training; Speichern und Statistik; Workouts, Editor und Bibliothek). Kein Absturz, kein Datenverlust gespeicherter Daten, keine Sicherheitslücke.
+
+Behoben (Entscheidungen Nicole, 2026-10-25: alles außer dem Entwurfs-Speicher, ✕ ab der Hälfte speichern, toten Code entfernen):
+- Statistik: Im laufenden Zeitraum nennt jeder Vergleichstext, bis wann verglichen wird („Vorwoche ohne Training (bis Montag)“). Vorher stand am Montag „Vorwoche ohne Training“, obwohl nur der Montag davor leer war (4.6).
+- ✕ ab der Hälfte der geplanten Zeit speichert wie am Schluss (4.4).
+- Anpassen: Der Schieber passt zur Intensität (vorher bei „hart“ z. B. 10 Min. nicht wählbar, bei „leicht“ mehrere Stufen mit derselben Dauer). Dauern und Budget gelten ohne die 5 s Vorbereitung wie überall (vorher Vorschau 9:40, Anpassen 9:45) (5.3).
+- Der Bildschirm blieb an, wenn ein Training bei gesperrtem Handy endete (8.1).
+- Eine eigene Übung, die nachträglich auf beidseitig gestellt wird, bekommt auch in bestehenden Workouts den Seitenwechsel (4.2).
+- Lernende Dauer fragt nicht bei Übungen mit verschiedenen Dauern im selben Workout (5.5).
+- Kleinere: Frühaufsteherin und Nachteule nach Mitternacht (5.8); „Als Nächstes:“ kam ohne Namen, wenn eine Sprachdatei nicht laden konnte; „Noch zehn Sekunden“ schnitt nach der Rückkehr aus einer anderen App den Seitenwechsel ab; eine zurückgestellte Abzeichen-Feier ging beim Neuladen verloren; Fenster und „Lädt …“ beim Start (8.3); voller Fotospeicher (8.2); Editor-Meldungen, Zurück aus der Kopie, „Ende“ statt Pause bei der letzten Übung (4.2); Suche mit ae, oe, ue (4.3); Mix-Fenster merkt die Auswahl sofort (5.4).
+- Aufgeräumt: ungenutzte Funktionen und CSS, der nie gespielte Satz „Los geht's!“ samt Datei.
+- Unterlagen abgeglichen: dieses Konzept (u. a. 6.1, 6.2, 8.8, 8.9), Design-Guide samt Kopie im Design-Skill (150 Übungen, Besenstiel), Figuren-Galerie (Filter Aufwärmen).
+
+Zurückgestellt:
+- Neuladen (z. B. wenn iOS die Home-Bildschirm-App im Hintergrund beendet) verwirft ungespeicherte Eingaben im Editor und im Formular für eigene Übungen; dafür bräuchte es einen Entwurfs-Speicher.
+- Das Ende eines Trainings prüft nicht, ob das Speichern geklappt hat (wie 8.6, volle Speicher).
+- Aufwärmen der Kraft-Vorlagen nach dem Schema des Mix (erst Puls, dann Gelenke): Vorschlag folgt, Nicole entscheidet.
 
 ## 9. Verifikation
 

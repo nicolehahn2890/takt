@@ -1,5 +1,5 @@
 /* Takt: Abzeichen als Inhalt. kind + n bestimmen die Regel (umgesetzt in js/badges.js):
-   count = Anzahl Trainings, minutes = Minuten gesamt, streak = Tage in Folge, before/from = Endzeit vor/ab Stunde n,
+   count = Anzahl Trainings, minutes = Minuten gesamt, streak = Tage in Folge, before = Endzeit von 4 Uhr bis vor Stunde n, from = ab Stunde n bis 4 Uhr nachts,
    themes = verschiedene Themen, mix = Trainings aus dem Mix, breath = Atem-Übungen, own = eigenes Workout gespeichert,
    templates = verschiedene Vorlagen trainiert, ownEx = eigene Übungen, backup = Backup gesichert, notes = Trainings mit Notiz.
    icon = Schlüssel in data/badge-icons.js, color = Farbe im erreichten Zustand (je Gruppe eine). */
@@ -20,8 +20,8 @@ window.Takt = window.Takt || {};
     { id: 'streak7', kind: 'streak', n: 7, icon: 'calendar-week', color: SERIE, title: '7 Tage in Folge', rule: '7 Tage hintereinander trainiert' },
     { id: 'streak14', kind: 'streak', n: 14, icon: 'bolt', color: SERIE, title: '14 Tage in Folge', rule: '14 Tage hintereinander trainiert' },
     { id: 'streak30', kind: 'streak', n: 30, icon: 'mountain', color: SERIE, title: '30 Tage in Folge', rule: '30 Tage hintereinander trainiert' },
-    { id: 'early', kind: 'before', n: 8, icon: 'sunrise', color: ZEIT, title: 'Frühaufsteherin', rule: 'Ein Training vor 8 Uhr beendet' },
-    { id: 'night', kind: 'from', n: 21, icon: 'moon-stars', color: ZEIT, title: 'Nachteule', rule: 'Ein Training ab 21 Uhr beendet' },
+    { id: 'early', kind: 'before', n: 8, icon: 'sunrise', color: ZEIT, title: 'Frühaufsteherin', rule: 'Ein Training zwischen 4 und 8 Uhr beendet' },
+    { id: 'night', kind: 'from', n: 21, icon: 'moon-stars', color: ZEIT, title: 'Nachteule', rule: 'Ein Training zwischen 21 und 4 Uhr beendet' },
     { id: 'themes', kind: 'themes', n: 6, icon: 'palette', color: VIEL, title: 'Alle 6 Themen', rule: 'Workouts aus allen 6 Themen trainiert' },
     { id: 'mix5', kind: 'mix', n: 5, icon: 'arrows-shuffle', color: VIEL, title: 'Mix-Meisterin', rule: '5 Mix-Workouts trainiert' },
     { id: 'breath10', kind: 'breath', n: 10, icon: 'wind', color: VIEL, title: 'Atemprofi', rule: '10 Atem-Übungen gemacht' },
