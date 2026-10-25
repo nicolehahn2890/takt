@@ -437,6 +437,26 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_squat-pulses.mp3",
   "text": "Kniebeuge mit Nachfedern"
  },
+ "ex_stab-brust": {
+  "src": "assets/voice/ex_stab-brust.mp3",
+  "text": "Brustöffner mit Stab"
+ },
+ "ex_stab-durchzug": {
+  "src": "assets/voice/ex_stab-durchzug.mp3",
+  "text": "Schulter-Durchzug mit Stab"
+ },
+ "ex_stab-kindhaltung": {
+  "src": "assets/voice/ex_stab-kindhaltung.mp3",
+  "text": "Kindhaltung mit Stab"
+ },
+ "ex_stab-schulter": {
+  "src": "assets/voice/ex_stab-schulter.mp3",
+  "text": "Schulterdehnung mit Stab"
+ },
+ "ex_stab-ueberkopf": {
+  "src": "assets/voice/ex_stab-ueberkopf.mp3",
+  "text": "Überkopf-Dehnung mit Stab"
+ },
  "ex_standwaage": {
   "src": "assets/voice/ex_standwaage.mp3",
   "text": "Standwaage"
