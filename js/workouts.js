@@ -271,24 +271,64 @@ window.Takt = window.Takt || {};
   /* Farbe des Mix: Vacuum und Ganzkoerper haben keine eigene Workout-Farbe */
   var MIX_COLOR = { core: 'core', vacuum: 'core', bauch: 'bauch', beine: 'beine', ruecken: 'ruecken', dehnen: 'dehnen', yoga: 'yoga',
     ganz: 'core' };
-  var MIX = { warm: 2, main: 5, work: 40, rest: 15, warmWork: 40, coolWork: 60, maxWork: 60, minWork: 20, maxRounds: 4 };
-  /* Kurzer Mix (bis 5 Min.): eine Aufwaerm-Uebung, vier im Hauptteil, kuerzerer Abschluss */
+  /* Aufbau (Nicole, 2026-10-25):
+     - Kraft-Themen (Core, Bauch, Beine & Po, Ruecken, Ganzkoerper) und Vacuum laufen als Zirkel in Runden.
+     - Dehnen und Yoga laufen als ein Durchgang: lange Haltezeiten (mind. 30 s je Seite, Empfehlung des ACSM), 5 s zum Wechseln,
+       am Ende die Totenstellung; Yoga beginnt mit dem Sonnengruss. Neben einem Zirkel kommt der Durchgang danach,
+       die Zeit teilt sich nach Anzahl der Themen.
+     - Aufwaermen nur bei Kraft-Themen: erst den Puls heben, dann die Gelenke des Themas bewegen. Dehnen und Vacuum brauchen keins.
+     - Jeder Teil laeuft vom Stehen zum Liegen (T.POSITIONS). Das Aufwaermen endet nicht tiefer, als der Zirkel beginnt,
+       die Dehnung zum Abschluss beginnt nicht hoeher, als er endet. */
+  var KRAFT = ['core', 'bauch', 'beine', 'ruecken', 'ganz'];
+  var FLOW = ['dehnen', 'yoga'];
+  /* Nicht im Durchgang: beim Dehnen Aufwaerm-, Vacuum- und Ganzkoerper-Uebungen (Armkreisen, Inchworm),
+     beim Yoga Sonnengruss und Totenstellung (sie kommen an Anfang und Ende) */
+  var MIX_SKIP = { dehnen: ['aufwaermen', 'vacuum', 'ganzkoerper'], yoga: ['aufwaermen', 'atmung'] };
+  var MIX_OPEN = 'sonnengruss', MIX_END = 'totenstellung';
+  var MIX_PULSE = ['laufen-stelle', 'hampelmann', 'kniehebelauf', 'seilspringen', 'schattenboxen'];
+  /* Mobilisation fuer die Gelenke, die im Zirkel arbeiten */
+  var MIX_MOBILE = { core: ['hueftkreisen', 'katze-kuh', 'inchworm'], bauch: ['hueftkreisen', 'katze-kuh', 'inchworm'],
+    beine: ['hueftkreisen', 'worlds-greatest'], ruecken: ['schulterkreisen', 'armkreisen', 'katze-kuh'],
+    ganz: ['armkreisen', 'hueftkreisen', 'inchworm', 'worlds-greatest'] };
+  /* Abschluss nach einem Zirkel: Dehnung fuer die Muskeln, die gearbeitet haben */
+  var MIX_COOL = { core: ['kindhaltung', 'knie-zur-brust', 'liegender-twist', 'happy-baby'],
+    vacuum: ['kindhaltung', 'knie-zur-brust', 'happy-baby'], bauch: ['kobra', 'sphinx', 'liegender-twist', 'knie-zur-brust'],
+    beine: ['quad-dehnung', 'hueftbeuger-dehnung', 'taube', 'hamstring-dehnung', 'huefte-90-90', 'figur-vier'],
+    ruecken: ['kindhaltung', 'faden-einfaedeln', 'knie-zur-brust', 'liegender-twist', 'happy-baby'],
+    ganz: ['vorbeuge-stehend', 'quad-dehnung', 'herabschauender-hund', 'kindhaltung', 'figur-vier'] };
+  /* Haltezeit im Durchgang: Dehnungen hold (beidseitig holdSide je Seite), bei Restzeit bis zum Doppelten;
+     Kraft- und Balance-Haltungen (Boot, Krieger) pose (poseSide je Seite); notfalls mindestens holdMin je Seite */
+  var MIX = { warm: 2, main: 5, work: 40, rest: 15, warmWork: 40, warmRest: 5, coolWork: 60, maxWork: 60, minWork: 20, maxRounds: 4,
+    hold: 60, holdSide: 45, pose: 45, poseSide: 30, holdMin: 30, flowRest: 5 };
+  /* Kurzer Mix (bis 5 Min.): eine Aufwaerm-Uebung, vier im Zirkel, kuerzerer Abschluss; langer (ab 30 Min.): sechs im Zirkel */
   var MIX_SHORT = { warm: 1, main: 4, warmWork: 30, coolWork: 40 };
+  var MIX_LONG = { warm: 2, main: 6, warmWork: 40, coolWork: 60 };
   var LABEL = { warm: 'Aufw\u00e4rmen', main: 'Hauptteil', cool: 'Abschluss' };
 
   function hasTag(e, tags) { return (e.tags || []).some(function (t) { return tags.indexOf(t) >= 0; }); }
+  function inTheme(e, k) { return hasTag(e, T.MIX_THEMES[k]) && !hasTag(e, MIX_SKIP[k] || []); }
   /* nur Zeit-Uebungen mit Figur, ohne Hilfsmittel ausser Matte und Wand */
   function mixable(e) {
     return e && e.typ === 'zeit' && !!(T.POSES || {})[e.id] &&
       (e.hilfsmittel || []).every(function (h) { return h === 'matte' || h === 'wand'; });
   }
-  function shuffle(list, rand) {
-    var a = list.slice();
-    for (var i = a.length - 1; i > 0; i--) {
-      var j = Math.floor(rand() * (i + 1)), t = a[i];
-      a[i] = a[j]; a[j] = t;
-    }
-    return a;
+  function rank(e) { return (T.POSITIONS || []).indexOf(e.position); }
+  /* vom Stehen zum Liegen; in gleicher Position bleibt die Reihenfolge */
+  function byPosition(list) {
+    return list.map(function (e, i) { return [rank(e), i, e]; })
+      .sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; })
+      .map(function (x) { return x[2]; });
+  }
+  /* Uebungen in Position r, sonst in der naechst tieferen, notfalls in der naechst hoeheren */
+  function nearest(list, r) {
+    var low = list.filter(function (e) { return rank(e) >= r; });
+    var src = low.length ? low : list;
+    var best = (low.length ? Math.min : Math.max).apply(null, src.map(rank));
+    return src.filter(function (e) { return rank(e) === best; });
+  }
+  function stretch(e) { return hasTag(e, ['dehnen']) || e.id === MIX_OPEN; }
+  function holdFor(e) {
+    return stretch(e) ? (e.beidseitig ? 2 * MIX.holdSide : MIX.hold) : (e.beidseitig ? 2 * MIX.poseSide : MIX.pose);
   }
   /* "Mix: Core, Bauch"; bei vielen Themen gekuerzt ("Mix: Core, Bauch +3"), damit der Name in 40 Zeichen passt */
   function mixName(themes) {
@@ -299,8 +339,8 @@ window.Takt = window.Takt || {};
     }
     return 'Mix';
   }
-  function mixItem(e, duration) {
-    return { exId: e.id, name: e.name, duration: duration, rest: null, bilateral: !!e.beidseitig };
+  function mixItem(e, duration, rest) {
+    return { exId: e.id, name: e.name, duration: duration, rest: rest == null ? null : rest, bilateral: !!e.beidseitig };
   }
 
   T.makeMix = function (opts, exercises) {
@@ -309,54 +349,125 @@ window.Takt = window.Takt || {};
     var themes = (opts.themes || []).filter(function (k) { return Object.prototype.hasOwnProperty.call(T.MIX_THEMES, k); });
     if (!themes.length) themes = ['core'];
     var minutes = Number(opts.minutes) > 0 ? Number(opts.minutes) : 15;
-    var size = minutes <= 5 ? MIX_SHORT : MIX;
+    var size = minutes <= 5 ? MIX_SHORT : minutes >= 30 ? MIX_LONG : MIX;
     var pool = (exercises || []).filter(mixable);
     var used = [];
-    function take(list, n) {
-      var picked = shuffle(list.filter(function (e) { return used.indexOf(e.id) < 0; }), rand).slice(0, n);
-      picked.forEach(function (e) { used.push(e.id); });
-      return picked;
+    function free(list) { return list.filter(function (e) { return used.indexOf(e.id) < 0; }); }
+    function pick(list) {
+      var c = free(list), e = c.length ? c[Math.floor(rand() * c.length)] : null;
+      if (e) used.push(e.id);
+      return e;
+    }
+    function ofIds(ids) { return pool.filter(function (e) { return ids.indexOf(e.id) >= 0; }); }
+    function idsOf(map, keys) { return [].concat.apply([], keys.map(function (k) { return map[k] || []; })); }
+    /* reihum aus den Themen, Uebungen aus prefer zuerst; ist ein Thema aufgebraucht, springt das naechste ein */
+    function drawer(keys, prefer) {
+      var i = 0;
+      return function () {
+        for (var n = 0; n < keys.length; n++) {
+          var k = keys[i++ % keys.length];
+          var all = pool.filter(function (x) { return inTheme(x, k); });
+          var e = pick(all.filter(function (x) { return (prefer || []).indexOf(x.id) >= 0; })) || pick(all);
+          if (e) return e;
+        }
+        return null;
+      };
     }
 
-    var warm = take(pool.filter(function (e) { return hasTag(e, ['aufwaermen']); }), size.warm);
-    var tags = [].concat.apply([], themes.map(function (k) { return T.MIX_THEMES[k]; }));
-    var main = take(pool.filter(function (e) { return hasTag(e, tags); }), size.main);
-    if (main.length < size.main) {
-      var fill = T.MIX_THEMES.core.concat(T.MIX_THEMES.ganz);
-      main = main.concat(take(pool.filter(function (e) { return hasTag(e, fill); }), size.main - main.length));
-    }
-    var cool = take(pool.filter(function (e) { return hasTag(e, ['dehnen']) && !hasTag(e, ['aufwaermen']); }), 1);
-
-    var blocks = [];
-    if (warm.length) blocks.push({ label: LABEL.warm, repeat: 1, items: warm.map(function (e) { return mixItem(e, size.warmWork); }) });
-    var mainBlock = { label: LABEL.main, repeat: 1, items: main.map(function (e) { return mixItem(e, MIX.work); }) };
-    if (main.length) blocks.push(mainBlock);
-    if (cool.length) blocks.push({ label: LABEL.cool, repeat: 1, items: [mixItem(cool[0], size.coolWork)] });
-
+    var circ = themes.filter(function (k) { return FLOW.indexOf(k) < 0; });
+    var flow = themes.filter(function (k) { return FLOW.indexOf(k) >= 0; });
+    var kraft = themes.filter(function (k) { return KRAFT.indexOf(k) >= 0; });
+    var warmB = { label: LABEL.warm, repeat: 1, items: [] };
+    var mainB = { label: LABEL.main, repeat: 1, items: [] };
+    var flowB = { label: circ.length ? flow.map(function (k) { return T.MIX_LABELS[k]; }).join(' & ') : LABEL.main, repeat: 1, items: [] };
+    var coolB = { label: LABEL.cool, repeat: 1, items: [] };
     var workout = {
       id: 'mix-' + ((Math.floor(Number(opts.seed)) || 0) >>> 0),
       name: mixName(themes),
-      theme: MIX_COLOR[themes[0]], defaultWork: MIX.work, defaultRest: MIX.rest, source: 'mix', blocks: blocks
+      theme: MIX_COLOR[themes[0]], defaultWork: MIX.work, defaultRest: circ.length ? MIX.rest : MIX.flowRest, source: 'mix',
+      blocks: [warmB, mainB, flowB, coolB]
     };
-    if (!main.length) return workout;
-
-    /* Runden so, dass die Zieldauer am besten passt, dann Arbeitszeit im Hauptteil in 5-s-Schritten anpassen */
     var target = minutes * 60;
     var secs = function () { return T.workoutSeconds(workout); };
-    var setWork = function (d) { mainBlock.items.forEach(function (i) { i.duration = d; }); };
-    var best = 1;
-    for (var r = 1; r <= MIX.maxRounds; r++) {
-      mainBlock.repeat = r;
-      if (secs() <= target) best = r;
+
+    /* Zirkel: reihum aus den Themen, bei duennen Themen mit Core und Ganzkoerper aufgefuellt, vom Stehen zum Liegen */
+    var main = [], e;
+    if (circ.length) {
+      var next = drawer(circ);
+      while (main.length < size.main && (e = next())) main.push(e);
+      var fill = pool.filter(function (x) { return hasTag(x, T.MIX_THEMES.core.concat(T.MIX_THEMES.ganz)); });
+      while (main.length < size.main && (e = pick(fill))) main.push(e);
+      main = byPosition(main);
     }
-    mainBlock.repeat = best;
-    var work = MIX.work;
-    while (work < MIX.maxWork) {
-      setWork(work + 5);
-      if (secs() > target) { setWork(work); break; }
-      work += 5;
+
+    /* Aufwaermen nur bei Kraft-Themen: erst Puls, dann Mobilisation, die nicht tiefer liegt, als der Zirkel beginnt */
+    if (kraft.length && main.length) {
+      var mobile = ofIds(idsOf(MIX_MOBILE, kraft));
+      var warm = [size.warm > 1 ? pick(ofIds(MIX_PULSE)) : null,
+        pick(mobile.filter(function (x) { return rank(x) <= rank(main[0]); })) || pick(mobile)].filter(Boolean);
+      warmB.items = warm.map(function (x, i) { return mixItem(x, size.warmWork, i < warm.length - 1 ? MIX.warmRest : null); });
     }
-    while (secs() > target && work > MIX.minWork) { work -= 5; setWork(work); }
+
+    /* Abschluss: nach Dehnen oder Yoga die Totenstellung, sonst eine Dehnung fuer die Themen, dort, wo der Zirkel endet */
+    var cool = flow.length ? pick(ofIds([MIX_END])) :
+      main.length ? pick(nearest(free(ofIds(idsOf(MIX_COOL, circ))), rank(main[main.length - 1]))) : null;
+    if (cool) coolB.items = [mixItem(cool, size.coolWork)];
+
+    /* Zirkel: je Rundenzahl die laengste Arbeitszeit (5-s-Schritte), die passt. Davon die, die die Zeit bis auf 5 % fuellen,
+       und darunter die Arbeitszeit am naechsten an 40 s. Neben einem Durchgang bekommt er nur seinen Anteil nach Anzahl der Themen.
+       Beidseitige Uebungen bekommen wie in den Vorlagen das Anderthalbfache (40 s, beidseitig 60 s = 30 s je Seite). */
+    if (main.length) {
+      var limit = target - (flow.length ? Math.round((target - secs()) * flow.length / themes.length) : 0);
+      mainB.items = main.map(function (x) { return mixItem(x, MIX.work); });
+      var setWork = function (d) {
+        mainB.items.forEach(function (i) { i.duration = i.bilateral ? Math.round(d * 1.5 / 5) * 5 : d; });
+      };
+      var fits = [];
+      for (var r = 1; r <= MIX.maxRounds; r++) {
+        mainB.repeat = r;
+        for (var w = MIX.maxWork; w >= MIX.minWork; w -= 5) {
+          setWork(w);
+          if (secs() <= limit) { fits.push({ r: r, w: w, s: secs() }); break; }
+        }
+      }
+      var top = Math.max.apply(null, fits.map(function (f) { return f.s; }));
+      var best = fits.filter(function (f) { return f.s >= top - target * 0.05; }).sort(function (a, b) {
+        return Math.abs(a.w - MIX.work) - Math.abs(b.w - MIX.work) || b.s - a.s;
+      })[0] || { r: 1, w: MIX.minWork };
+      mainB.repeat = best.r;
+      setWork(best.w);
+    }
+
+    /* Durchgang: so viele Uebungen, wie mit voller Haltezeit in die Restzeit passen, dann vom Stehen zum Liegen sortiert.
+       Nach einem Kraft-Zirkel zuerst Dehnungen fuer die Muskeln, die gearbeitet haben. Ohne Aufwaermen beginnt Yoga mit dem Sonnengruss. */
+    if (flow.length) {
+      var picked = [], nextFlow = drawer(flow, idsOf(MIX_COOL, kraft));
+      var x = flow.indexOf('yoga') >= 0 && !warmB.items.length ? pick(ofIds([MIX_OPEN])) : null;
+      for (x = x || nextFlow(); x; x = nextFlow()) {
+        var it = mixItem(x, holdFor(x), circ.length ? MIX.flowRest : null);
+        flowB.items.push(it);
+        var full = secs() <= target;
+        if (!full) it.duration = (x.beidseitig ? 2 : 1) * MIX.holdMin;   // die letzte kuerzer, wenn sie so noch passt
+        if (secs() > target) { flowB.items.pop(); continue; }   // passt gar nicht: die naechste versuchen
+        picked.push(x);
+        if (!full) break;
+      }
+      var items = flowB.items, order = byPosition(picked);
+      flowB.items = order.map(function (p) { return items[picked.indexOf(p)]; });
+      /* Restzeit in 5-s-Schritten an die relativ kuerzeste Haltezeit; Dehnungen bis zum Doppelten, Haltungen bis zur vollen Zeit */
+      for (var left = target - secs(); left >= 5; left -= 5) {
+        var low = -1;
+        order.forEach(function (p, i) {
+          var d = flowB.items[i].duration;
+          if (d + 5 <= (stretch(p) ? 2 : 1) * holdFor(p) &&
+            (low < 0 || d / holdFor(p) < flowB.items[low].duration / holdFor(order[low]))) low = i;
+        });
+        if (low < 0) break;
+        flowB.items[low].duration += 5;
+      }
+    }
+
+    workout.blocks = workout.blocks.filter(function (b) { return b.items.length; });
     return workout;
   };
 })(window.Takt);

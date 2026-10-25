@@ -81,6 +81,18 @@ test('data: jede Haltung bleibt im Bild und ueber dem Boden', function () {
   eq(errors, []);
 });
 
+test('data: jede Zeit-Uebung hat eine Ausgangsposition, Atem-Uebungen keine', function () {
+  eq(Takt.POSITIONS, ['stehen', 'stuetz', 'knien', 'bauchlage', 'sitzen', 'seitenlage', 'rueckenlage']);
+  var bad = Takt.EXERCISES.filter(function (e) {
+    return e.typ === 'zeit' ? Takt.POSITIONS.indexOf(e.position) < 0 : e.position !== undefined;
+  }).map(function (e) { return e.id; });
+  eq(bad, []);
+  var pos = {};
+  Takt.EXERCISES.forEach(function (e) { pos[e.id] = e.position; });
+  eq([pos.kniebeuge, pos.plank, pos['katze-kuh'], pos.superman, pos.schmetterling, pos.clamshells, pos['glute-bridge']],
+    Takt.POSITIONS);
+});
+
 test('data: Tag yoga hat 19 Uebungen', function () {
   eq(Takt.EXERCISES.filter(function (e) { return e.tags.indexOf('yoga') >= 0; }).length, 19);
 });
@@ -162,6 +174,22 @@ test('data: Vorlage beidseitig passt zur Bibliothek', function () {
   Takt.TEMPLATES.forEach(function (w) {
     w.blocks.forEach(function (b) { b.items.forEach(function (i) { eq(i.bilateral, !!idx[i.exId].beidseitig, w.id + ' ' + i.exId); }); });
   });
+});
+
+test('data: Vorlagen vom Stehen zum Liegen, kein Aufstehen mitten im Block', function () {
+  var idx = Takt.indexExercises(Takt.EXERCISES), bad = [];
+  Takt.TEMPLATES.forEach(function (w) {
+    w.blocks.forEach(function (b) {
+      if (b.label === 'Aufwärmen' || b.label === 'Ankommen') return;
+      var items = b.items.filter(function (i) { return idx[i.exId].position; });   // Atem-Uebungen haben keine Position
+      var r = items.map(function (i) { return Takt.POSITIONS.indexOf(idx[i.exId].position); });
+      var strict = b.label === 'Hauptteil' || b.label === 'Haltungen';
+      r.forEach(function (x, i) {
+        if (i && (strict ? x < r[i - 1] : x === 0 && r[i - 1] > 0)) bad.push(w.id + ' ' + (b.label || 'Block') + ': ' + items[i].exId);
+      });
+    });
+  });
+  eq(bad, []);
 });
 
 test('data: Stomach-Uebungen spricht Katja als Bauch-Vakuum', function () {

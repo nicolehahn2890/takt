@@ -90,6 +90,19 @@ test('prepareSteps Reihenfolge', function () {
 function mixIds(block) { return block ? block.items.map(function (i) { return i.exId; }) : []; }
 function mixBlock(w, label) { return w.blocks.filter(function (b) { return b.label === label; })[0]; }
 function mixAll(w) { return [].concat.apply([], w.blocks.map(mixIds)); }
+function mixShape(w) { return w.blocks.map(function (b) { return [b.label, b.items.length]; }); }
+function mixLabels(w) { return w.blocks.map(function (b) { return b.label; }); }
+var mixIdx = Takt.indexExercises(Takt.EXERCISES);
+function mixRank(id) { return Takt.POSITIONS.indexOf(mixIdx[id].position); }
+var MIX_KEYS = ['core', 'vacuum', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'];
+var MIX_KRAFT = ['core', 'bauch', 'beine', 'ruecken', 'ganz'];
+/* alle 255 Themen-Kombinationen, je mit eigenem Seed */
+function mixEach(minutes, fn) {
+  for (var mask = 1; mask < 256; mask++) {
+    var th = MIX_KEYS.filter(function (k, i) { return mask & (1 << i); });
+    fn(Takt.makeMix({ themes: th, minutes: minutes, seed: mask * 31 + minutes }, Takt.EXERCISES), th);
+  }
+}
 
 test('workoutSeconds ohne Vorbereitung', function () {
   eq(Takt.workoutSeconds(w600(), wIdx()), 600);
@@ -111,80 +124,179 @@ test('mix gleicher seed gleiches Ergebnis', function () {
   ok(JSON.stringify(mixAll(a)) !== JSON.stringify(mixAll(c)), 'anderer Seed gleicher Mix');
 });
 
-test('mix keine Uebung doppelt im Hauptblock', function () {
-  ['core', 'vacuum', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'].forEach(function (th) {
-    for (var seed = 1; seed <= 15; seed++) {
-      var w = Takt.makeMix({ themes: [th], minutes: 20, seed: seed }, Takt.EXERCISES);
-      var main = mixIds(mixBlock(w, 'Hauptteil'));
-      eq(main.length, 5, th + ' ' + seed);
-      var all = mixAll(w);
-      eq(all.filter(function (x, i) { return all.indexOf(x) === i; }).length, all.length, 'doppelt bei ' + th + ' ' + seed);
-    }
-  });
-});
-
-test('mix Dauer passt', function () {
+test('mix Dauer passt fuer jede Themen-Kombination: nie laenger, mindestens 90 %', function () {
+  var bad = [];
   [5, 10, 15, 20, 30].forEach(function (m) {
+    mixEach(m, function (w, th) {
+      var s = Takt.workoutSeconds(w, mixIdx);
+      if (s > m * 60 || s < m * 60 * 0.9) bad.push(th.join(',') + ' ' + m + ' Min.: ' + s + ' s');
+    });
+  });
+  eq(bad, []);
+});
+
+test('mix keine Uebung doppelt, nur Zeit-Uebungen mit Figur, ohne Hilfsmittel ausser Matte und Wand', function () {
+  var bad = [];
+  [10, 30].forEach(function (m) {
+    mixEach(m, function (w, th) {
+      var all = mixAll(w);
+      if (all.some(function (x, i) { return all.indexOf(x) !== i; })) bad.push('doppelt: ' + th);
+      all.forEach(function (id) {
+        var e = mixIdx[id];
+        if (!Takt.POSES[id] || e.typ !== 'zeit' || !e.hilfsmittel.every(function (h) { return h === 'matte' || h === 'wand'; })) bad.push(id);
+      });
+    });
+  });
+  eq(bad, []);
+});
+
+test('mix Aufwaermen nur bei Kraft-Themen, nicht bei Dehnen, Vacuum oder Yoga', function () {
+  var bad = [];
+  [5, 15].forEach(function (m) {
+    mixEach(m, function (w, th) {
+      var kraft = th.some(function (k) { return MIX_KRAFT.indexOf(k) >= 0; });
+      if (kraft !== !!mixBlock(w, 'Aufwärmen')) bad.push(th.join(',') + ' ' + m);
+    });
+  });
+  eq(bad, []);
+  eq(mixLabels(Takt.makeMix({ themes: ['vacuum', 'dehnen'], minutes: 15, seed: 1 }, Takt.EXERCISES)), ['Hauptteil', 'Dehnen', 'Abschluss']);
+});
+
+test('mix Aufwaermen: erst Puls, dann die Gelenke des Themas, 5 s zum Wechseln', function () {
+  var pulse = ['laufen-stelle', 'hampelmann', 'kniehebelauf', 'seilspringen', 'schattenboxen'];
+  var mobile = { core: ['hueftkreisen', 'katze-kuh', 'inchworm'], bauch: ['hueftkreisen', 'katze-kuh', 'inchworm'],
+    beine: ['hueftkreisen', 'worlds-greatest'], ruecken: ['schulterkreisen', 'armkreisen', 'katze-kuh'],
+    ganz: ['armkreisen', 'hueftkreisen', 'inchworm', 'worlds-greatest'] };
+  MIX_KRAFT.forEach(function (th) {
     for (var seed = 1; seed <= 10; seed++) {
-      var s = Takt.workoutSeconds(Takt.makeMix({ themes: ['core', 'ruecken'], minutes: m, seed: seed }, Takt.EXERCISES), wIdx());
-      ok(s <= m * 60 && s >= m * 60 * 0.8, m + ' Min. ergibt ' + s + ' s');
+      var warm = mixBlock(Takt.makeMix({ themes: [th], minutes: 15, seed: seed }, Takt.EXERCISES), 'Aufwärmen').items;
+      ok(pulse.indexOf(warm[0].exId) >= 0, th + ': kein Puls ' + warm[0].exId);
+      ok(mobile[th].indexOf(warm[1].exId) >= 0, th + ': keine Mobilisation ' + warm[1].exId);
+      eq(warm.map(function (i) { return [i.duration, i.rest]; }), [[40, 5], [40, null]], th);
     }
   });
 });
 
-test('mix nur Zeit-Uebungen mit Figur, ohne Hilfsmittel ausser Matte und Wand', function () {
-  var idx = wIdx();
-  for (var seed = 1; seed <= 20; seed++) {
-    mixAll(Takt.makeMix({ themes: ['ganz', 'yoga', 'ruecken'], minutes: 30, seed: seed }, Takt.EXERCISES)).forEach(function (id) {
-      ok(Takt.POSES[id], 'ohne Figur: ' + id);
-      eq(idx[id].typ, 'zeit', id);
-      ok((idx[id].hilfsmittel || []).every(function (h) { return h === 'matte' || h === 'wand'; }), 'Hilfsmittel bei ' + id);
+test('mix jeder Teil vom Stehen zum Liegen, Aufwaermen und Abschluss ohne Aufstehen', function () {
+  var bad = [];
+  [10, 20].forEach(function (m) {
+    mixEach(m, function (w, th) {
+      w.blocks.forEach(function (b) {
+        var r = b.items.map(function (i) { return mixRank(i.exId); });
+        if (r.some(function (x, i) { return i && x < r[i - 1]; })) bad.push(th + ' ' + b.label + ': ' + mixIds(b));
+      });
+      var warm = mixIds(mixBlock(w, 'Aufwärmen')), main = mixIds(mixBlock(w, 'Hauptteil')), cool = mixIds(mixBlock(w, 'Abschluss'));
+      if (warm.length && mixRank(warm[warm.length - 1]) > mixRank(main[0])) bad.push(th + ': Aufwaermen tiefer als der Hauptteil');
+      if (mixRank(cool[0]) < mixRank(main[main.length - 1])) bad.push(th + ': Abschluss hoeher als der Hauptteil');
+    });
+  });
+  eq(bad, []);
+});
+
+test('mix Dehnen und Yoga: ein Durchgang, mind. 30 s je Seite, 5 s Wechsel, am Ende Totenstellung', function () {
+  ['dehnen', 'yoga'].forEach(function (th) {
+    for (var seed = 1; seed <= 10; seed++) {
+      var w = Takt.makeMix({ themes: [th], minutes: 15, seed: seed }, Takt.EXERCISES);
+      var main = mixBlock(w, 'Hauptteil');
+      eq([mixLabels(w), main.repeat, w.defaultRest], [['Hauptteil', 'Abschluss'], 1, 5], th);
+      ok(main.items.length >= 8, th + ': nur ' + main.items.length + ' Uebungen');
+      main.items.forEach(function (i) {
+        var e = mixIdx[i.exId];
+        ok((i.bilateral ? i.duration / 2 : i.duration) >= 30 && i.rest === null, i.exId + ' ' + i.duration);
+        if (th === 'dehnen') {
+          ok(e.tags.indexOf('dehnen') >= 0 && !['aufwaermen', 'vacuum', 'ganzkoerper'].some(function (t) { return e.tags.indexOf(t) >= 0; }),
+            'keine Dehnung: ' + i.exId);
+        }
+      });
+      eq(mixIds(mixBlock(w, 'Abschluss')), ['totenstellung'], th);
+      if (th === 'yoga') eq(main.items[0].exId, 'sonnengruss');
+    }
+  });
+});
+
+test('mix Yoga: Kraft- und Balance-Haltungen bleiben kurz, nur Dehnungen werden laenger', function () {
+  for (var seed = 1; seed <= 10; seed++) {
+    mixBlock(Takt.makeMix({ themes: ['yoga'], minutes: 30, seed: seed }, Takt.EXERCISES), 'Hauptteil').items.forEach(function (i) {
+      var stretch = mixIdx[i.exId].tags.indexOf('dehnen') >= 0 || i.exId === 'sonnengruss';
+      ok(i.duration <= (stretch ? 2 : 1) * (i.bilateral ? (stretch ? 90 : 60) : (stretch ? 60 : 45)), i.exId + ' ' + i.duration);
     });
   }
 });
 
-test('mix mit duennem Thema', function () {
-  eq(mixIds(mixBlock(Takt.makeMix({ themes: ['yoga'], minutes: 15, seed: 5 }, Takt.EXERCISES), 'Hauptteil')).length, 5);
-  var thin = Takt.EXERCISES.filter(function (e) { return e.tags.indexOf('yoga') < 0 || e.id === 'baum' || e.id === 'stuhl'; });
-  var main = mixIds(mixBlock(Takt.makeMix({ themes: ['yoga'], minutes: 15, seed: 3 }, thin), 'Hauptteil'));
+test('mix Kombi: erst der Zirkel, dann Dehnen fuer die Muskeln, die gearbeitet haben', function () {
+  var legs = ['quad-dehnung', 'hueftbeuger-dehnung', 'taube', 'hamstring-dehnung', 'huefte-90-90', 'figur-vier'];
+  for (var seed = 1; seed <= 10; seed++) {
+    var w = Takt.makeMix({ themes: ['beine', 'dehnen'], minutes: 20, seed: seed }, Takt.EXERCISES);
+    eq(mixLabels(w), ['Aufwärmen', 'Hauptteil', 'Dehnen', 'Abschluss']);
+    ok(mixIds(mixBlock(w, 'Hauptteil')).every(function (id) { return mixIdx[id].tags.indexOf('beine-po') >= 0; }), 'Hauptteil');
+    var d = mixBlock(w, 'Dehnen').items;
+    ok(d.every(function (i) { return i.rest === 5; }), '5 s Wechsel');
+    // Beine zuerst; passt die letzte Bein-Dehnung nicht mehr, darf eine kuerzere andere nachruecken
+    ok(d.filter(function (i) { return legs.indexOf(i.exId) >= 0; }).length >= Math.min(d.length, legs.length) - 1,
+      'Beine zuerst: ' + mixIds(mixBlock(w, 'Dehnen')));
+    eq(mixIds(mixBlock(w, 'Abschluss')), ['totenstellung']);
+  }
+});
+
+test('mix Zirkel: reihum aus den Themen, 5 Uebungen, ab 30 Min. 6', function () {
+  for (var seed = 1; seed <= 10; seed++) {
+    var main = mixIds(mixBlock(Takt.makeMix({ themes: ['vacuum', 'beine'], minutes: 15, seed: seed }, Takt.EXERCISES), 'Hauptteil'));
+    eq(main.length, 5);
+    ok(main.filter(function (id) { return mixIdx[id].tags.indexOf('vacuum') >= 0; }).length >= 2, 'Vacuum ' + main);
+    ok(main.filter(function (id) { return mixIdx[id].tags.indexOf('beine-po') >= 0; }).length >= 2, 'Beine ' + main);
+  }
+  eq(mixIds(mixBlock(Takt.makeMix({ themes: ['core'], minutes: 30, seed: 2 }, Takt.EXERCISES), 'Hauptteil')).length, 6);
+});
+
+test('mix mit duennem Thema: Zirkel mit Core und Ganzkoerper aufgefuellt, Durchgang nicht', function () {
+  var thin = Takt.EXERCISES.filter(function (e) { return e.tags.indexOf('bauch') < 0 || e.id === 'crunch' || e.id === 'dead-bug'; });
+  var main = mixIds(mixBlock(Takt.makeMix({ themes: ['bauch'], minutes: 15, seed: 3 }, thin), 'Hauptteil'));
   eq(main.length, 5);
   eq(main.filter(function (x, i) { return main.indexOf(x) === i; }).length, 5);
-  ok(main.indexOf('baum') >= 0 && main.indexOf('stuhl') >= 0, 'Yoga-Uebungen fehlen: ' + main);
+  ok(main.indexOf('crunch') >= 0 && main.indexOf('dead-bug') >= 0, 'Bauch-Uebungen fehlen: ' + main);
+  var yoga = Takt.EXERCISES.filter(function (e) {
+    return e.tags.indexOf('yoga') < 0 || ['baum', 'stuhl', 'sonnengruss', 'totenstellung'].indexOf(e.id) >= 0;
+  });
+  var w = Takt.makeMix({ themes: ['yoga'], minutes: 15, seed: 5 }, yoga);
+  var y = mixIds(mixBlock(w, 'Hauptteil'));
+  eq([y[0], y.slice(1).sort()], ['sonnengruss', ['baum', 'stuhl']]);
+  ok(Takt.workoutSeconds(w, mixIdx) <= 900, 'zu lang');
 });
 
 test('mix Name, Thema, Quelle und Aufbau', function () {
   var w = Takt.makeMix({ themes: ['ganz', 'bauch'], minutes: 10, seed: 1 }, Takt.EXERCISES);
   eq([w.name, w.theme, w.source], ['Mix: Ganzkörper, Bauch', 'core', 'mix']);
-  eq(w.blocks.map(function (b) { return [b.label, b.items.length]; }),
-    [['Aufwärmen', 2], ['Hauptteil', 5], ['Abschluss', 1]]);
-  var idx = wIdx();
-  ok(mixBlock(w, 'Aufwärmen').items.every(function (i) { return idx[i.exId].tags.indexOf('aufwaermen') >= 0 && i.duration === 40; }), 'Aufwaermen');
+  eq(mixShape(w), [['Aufwärmen', 2], ['Hauptteil', 5], ['Abschluss', 1]]);
   var cool = mixBlock(w, 'Abschluss').items[0];
-  ok(idx[cool.exId].tags.indexOf('dehnen') >= 0 && cool.duration === 60, 'Abschluss');
-  ok(mixBlock(w, 'Hauptteil').items.every(function (i) { return i.name === idx[i.exId].name; }), 'Name fehlt');
+  ok(['vorbeuge-stehend', 'quad-dehnung', 'herabschauender-hund', 'kindhaltung', 'figur-vier', 'kobra', 'sphinx', 'liegender-twist',
+    'knie-zur-brust'].indexOf(cool.exId) >= 0 && cool.duration === 60, 'Abschluss ' + cool.exId);
+  ok(mixBlock(w, 'Hauptteil').items.every(function (i) { return i.name === mixIdx[i.exId].name; }), 'Name fehlt');
 });
 
-test('mix 5 Min.: kurz aufwaermen, 4 im Hauptteil, passt in 5 Min.', function () {
-  var idx = wIdx();
-  ['core', 'vacuum', 'yoga', 'ganz'].forEach(function (th) {
+test('mix 5 Min.: passt, Kraft mit einer Aufwaerm-Uebung, Vacuum ohne, Yoga als Durchgang', function () {
+  var shapes = { core: [['Aufwärmen', 1], ['Hauptteil', 4], ['Abschluss', 1]], vacuum: [['Hauptteil', 4], ['Abschluss', 1]] };
+  shapes.ganz = shapes.core;
+  ['core', 'ganz', 'vacuum', 'yoga'].forEach(function (th) {
     for (var seed = 1; seed <= 10; seed++) {
       var w = Takt.makeMix({ themes: [th], minutes: 5, seed: seed }, Takt.EXERCISES);
-      eq(w.blocks.map(function (b) { return [b.label, b.items.length]; }), [['Aufwärmen', 1], ['Hauptteil', 4], ['Abschluss', 1]], th + ' ' + seed);
-      var s = Takt.workoutSeconds(w, idx);
-      ok(s <= 300 && s >= 240, th + ' ' + seed + ': ' + s + ' s');
-      ok(mixBlock(w, 'Hauptteil').items.every(function (i) { return i.duration >= 20; }), 'Hauptteil zu kurz');
+      var s = Takt.workoutSeconds(w, mixIdx);
+      ok(s <= 300 && s >= 270, th + ' ' + seed + ': ' + s + ' s');
+      if (th === 'yoga') eq([mixLabels(w), mixBlock(w, 'Abschluss').items[0].duration], [['Hauptteil', 'Abschluss'], 40]);
+      else {
+        eq(mixShape(w), shapes[th], th + ' ' + seed);
+        ok(mixBlock(w, 'Hauptteil').items.every(function (i) { return i.duration >= 20; }), 'Hauptteil zu kurz');
+      }
     }
   });
 });
 
-test('mix nur Vacuum: Hauptteil nur Vacuum-Uebungen', function () {
-  var idx = wIdx();
+test('mix nur Vacuum: nur Vacuum-Uebungen, ohne Aufwaermen, 15 s zum Durchatmen', function () {
   for (var seed = 1; seed <= 20; seed++) {
     var w = Takt.makeMix({ themes: ['vacuum'], minutes: 10, seed: seed }, Takt.EXERCISES);
     var main = mixIds(mixBlock(w, 'Hauptteil'));
     eq(main.length, 5);
-    ok(main.every(function (id) { return idx[id].tags.indexOf('vacuum') >= 0; }), 'kein Vacuum: ' + main);
-    eq([w.name, w.theme], ['Mix: Vacuum', 'core']);
+    ok(main.every(function (id) { return mixIdx[id].tags.indexOf('vacuum') >= 0; }), 'kein Vacuum: ' + main);
+    eq([w.name, w.theme, w.defaultRest, mixLabels(w)], ['Mix: Vacuum', 'core', 15, ['Hauptteil', 'Abschluss']]);
   }
 });
 

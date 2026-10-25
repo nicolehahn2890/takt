@@ -1,7 +1,7 @@
 # Homeworkout-Timer-App – Konzept und Umsetzungsplan
 
 Name: **Takt** – "Dein Training, dein Takt" · Repo `nicolehahn2890/takt` (öffentlich) · Live: https://nicolehahn2890.github.io/takt/
-Stand: 2026-10-24 (live v=46) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
+Stand: 2026-10-25 (v=47) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
 
 Dieses Dokument beschreibt den aktuellen Stand. Pläne und Specs unter `docs/superpowers/` sind Momentaufnahmen ihres Datums; weicht etwas ab, gilt dieses Dokument. Gestaltung: `docs/design_handoff_takt_redesign/design-system/DESIGN_GUIDE.md`.
 
@@ -103,7 +103,7 @@ Folgerung: Der Ansage-Weg über Sprachdateien ist bestätigt. Ansagen bei gesper
 
 ## 4. Produkt – Screens und Verhalten
 
-Stand v=46. Was noch fehlt oder bewusst wegfällt, ist markiert.
+Stand v=47. Was noch fehlt oder bewusst wegfällt, ist markiert.
 
 ### 4.1 Home (Startseite)
 - Kopf: Logo-Figur, „Takt“, „Dein Training, dein Takt“. Darunter Minuten und Anzahl Trainings dieser Woche.
@@ -174,7 +174,14 @@ Nächste Übung immer sichtbar; bei 10 s "noch 10 Sekunden", bei 3 s Countdown; 
 Im Fenster „Anpassen“: Schieber ab 5 Min. Erst werden alle Dauern und Pausen anteilig gekürzt (auf 5 s gerundet, mindestens 10 s je Übung, nie länger als geplant). Reicht das nicht, fallen Runden weg (zuerst die letzte Runde des Blocks mit den meisten Runden), dann die Pausen, zuletzt Übungen von hinten.
 
 ### 5.4 Mix-Modus
-Fenster „Mix“: Themen antippen (mehrere möglich): Core, Vacuum, Bauch, Beine & Po, Rücken, Dehnen, Yoga, Ganzkörper; Gesamtdauer 5, 10, 15, 20 oder 30 Min. Takt zieht zufällig aus der Bibliothek (nur Zeit-Übungen mit Figur, ohne Hilfsmittel außer Matte und Wand, keine Übung doppelt): 2 Aufwärm-Übungen (je 40 s), 5 im Hauptteil, 1 Dehn-Übung als Abschluss (60 s), Pause 15 s. Runden (bis 4) und Arbeitszeit im Hauptteil (20–60 s) werden so gewählt, dass die Gesamtdauer passt und nie überschritten wird. Ein 5-Min.-Mix hat 1 Aufwärm-Übung (30 s), 4 im Hauptteil und 40 s Abschluss. „Core“ enthält auch die Vacuum-Übungen, „Vacuum“ nur diese. Danach „Neu mischen“, „Speichern“ (unter „Meine Workouts“) oder „Starten“.
+Fenster „Mix“: Themen antippen (mehrere möglich): Core, Vacuum, Bauch, Beine & Po, Rücken, Dehnen, Yoga, Ganzkörper; Gesamtdauer 5, 10, 15, 20 oder 30 Min. Takt zieht zufällig aus der Bibliothek (nur Zeit-Übungen mit Figur, ohne Hilfsmittel außer Matte und Wand, keine Übung doppelt), bei mehreren Themen reihum aus jedem Thema. „Core“ enthält auch die Vacuum-Übungen, „Vacuum“ nur diese. Aufbau seit v=47 (Nicole, 2026-10-25, Hintergrund in 8.8):
+- **Zirkel** (Core, Bauch, Beine & Po, Rücken, Ganzkörper, Vacuum): 5 Übungen (5 Min.: 4, 30 Min.: 6), Pause 15 s. Runden (bis 4) und Arbeitszeit (20–60 s) füllen die Zeit bis auf 5 %, die Arbeitszeit liegt dabei möglichst nah an 40 s; die Gesamtdauer wird nie überschritten. Beidseitige Übungen bekommen wie in den Vorlagen das Anderthalbfache (40 s, beidseitig 60 s = 30 s je Seite). Ein dünnes Thema wird mit Core und Ganzkörper aufgefüllt.
+- **Aufwärmen nur bei Kraft-Themen** (Core, Bauch, Beine & Po, Rücken, Ganzkörper): erst den Puls heben (Laufen auf der Stelle, Hampelmann, Kniehebelauf, Seilspringen, Schattenboxen), dann die Gelenke des Themas bewegen (z. B. Hüftkreisen vor Beine & Po, Schulterkreisen vor Rücken, Katze-Kuh vor Bauch), je 40 s mit 5 s Wechsel; im 5-Min.-Mix nur die Mobilisation (30 s). Dehnen, Vacuum und Yoga ohne Aufwärm-Block.
+- **Durchgang** (Dehnen, Yoga): keine Runden, so viele Übungen, wie in die Zeit passen, 5 s Wechsel. Dehnungen 60 s (beidseitig 45 s je Seite), bei übriger Zeit bis zum Doppelten; Kraft- und Balance-Haltungen (z. B. Boot, Krieger, Heuschrecke) 45 s (beidseitig 30 s je Seite); nie unter 30 s je Seite. Passt die nächste Übung nicht mehr ganz, kommt eine mit kürzerer Haltezeit dazu. Dehnen ohne Aufwärm-, Vacuum- und Ganzkörper-Übungen (z. B. Armkreisen, Inchworm). Yoga beginnt mit dem Sonnengruß. Am Ende steht die Totenstellung (60 s, 5 Min.: 40 s).
+- **Kombination** von Zirkel und Durchgang: nacheinander, erst der Zirkel („Hauptteil“), dann ein Block „Dehnen“, „Yoga“ oder „Dehnen & Yoga“, dann die Totenstellung. Die Zeit teilt sich nach Anzahl der Themen. Nach einem Kraft-Zirkel kommen zuerst Dehnungen für die Muskeln, die gearbeitet haben (z. B. Figur 4, Taube, Hüftbeuger nach Beine & Po).
+- **Positionen:** Jeder Teil läuft vom Stehen zum Liegen (Stehen, Stütz, Knien, Bauchlage, Sitzen, Seitenlage, Rückenlage). Das Aufwärmen endet nicht tiefer, als der Zirkel beginnt. Abschluss nach einem Zirkel ohne Durchgang: eine Dehnung für die Themen (z. B. Figur 4 nach Beine & Po, Kobra nach Bauch, Kindhaltung nach Rücken) in der Position, in der der Zirkel endet, oder tiefer; 60 s (5 Min.: 40 s).
+
+Danach „Neu mischen“, „Speichern“ (unter „Meine Workouts“) oder „Starten“.
 
 ### 5.5 Lernende Dauer
 Jede +15/−15-Änderung wird mit Übung und Workout protokolliert. Wurde dieselbe Übung im **selben Workout** in den letzten 3 Trainings dieses Workouts jedes Mal verlängert (oder jedes Mal gekürzt), fragt der Fertig-Screen z. B. „Plank in ‚Morgen-Core‘ auf 60 s setzen?“. „Ja“ ändert nur dieses Workout (bei einer Vorlage entsteht eine Kopie), „Nein“ stellt die Frage für die nächsten 10 Trainings dieses Workouts zurück. Trainings über „Anpassen“ und ungespeicherte Mixe zählen nicht. Details: Spec Schritt 4.
@@ -199,12 +206,13 @@ Eine feste natürliche Stimme: **Katja** (`de-DE-KatjaNeural`, gewählt von Nico
 ## 6. Inhalte
 
 ### 6.1 Übungsbibliothek (145 Übungen, deutsch)
-Felder: `id, name, alias[], beschreibung, hinweis, tags[], beidseitig, typ ('zeit'|'atem'), atem {ein, halten, aus, haltenLeer}, hilfsmittel[], bild (derzeit immer null), icon, quelle`.
+Felder: `id, name, alias[], beschreibung, hinweis, tags[], beidseitig, typ ('zeit'|'atem'), atem {ein, halten, aus, haltenLeer}, hilfsmittel[], bild (derzeit immer null), icon, quelle, position`.
+Jede Zeit-Übung hat eine Ausgangsposition (`position`, seit v=47): `stehen, stuetz, knien, bauchlage, sitzen, seitenlage, rueckenlage`, in dieser Reihenfolge von oben nach unten (`T.POSITIONS`). Mix und Vorlagen laufen danach.
 139 Übungen haben eine animierte Figur (`data/poses.js`), die 6 Atem-Übungen den Atem-Kreis. Bilder aus free-exercise-db werden nicht genutzt (Figur statt Bild). Ursprünglich 110 Übungen, am 2026-10-23 kamen 36 dazu (davon 12 Vacuum-Varianten), eine fiel weg.
 Themen (eine Übung kann mehrere haben): Core 42, Beine/Po 32, Dehnen 28, Rücken 22, Bauch 20, Yoga 19, Vacuum 17, Ganzkörper 11, Aufwärmen 10, Oberkörper 8, Atmung 7.
 
 ### 6.2 Vorlagen (12)
-Je Thema „Kurz“ (~10 Min) und „Lang“ (~20 Min): Vacuum & Core, Bauch, Dehnen & Rücken, Yoga & Atmung, Beine & Po, Starker Rücken. Jede Vorlage: Aufwärmen (2–3 Übungen), Hauptteil als Block mit Wiederholung, Abschluss (Dehnen/Atmung). Nicole prüft die Vorlagen vor einer Veröffentlichung.
+Je Thema „Kurz“ (~10 Min) und „Lang“ (~20 Min): Vacuum & Core, Bauch, Dehnen & Rücken, Yoga & Atmung, Beine & Po, Starker Rücken. Jede Vorlage: Aufwärmen (2–3 Übungen), Hauptteil als Block mit Wiederholung, Abschluss (Dehnen/Atmung). Seit v=47 läuft der Hauptteil vom Stehen zum Liegen; in den anderen Blöcken (außer dem Aufwärmen) steht man nicht mitten im Block wieder auf (nur die Reihenfolge geändert, Übungen und Zeiten gleich). Nicole prüft die Vorlagen vor einer Veröffentlichung.
 
 ## 7. Technik
 
@@ -318,7 +326,7 @@ Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzu
 - Block-Namen lassen sich im Editor nicht ändern, obwohl der Knopf „+ Block (z. B. Abschluss)“ heißt.
 - „Für neue Übungen“: Die Standard-Pause ändert auch bestehende Einträge, die keine eigene Pause haben.
 - Touch-Ziele unter 44 px: „Anpassen“-Link (34 px), „Speichern“ im Editor-Kopf, Themen-Chips, ± Knöpfe (42 px).
-- Mix für Dehnen, Yoga oder Vacuum beginnt mit sportlichen Aufwärm-Übungen (z. B. Hampelmann, Schattenboxen); Nicole fragen, ob das so bleiben soll.
+- Mix für Dehnen, Yoga oder Vacuum begann mit sportlichen Aufwärm-Übungen (z. B. Hampelmann, Schattenboxen). (Erledigt v=47: Dehnen und Vacuum ohne Aufwärmen, Yoga beginnt mit dem Sonnengruß, siehe 8.8.)
 - Anpassen: kleinstes Budget immer 5 Min. (bei langen Dehn-Vorlagen werden die Übungen dann sehr kurz).
 - `validateWorkout`/`copyWorkout` kennen nur die Bibliothek, nicht eigene Übungen (heute egal, weil der Editor den Namen immer mitspeichert).
 - Hintergrund scrollt auf iOS hinter offenen Fenstern mit; Escape schließt Fenster nicht.
@@ -396,6 +404,27 @@ Wünsche von Nicole nach dem ersten Trainieren mit Schritt 4:
 - **Unterlagen abgeglichen (v=44):** Konzept, README, Design-Guide und Code-Kommentare auf den aktuellen Stand gebracht; keine Änderung am Verhalten.
 
 Meine Festlegungen (Nicole kann widersprechen): Feier schließt nur über den Knopf (ein versehentlicher Tipp wischt sie nicht weg); Klang nur, wenn Töne an sind; ohne Animation bei „Bewegung reduzieren“.
+
+### 8.8 Mix nach Positionen und Thema (2026-10-25, v=47)
+
+Wunsch von Nicole: Vor Dehnen und Vacuum ergibt Aufwärmen keinen Sinn. Die Workouts sollen fachlich sinnvoll zusammengestellt sein, auch beim Ablauf der Positionswechsel. Anlass war ein Mix „Vacuum, Dehnen“: Aufwärmen mit Sonnengruß und Laufen auf der Stelle, im Hauptteil Inchworm (Stehen und Stütz), Taube (Boden), Armkreisen (Stehen), und das in 2 Runden mit 15 s Pause.
+
+Entscheidungen (Nicole, 2026-10-25): Dehnen und Yoga als ein Durchgang statt in Runden. Kombinationen nacheinander (erst Zirkel, dann Dehnen oder Yoga, dann Totenstellung). Die 12 Vorlagen werden nach Positionen umsortiert.
+
+Umgesetzt: Ausgangsposition für alle 139 Zeit-Übungen (`data/exercises.js`, 6.1), neuer Mix-Aufbau (5.4), Vorlagen umsortiert (6.2; „Dehnen & Rücken kurz“ beginnt weiter mit Katze-Kuh als sanftem Einstieg). Hinweis im Mix-Fenster: „Takt stellt den Rest zusammen, vom Stehen zum Liegen.“ Die Tests prüfen alle 255 Themen-Kombinationen in 5 Dauern: nie länger als gewählt, mindestens 90 % der Zeit, jeder Teil von oben nach unten, Aufwärmen nur bei Kraft-Themen.
+
+Fachlicher Hintergrund:
+- Dehnen: Das ACSM (Garber u. a. 2011) empfiehlt, eine Dehnung 10–30 s zu halten (Ältere 30–60 s), zusammen etwa 60 s je Muskelgruppe. In einer Studie brachte ein Aufwärmen vor dem Dehnen (10 Min. Treppensteigen) keinen messbaren Zusatznutzen für die Beweglichkeit (de Weijer u. a. 2003).
+- Vor Kraft-Übungen dynamisch aufwärmen: erst den Puls heben, dann die Gelenke bewegen. Langes statisches Dehnen (60 s und mehr je Muskel) direkt vor Belastung mindert die Leistung leicht (Behm u. a. 2016), deshalb stehen Dehnungen am Ende.
+- Reihenfolge: Übungen am Anfang einer Einheit gelingen mit mehr Wiederholungen (Simão u. a. 2012). Weil der Mix vom Stehen zum Liegen läuft, kommen die großen Übungen im Stehen (Kniebeugen, Ausfallschritte) zuerst.
+- Vacuum: kaum Studien zur Reihenfolge. Umgesetzt sind kein Aufwärmen, 15 s Pause zum Durchatmen und der Ablauf nach Positionen.
+
+Meine Festlegungen (Nicole kann widersprechen): Yoga beginnt mit dem Sonnengruß, ohne eigenen Aufwärm-Block. Jeder Mix mit Dehnen oder Yoga endet mit der Totenstellung. Haltezeiten wie in 5.4. Ab 30 Min. sechs Übungen im Zirkel (sonst kam ein 30-Min.-Vacuum-Mix nur auf 26 Min.). Arbeitszeit im Zirkel möglichst nah an 40 s, solange die Zeit damit bis auf 5 % gefüllt ist (sonst z. B. 20-s-Haltezeiten beim Vacuum). Beidseitige Übungen im Zirkel bekommen das Anderthalbfache (vorher bekamen sie im Mix dieselbe Zeit, bei 25 s also nur gut 12 s je Seite).
+
+Zurückgestellt:
+- Innerhalb eines Themas sind die Übungen noch nicht nach Bewegungsmuster ausgewogen: Ein Bauch-Mix kann z. B. fünf Crunch-Varianten ziehen, ein Ganzkörper-Mix nur Stütz-Übungen. Dafür bräuchte jede Kraft-Übung ein Bewegungsmuster in der Bibliothek.
+- Bei Kombinationen läuft jeder Teil für sich vom Stehen zum Liegen, zwischen Zirkel und Dehnen steht man einmal auf. Auch zwischen den Runden eines Zirkels steht man wieder auf (eine Runde geht einmal vom Stehen zum Boden).
+- In kurzen Kombinationen (10 Min.) hat der Dehn-Teil oft nur 2–3 Dehnungen, eine davon kürzer (30 s).
 
 ## 9. Verifikation
 

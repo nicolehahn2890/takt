@@ -473,4 +473,38 @@ window.Takt = window.Takt || {};
     // Katja liest deutsch: „Stomach“ klingt falsch, gesprochen wird „Bauch-Vakuum“ (Nicole, 2026-10-24)
     else if (/^Stomach Vacuum/.test(e.name)) e.ansage = e.name.replace('Stomach Vacuum', 'Bauch-Vakuum');
   });
+
+  /* Ausgangsposition jeder Zeit-Übung, von oben nach unten. Mix und Vorlagen laufen in dieser Reihenfolge,
+     damit man nicht zwischen Stehen und Liegen hin und her wechselt (Nicole, 2026-10-25). Atem-Übungen haben keine.
+     Stütz: Hände oder Unterarme am Boden, Knie oben. Knien: Vierfüßler, Fersensitz, kniender Ausfallschritt. */
+  var POSITION = {
+    stehen: ['vacuum-stehend', 'vacuum-vorgebeugt', 'vacuum-arme-oben', 'vacuum-gehen', 'pallof-press', 'wall-angels', 'good-morning',
+      'band-pull-apart', 'kniebeuge', 'sumo-kniebeuge', 'ausfallschritt', 'ausfallschritt-rueck', 'seitlicher-ausfallschritt',
+      'bulgarian-split-squat', 'wandsitzen', 'wadenheben', 'step-ups', 'curtsy-lunge', 'sprung-kniebeuge', 'standwaage',
+      'abduktion-stehend', 'kickback-stehend', 'squat-pulses', 'quad-dehnung', 'nacken-dehnung', 'schulterkreisen', 'armkreisen',
+      'hueftkreisen', 'worlds-greatest', 'seitdehnung', 'vorbeuge-stehend', 'waden-dehnung', 'schulter-dehnung', 'brust-dehnung',
+      'sonnengruss', 'krieger-1', 'krieger-2', 'baum', 'dreieck', 'stuhl', 'krieger-3', 'hampelmann', 'laufen-stelle', 'kniehebelauf',
+      'burpees', 'squat-jacks', 'inchworm', 'schattenboxen', 'seilspringen'],
+    stuetz: ['vacuum-unterarmstuetz', 'plank', 'high-plank', 'plank-shoulder-taps', 'plank-hip-dips', 'mountain-climbers', 'plank-jacks',
+      'spiderman-plank', 'plank-rock', 'plank-knie', 'plank-beinheben', 'herabschauender-hund', 'liegestuetz', 'knie-liegestuetz',
+      'pike-pushup'],
+    knien: ['vacuum-vierfuessler', 'vacuum-kniend', 'vacuum-kindhaltung', 'vacuum-baerenstand', 'bird-dog', 'baerenstand', 'donkey-kicks',
+      'fire-hydrants', 'kickback', 'katze-kuh', 'hueftbeuger-dehnung', 'taube', 'kindhaltung', 'faden-einfaedeln'],
+    bauchlage: ['superman', 'swimmer', 'ytw', 'snow-angels', 'rueckenstrecker', 'prone-cobra', 'arm-bein-bauchlage', 'kobra', 'heuschrecke',
+      'sphinx'],
+    sitzen: ['vacuum-sitzend', 'vacuum-schneidersitz', 'russian-twist', 'reverse-plank', 'knee-tucks', 'boot', 'band-rudern', 'hip-thrust',
+      'stuhl-dips', 'hamstring-dehnung', 'schmetterling', 'huefte-90-90'],
+    seitenlage: ['seitstuetz', 'seitstuetz-hueftheben', 'seitstuetz-knie', 'clamshells', 'beinheben-seitlich', 'innenschenkel', 'open-book'],
+    rueckenlage: ['vacuum-liegend', 'vacuum-fersentippen', 'vacuum-glute-bridge', 'vacuum-beckenkippen', 'vacuum-marschieren', 'dead-bug',
+      'hollow-hold', 'hollow-rocks', 'scheibenwischer', 'crunch', 'reverse-crunch', 'fahrrad-crunch', 'beinheben', 'flutter-kicks',
+      'scherenschlag', 'v-ups', 'sit-up', 'heel-touches', 'toe-touches', 'seitlicher-crunch', 'kreuz-crunch', 'tabletop-crunch',
+      'glute-bridge', 'glute-bridge-einbeinig', 'frog-pumps', 'glute-bridge-marsch', 'tisch-rudern', 'figur-vier', 'liegender-twist',
+      'knie-zur-brust', 'happy-baby', 'totenstellung']
+  };
+  T.POSITIONS = Object.keys(POSITION);
+  var byId = {};
+  T.EXERCISES.forEach(function (e) { byId[e.id] = e; });
+  T.POSITIONS.forEach(function (p) {
+    POSITION[p].forEach(function (id) { if (byId[id]) byId[id].position = p; });
+  });
 })(window.Takt);
