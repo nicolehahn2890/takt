@@ -1,7 +1,7 @@
 # Homeworkout-Timer-App – Konzept und Umsetzungsplan
 
 Name: **Takt** – "Dein Training, dein Takt" · Repo `nicolehahn2890/takt` (öffentlich) · Live: https://nicolehahn2890.github.io/takt/
-Stand: 2026-10-25 (live v=51) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
+Stand: 2026-10-25 (live v=52) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
 
 Dieses Dokument beschreibt den aktuellen Stand. Pläne und Specs unter `docs/superpowers/` sind Momentaufnahmen ihres Datums; weicht etwas ab, gilt dieses Dokument. Gestaltung: `docs/design_handoff_takt_redesign/design-system/DESIGN_GUIDE.md`.
 
@@ -103,7 +103,7 @@ Folgerung: Der Ansage-Weg über Sprachdateien ist bestätigt. Ansagen bei gesper
 
 ## 4. Produkt – Screens und Verhalten
 
-Stand v=51. Was noch fehlt oder bewusst wegfällt, ist markiert.
+Stand v=52. Was noch fehlt oder bewusst wegfällt, ist markiert.
 
 ### 4.1 Home (Startseite)
 - Kopf: Logo-Figur, „Takt“, „Dein Training, dein Takt“. Darunter Minuten und Anzahl Trainings dieser Woche.
@@ -215,7 +215,7 @@ Hilfsmittel: Matte, Wand, Stuhl, Band, Tisch, Sofa und seit v=48 Stab (Anzeige �
 Themen (eine Übung kann mehrere haben): Core 43, Dehnen 33, Beine/Po 32, Yoga 24, Rücken 23, Bauch 20, Vacuum 17, Ganzkörper 13, Aufwärmen 10, Oberkörper 8, Atmung 7.
 
 ### 6.2 Vorlagen (12)
-Je Thema „Kurz“ (~10 Min) und „Lang“ (~20 Min): Vacuum & Core, Bauch, Dehnen & Rücken, Yoga & Atmung, Beine & Po, Starker Rücken. Kraft-Vorlagen (Vacuum & Core, Bauch, Beine & Po, Starker Rücken): Aufwärmen (2–3 Übungen, seit v=50 wie im Mix: erst den Puls heben, dann die Gelenke des Themas, 5 s Wechsel, endet nicht tiefer als der Hauptteil beginnt), Hauptteil als Block mit 2–3 Runden, Abschluss (Dehnen/Atmung). Dehnen & Rücken: ein Durchgang ohne Block-Namen. Yoga & Atmung: Ankommen, Sonnengruß (2 Runden), Haltungen, Abschluss. Seit v=47 läuft der Hauptteil vom Stehen zum Liegen; in den anderen Blöcken (außer dem Aufwärmen) steht man nicht mitten im Block wieder auf (nur die Reihenfolge geändert, Übungen und Zeiten gleich). Nicole prüft die Vorlagen vor einer Veröffentlichung.
+Je Thema „Kurz“ (~10 Min) und „Lang“ (~20 Min): Vacuum & Core, Bauch, Dehnen & Rücken, Yoga & Atmung, Beine & Po, Starker Rücken. Vacuum & Core: kein Aufwärmen, sondern 60 s Bauchatmung zum Ankommen (seit v=52, Nicole: vor Vacuum ergibt Aufwärmen keinen Sinn), dann Hauptteil (2–3 Runden) und Abschluss. Kraft-Vorlagen (Bauch, Beine & Po, Starker Rücken): Aufwärmen (2–3 Übungen, seit v=50 wie im Mix: erst den Puls heben, dann die Gelenke des Themas, 5 s Wechsel, endet nicht tiefer als der Hauptteil beginnt), Hauptteil als Block mit 2–3 Runden, Abschluss (Dehnen/Atmung). Dehnen & Rücken: ein Durchgang ohne Block-Namen. Yoga & Atmung: Ankommen, Sonnengruß (2 Runden), Haltungen, Abschluss. Seit v=47 läuft der Hauptteil vom Stehen zum Liegen; in den anderen Blöcken (außer dem Aufwärmen) steht man nicht mitten im Block wieder auf (nur die Reihenfolge geändert, Übungen und Zeiten gleich). Nicole prüft die Vorlagen vor einer Veröffentlichung.
 
 ## 7. Technik
 
@@ -458,7 +458,7 @@ Behoben (Entscheidungen Nicole, 2026-10-25: alles außer dem Entwurfs-Speicher, 
 - Aufgeräumt: ungenutzte Funktionen und CSS, der nie gespielte Satz „Los geht's!“ samt Datei.
 - Unterlagen abgeglichen: dieses Konzept (u. a. 6.1, 6.2, 8.8, 8.9), Design-Guide samt Kopie im Design-Skill (150 Übungen, Besenstiel), Figuren-Galerie (Filter Aufwärmen).
 - Uhrzeit-Zeile unten im Training (Test-Hilfe aus Schritt 1) entfernt (v=51, Nicole).
-- Aufwärmen der 8 Kraft-Vorlagen nach dem Schema des Mix (v=50, Vorschlag von Nicole abgenommen): erst den Puls heben (Auf der Stelle laufen, Hampelmann, Kniehebelauf, Schattenboxen), dann die Gelenke des Themas (Hüftkreisen, Inchworm, World's Greatest Stretch, Katze-Kuh, Arm- und Schulterkreisen), 5 s Wechsel statt 15 s Pause. Raus aus dem Aufwärmen: Bauchatmung (Vacuum & Core), Mountain Climbers, Squat Jacks und die doppelte Kniebeuge (Beine & Po kurz). Bei „Starker Rücken lang“ steht man nach dem Aufwärmen nicht mehr vom Boden auf. Dauern: Vacuum & Core 10:35 / 20:10, Bauch 9:40 / 20:25, Beine & Po 10:40 / 20:15, Starker Rücken 10:00 / 20:05. Ein Test prüft das Schema.
+- Aufwärmen der Kraft-Vorlagen nach dem Schema des Mix (v=50, Vorschlag von Nicole abgenommen): erst den Puls heben (Auf der Stelle laufen, Hampelmann, Kniehebelauf, Schattenboxen), dann die Gelenke des Themas (Hüftkreisen, Inchworm, World's Greatest Stretch, Katze-Kuh, Arm- und Schulterkreisen), 5 s Wechsel statt 15 s Pause. Raus aus dem Aufwärmen: Mountain Climbers, Squat Jacks und die doppelte Kniebeuge (Beine & Po kurz). Bei „Starker Rücken lang“ steht man nach dem Aufwärmen nicht mehr vom Boden auf. Vacuum & Core (v=52, Nicole): gar kein Aufwärmen, wie beim Mix „Vacuum“; stattdessen 60 s Bauchatmung als „Ankommen“, die beim vollständigen Ausatmen für das Vakuum hilft. Dauern: Vacuum & Core 10:10 / 19:00, Bauch 9:40 / 20:25, Beine & Po 10:40 / 20:15, Starker Rücken 10:00 / 20:05. Ein Test prüft beides.
 
 Zurückgestellt:
 - Neuladen (z. B. wenn iOS die Home-Bildschirm-App im Hintergrund beendet) verwirft ungespeicherte Eingaben im Editor und im Formular für eigene Übungen; dafür bräuchte es einen Entwurfs-Speicher.

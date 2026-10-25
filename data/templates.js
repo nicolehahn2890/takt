@@ -3,6 +3,7 @@
    Block: [Name, Runden, [[Übungs-Id, Sekunden, Pause], ...]], Pause nur wenn abweichend (5 s Wechsel im Aufwärmen).
    Übungsnamen und „beidseitig“ kommen aus der Bibliothek.
    Aufwärmen wie im Mix: erst den Puls heben, dann die Gelenke des Themas, endet nicht tiefer als der Hauptteil beginnt.
+   Vacuum & Core ohne Aufwärmen (vor Vacuum ergibt es keinen Sinn), dafür 60 s Bauchatmung zum Ankommen.
    Reihenfolge vom Stehen zum Liegen (Positionen in data/exercises.js), damit man nicht mitten im Block wieder aufsteht.
    Dauer prüft der Test „data: Vorlagen-Dauer“ (kurz 8–12, lang 17–23 Min.). */
 window.Takt = window.Takt || {};
@@ -25,11 +26,11 @@ window.Takt = window.Takt || {};
 
   T.TEMPLATES = [
     V('vacuum-core-kurz', 'Vacuum & Core kurz', 'core', 'kurz', 15, [
-      [A, 1, [['laufen-stelle', 40, 5], ['hueftkreisen', 40]]],
+      [K, 1, [['bauchatmung', 60]]],
       [H, 2, [['plank', 30], ['vacuum-vierfuessler', 30], ['dead-bug', 40], ['vacuum-liegend', 30], ['vacuum-fersentippen', 40]]],
       [Z, 1, [['kindhaltung', 45]]]]),
     V('vacuum-core-lang', 'Vacuum & Core lang', 'core', 'lang', 15, [
-      [A, 1, [['laufen-stelle', 40, 5], ['hueftkreisen', 40, 5], ['inchworm', 40]]],
+      [K, 1, [['bauchatmung', 60]]],
       [H, 3, [['vacuum-vorgebeugt', 30], ['vacuum-unterarmstuetz', 30], ['vacuum-vierfuessler', 30], ['bird-dog', 40],
         ['dead-bug', 40], ['vacuum-glute-bridge', 40]]],
       [Z, 1, [['hypopressive-atmung', 90], ['kindhaltung', 60]]]]),

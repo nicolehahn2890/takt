@@ -266,5 +266,10 @@ test('data: Aufwaermen der Vorlagen wie im Mix (Puls, dann Gelenke, 5 s Wechsel,
     main.items.forEach(function (i) { if (ids.indexOf(i.exId) >= 0) bad.push(w.id + ': ' + i.exId + ' doppelt'); });
   });
   eq(bad, []);
-  eq(warmed, 8);
+  eq(warmed, 6);
+  // Vacuum & Core: kein Aufwaermen, 60 s Bauchatmung zum Ankommen, dann direkt der Hauptteil
+  Takt.TEMPLATES.filter(function (w) { return w.id.indexOf('vacuum-core') === 0; }).forEach(function (w) {
+    eq([w.blocks[0].label, w.blocks[0].items.map(function (i) { return i.exId + ' ' + i.duration; }), w.blocks[1].label],
+      ['Ankommen', ['bauchatmung 60'], 'Hauptteil'], w.id);
+  });
 });
