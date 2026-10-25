@@ -441,7 +441,7 @@ Umgesetzt: `muster` und `fokus` für alle Übungen (6.1), Auswahl nach festen Sc
 
 Meine Festlegungen (Nicole kann widersprechen): Damit kein Muster nur eine einzige Übung hat (sonst käme sie in jedem Mix), gehören Plank und Bärenstand jetzt auch zu Ganzkörper, Swimmer zu Core und Standwaage zu Rücken. Die Stab-Übungen gehören zu Dehnen und Yoga (mit Gurt oder Stab sind sie auch im Yoga üblich). Mit Schalter kann der Schulter-Durchzug auch im Aufwärmen von Rücken und Ganzkörper kommen, im Abschluss Kindhaltung mit Stab (Rücken) oder Brustöffner (Ganzkörper). Der Schalter ist zu Beginn aus.
 
-**Offen:** Sprachdateien der 5 Stab-Übungen auf Nicoles PC erzeugen (`python tools/make_voice.py`). Bis dahin ist der Test „jede Übung hat eine Katja-Ansage“ rot und die App gibt bei diesen Übungen nur den Ton.
+Die Sprachdateien der 5 Stab-Übungen erzeugt Nicole auf ihrem PC (`python tools/make_voice.py`, der Sprachdienst ist aus der Cloud-Sitzung gesperrt). Solange sie fehlen, ist der Test „jede Übung hat eine Katja-Ansage“ rot und die App gibt bei diesen Übungen nur den Ton.
 
 ## 9. Verifikation
 
