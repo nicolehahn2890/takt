@@ -503,7 +503,7 @@ Takt.VOICE_FILES = {
  },
  "ex_vacuum-fersentippen": {
   "src": "assets/voice/ex_vacuum-fersentippen.mp3",
-  "text": "Vacuum mit Fersentippen"
+  "text": "Vakuum mit Fersentippen"
  },
  "ex_vacuum-gehen": {
   "src": "assets/voice/ex_vacuum-gehen.mp3",
