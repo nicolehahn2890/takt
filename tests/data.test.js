@@ -1,11 +1,11 @@
 var D_TAGS = ['vacuum', 'atmung', 'core', 'bauch', 'ruecken', 'beine-po', 'dehnen', 'yoga', 'ganzkoerper', 'oberkoerper', 'aufwaermen'];
-var D_HILF = ['band', 'stuhl', 'tisch', 'sofa', 'wand', 'matte'];
+var D_HILF = ['band', 'stuhl', 'tisch', 'sofa', 'wand', 'matte', 'stab'];
 var D_ICONS = ['core', 'dehnen', 'beine', 'ganz'];
 function dSubset(arr, allowed) { return Array.isArray(arr) && arr.every(function (x) { return allowed.indexOf(x) >= 0; }); }
 
-test('data: genau 145 Uebungen mit eindeutigen Ids', function () {
+test('data: genau 150 Uebungen mit eindeutigen Ids', function () {
   var ids = Takt.EXERCISES.map(function (e) { return e.id; });
-  eq(ids.length, 145);
+  eq(ids.length, 150);
   var dup = ids.filter(function (id, i) { return ids.indexOf(id) !== i; });
   eq(dup, []);
   var bad = ids.filter(function (id) { return !/^[a-z0-9-]+$/.test(id); });
@@ -93,8 +93,47 @@ test('data: jede Zeit-Uebung hat eine Ausgangsposition, Atem-Uebungen keine', fu
     Takt.POSITIONS);
 });
 
-test('data: Tag yoga hat 19 Uebungen', function () {
-  eq(Takt.EXERCISES.filter(function (e) { return e.tags.indexOf('yoga') >= 0; }).length, 19);
+test('data: Kraft-Uebungen haben ein Bewegungsmuster, Dehnungen und Yoga-Haltungen einen Schwerpunkt', function () {
+  var kraft = ['core', 'vacuum', 'bauch', 'beine-po', 'ruecken', 'ganzkoerper', 'oberkoerper'];
+  function has(e, tags) { return e.tags.some(function (t) { return tags.indexOf(t) >= 0; }); }
+  var bad = [];
+  Takt.EXERCISES.forEach(function (e) {
+    if (e.typ !== 'zeit') { if (e.muster || e.fokus) bad.push(e.id + ': Atem-Uebung mit Muster'); return; }
+    if (has(e, kraft) && !e.muster && !e.fokus) bad.push(e.id + ': ohne Muster');
+    if (e.muster && !has(e, kraft)) bad.push(e.id + ': Muster ohne Kraft-Thema');
+    var flow = (has(e, ['dehnen']) && !has(e, ['aufwaermen', 'vacuum', 'ganzkoerper'])) || (has(e, ['yoga']) && !has(e, ['aufwaermen', 'atmung']));
+    if (flow && !e.fokus) bad.push(e.id + ': ohne Schwerpunkt');
+  });
+  eq(bad, []);
+  var ex = {};
+  Takt.EXERCISES.forEach(function (e) { ex[e.id] = e; });
+  eq([ex.kniebeuge.muster, ex['glute-bridge'].muster, ex.clamshells.muster, ex.crunch.muster, ex['bird-dog'].muster],
+    ['kniebeuge', 'huefte-strecken', 'abspreizen', 'beugen', 'gegengleich']);
+  eq([ex['katze-kuh'].muster, ex['katze-kuh'].fokus, ex.taube.fokus, ex.stuhl.muster, ex.stuhl.fokus],
+    [undefined, 'wirbelsaeule', 'huefte', 'kniebeuge', 'stand']);
+});
+
+test('data: Tag yoga hat 24 Uebungen (19 und 5 mit Stab)', function () {
+  eq(Takt.EXERCISES.filter(function (e) { return e.tags.indexOf('yoga') >= 0; }).length, 24);
+});
+
+test('data: Besenstiel-Uebungen zeigen den Stab, und er bleibt im Bild', function () {
+  var errors = [], stab = Takt.EXERCISES.filter(function (e) { return e.hilfsmittel.indexOf('stab') >= 0; }).map(function (e) { return e.id; });
+  eq(stab, ['stab-durchzug', 'stab-schulter', 'stab-brust', 'stab-kindhaltung', 'stab-ueberkopf']);
+  Object.keys(Takt.POSES).forEach(function (id) {
+    var p = Takt.POSES[id], has = (p.props || []).some(function (x) { return x.type === 'stab'; });
+    if (has !== (stab.indexOf(id) >= 0)) errors.push(id + (has ? ': Stab ohne Hilfsmittel' : ': Hilfsmittel ohne Stab'));
+    if (!has) return;
+    var s = p.scale || Takt.figure.DEFAULT_SCALE, seg = (p.hold != null ? p.hold : 0.6) + (p.move != null ? p.move : 0.9);
+    for (var t = 0; t <= seg * p.frames.length * 1000; t += 50) {
+      var m = /data-prop="stab" x1="([-\d.]+)" y1="([-\d.]+)" x2="([-\d.]+)" y2="([-\d.]+)"/.exec(Takt.figure.svg(Takt.figure.frameAt(p, t), s, p.props, t));
+      [[m[1], m[2]], [m[3], m[4]]].forEach(function (q) {
+        var x = 120 + (Number(q[0]) - 120) * s, y = 166 + (Number(q[1]) - 166) * s;
+        if (x < 12 || x > 228 || y < 18 || y > 170) errors.push(id + ' bei ' + t + ' ms: ' + Math.round(x) + '/' + Math.round(y));
+      });
+    }
+  });
+  eq(errors, []);
 });
 
 test('data: jede Uebung hat eine Katja-Ansage', function () {

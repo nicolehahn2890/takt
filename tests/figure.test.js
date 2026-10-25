@@ -78,6 +78,32 @@ test('figure svg: Hilfsmittel werden gezeichnet', function () {
   ok(s.indexOf('data-prop="stuhl"') > 0 && s.indexOf('data-prop="wand"') > 0, 'Hilfsmittel fehlen');
 });
 
+function stabLine(svg) {
+  var m = /<line data-prop="stab" x1="([-\d.]+)" y1="([-\d.]+)" x2="([-\d.]+)" y2="([-\d.]+)"/.exec(svg);
+  return m ? [[Number(m[1]), Number(m[2])], [Number(m[3]), Number(m[4])]] : null;
+}
+
+test('figure svg: Stab laeuft durch beide Haende, ueber sie hinaus verlaengert', function () {
+  var f = { hip: [120, 82], sh: [120, 32], shW: 13, footN: [130, 162], footF: [110, 162], handN: [170, 90], handF: [70, 90],
+    kneeN: -1, kneeF: 1, elbowN: -1, elbowF: 1 };
+  var g = Takt.figure.geometry(f), l = stabLine(Takt.figure.svg(f, 1, [{ type: 'stab', ext: 10 }]));
+  ok(l, 'Stab fehlt');
+  var a = g.armN.end, b = g.armF.end;
+  ok(Math.abs(fdist(l[0], l[1]) - (fdist(a, b) + 20)) < 0.5, 'Laenge ' + fdist(l[0], l[1]));
+  ok(Math.abs(fdist(l[0], a) - 10) < 0.5 && Math.abs(fdist(l[1], b) - 10) < 0.5, 'nicht durch die Haende');
+  // Haende uebereinander (Seitenansicht): kurzer Stab in Richtung dir
+  var side = Takt.figure.frameAt(standPose(), 0);
+  var k = stabLine(Takt.figure.svg(side, 1, [{ type: 'stab', ext: 8, dir: [0, -1] }]));
+  ok(Math.abs(k[0][0] - k[1][0]) < 0.5 && Math.abs(fdist(k[0], k[1]) - 16) < 1, 'Seitenansicht ' + JSON.stringify(k));
+});
+
+test('figure svg: Stab hinten liegt hinter den Gliedmassen, sonst vor der Figur', function () {
+  var f = Takt.figure.frameAt(standPose(), 0);
+  var back = Takt.figure.svg(f, 1, [{ type: 'stab', hinten: true }]), front = Takt.figure.svg(f, 1, [{ type: 'stab' }]);
+  ok(back.indexOf('data-prop="stab"') < back.indexOf('<line x1'), 'hinten nicht zuerst');
+  ok(front.indexOf('data-prop="stab"') > front.indexOf('<circle'), 'vorne nicht nach dem Kopf');
+});
+
 test('figure breathAt: Phasen, Restsekunden und Groesse', function () {
   var a = { ein: 4, halten: 2, aus: 6, haltenLeer: 0 };
   var b0 = Takt.figure.breathAt(a, 0);

@@ -5,7 +5,8 @@ window.Takt = window.Takt || {};
   'use strict';
 
   var SEG = { thigh: 40, shin: 40, upper: 30, fore: 28, neck: 6, head: 10 };
-  var COL = { near: '#E3A3BF', far: '#9A6B8C', head: '#F0C4D6', mat: 'rgba(255,255,255,.07)', prop: '#4a3a44', arrow: '#BE7B9D', wall: 'rgba(255,255,255,.05)' };
+  var COL = { near: '#E3A3BF', far: '#9A6B8C', head: '#F0C4D6', mat: 'rgba(255,255,255,.07)', prop: '#4a3a44', arrow: '#BE7B9D', wall: 'rgba(255,255,255,.05)',
+    stab: '#C4A882' };
   var DEFAULT_SCALE = 0.85;
   var WID = { torso: 17, thigh: 11, shin: 10, upper: 9, fore: 8, foot: 7, girdle: 9 };
   var FOOT = 9;
@@ -156,6 +157,18 @@ window.Takt = window.Takt || {};
     return seg(tail, tip) + seg(w1, tip) + seg(w2, tip);
   }
 
+  /* Stab (Besenstiel) durch beide Haende, um ext ueber die Haende hinaus. Liegen die Haende fast aufeinander (Seitenansicht),
+     zeigt der Stab in die Tiefe: kurz und schraeg in Richtung dir. */
+  function stabSvg(g, p) {
+    var a = g.armN.end, b = g.armF.end, d = [b[0] - a[0], b[1] - a[1]], len = Math.hypot(d[0], d[1]);
+    var u = len > 4 ? [d[0] / len, d[1] / len] : p.dir || [0.6, -0.8];
+    var ul = Math.hypot(u[0], u[1]) || 1, ext = p.ext != null ? p.ext : 14;
+    u = [u[0] / ul, u[1] / ul];
+    var s = [a[0] - u[0] * ext, a[1] - u[1] * ext], e = [b[0] + u[0] * ext, b[1] + u[1] * ext];
+    return '<line data-prop="stab" x1="' + n1(s[0]) + '" y1="' + n1(s[1]) + '" x2="' + n1(e[0]) + '" y2="' + n1(e[1]) +
+      '" stroke="' + COL.stab + '" stroke-width="4.5" stroke-linecap="round"/>';
+  }
+
   function torso(g, F, w, c) {
     if (!F.bow) return line(g.hip, g.sh, w, c);
     var dx = g.sh[0] - g.hip[0], dy = g.sh[1] - g.hip[1], len = Math.hypot(dx, dy) || 1;
@@ -168,11 +181,15 @@ window.Takt = window.Takt || {};
     if (!F) return '';
     var g = geometry(F);
     var mat = '<rect x="14" y="166" width="212" height="6" rx="3" fill="' + COL.mat + '"/>';
-    var behind = (props || []).filter(function (p) { return p.type !== 'pfeil'; });
+    var behind = (props || []).filter(function (p) { return p.type !== 'pfeil' && p.type !== 'stab'; });
     var front = (props || []).filter(function (p) { return p.type === 'pfeil'; });
+    // Stab hinter dem Koerper (hinten) vor allen Gliedmassen zeichnen, sonst vor der Figur
+    function sticks(back) {
+      return (props || []).filter(function (p) { return p.type === 'stab' && !!p.hinten === back; }).map(function (p) { return stabSvg(g, p); }).join('');
+    }
     // Vorderansicht: beide Seiten gleich nah, also gleiche Farbe
     var far = g.girdle ? COL.near : COL.far;
-    var h = behind.map(propSvg).join('');
+    var h = behind.map(propSvg).join('') + sticks(true);
     h += line(g.shF, g.armF.mid, WID.upper, far) + line(g.armF.mid, g.armF.end, WID.fore, far);
     h += line(g.hipF, g.legF.mid, WID.thigh, far) + line(g.legF.mid, g.legF.end, WID.shin, far) +
       line(g.legF.end, g.toeF, WID.foot, far);
@@ -182,7 +199,7 @@ window.Takt = window.Takt || {};
       line(g.legN.end, g.toeN, WID.foot, COL.near);
     h += line(g.shN, g.armN.mid, WID.upper, COL.near) + line(g.armN.mid, g.armN.end, WID.fore, COL.near);
     h += '<circle cx="' + n1(g.head[0]) + '" cy="' + n1(g.head[1]) + '" r="' + SEG.head + '" fill="' + COL.head + '"/>';
-    h += front.map(function (p) { return arrowSvg(p, ms); }).join('');
+    h += sticks(false) + front.map(function (p) { return arrowSvg(p, ms); }).join('');
     if (scale && scale !== 1) {
       h = '<g transform="translate(120 166) scale(' + scale + ') translate(-120 -166)">' + h + '</g>';
     }

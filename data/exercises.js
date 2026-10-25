@@ -1,4 +1,4 @@
-/* Takt: Übungsbibliothek (145 Übungen, davon 6 Atem-Übungen ohne Figur). Haltungen der Figur: data/poses.js.
+/* Takt: Übungsbibliothek (150 Übungen, davon 6 Atem-Übungen ohne Figur). Haltungen der Figur: data/poses.js.
    Nach Änderungen an Namen: python tools/make_voice.py */
 window.Takt = window.Takt || {};
 (function (T) {
@@ -83,7 +83,7 @@ window.Takt = window.Takt || {};
       'Langsam durch leicht gespitzte Lippen ausatmen.', R(4, 0, 8, 0)),
 
     /* ---------- Core und Taille ---------- */
-    X('plank', 'Plank', ['Unterarmstütz'], ['core'], false, ['matte'], 'core',
+    X('plank', 'Plank', ['Unterarmstütz'], ['core', 'ganzkoerper'], false, ['matte'], 'core',
       'Unterarme unter die Schultern, der Körper bildet eine Linie von Kopf bis Ferse. Bauch und Po fest anspannen und halten.',
       'Die Hüfte nicht durchhängen lassen.'),
     X('high-plank', 'Hoher Stütz', ['High Plank'], ['core', 'oberkoerper'], false, ['matte'], 'core',
@@ -113,7 +113,7 @@ window.Takt = window.Takt || {};
     X('plank-hip-dips', 'Plank Hüftdrehung', ['Hip Dips'], ['core'], false, ['matte'], 'core',
       'Im Unterarmstütz die Hüfte abwechselnd zur einen und zur anderen Seite Richtung Boden drehen.',
       'Langsam und kontrolliert, der Bauch bleibt fest.'),
-    X('baerenstand', 'Bärenstand', ['Bear Hold'], ['core'], false, ['matte'], 'core',
+    X('baerenstand', 'Bärenstand', ['Bear Hold'], ['core', 'ganzkoerper'], false, ['matte'], 'core',
       'Im Vierfüßlerstand die Knie wenige Zentimeter vom Boden abheben und halten. Rücken flach, Blick zum Boden.',
       'Die Knie schweben nur knapp über dem Boden.'),
     X('mountain-climbers', 'Mountain Climbers', ['Bergsteiger'], ['core', 'ganzkoerper'], false, ['matte'], 'ganz',
@@ -198,7 +198,7 @@ window.Takt = window.Takt || {};
     X('superman', 'Superman', ['Rückenheben'], ['ruecken'], false, ['matte'], 'core',
       'Bauchlage, Arme nach vorne gestreckt. Arme, Brust und Beine gleichzeitig leicht anheben, kurz halten und ablegen.',
       'Blick zum Boden, der Nacken bleibt lang.'),
-    X('swimmer', 'Swimmer', ['Schwimmer'], ['ruecken'], false, ['matte'], 'core',
+    X('swimmer', 'Swimmer', ['Schwimmer'], ['ruecken', 'core'], false, ['matte'], 'core',
       'Bauchlage, Arme vorne. Gegengleich einen Arm und das andere Bein anheben und im Wechsel schnell flattern, wie beim Kraulen.',
       'Kleine, schnelle Bewegungen.'),
     X('ytw', 'Y-T-W', ['Schulterblatt-Heben'], ['ruecken'], false, ['matte'], 'core',
@@ -297,7 +297,7 @@ window.Takt = window.Takt || {};
     X('glute-bridge-marsch', 'Glute Bridge mit Marschieren', ['Bridge March'], ['beine-po', 'core'], false, ['matte'], 'beine',
       'In der Glute Bridge die Hüfte oben halten und abwechselnd ein Knie anheben. Die Hüfte bleibt dabei waagerecht.',
       'Langsam, das Becken darf nicht absinken.'),
-    X('standwaage', 'Standwaage', ['Einbeinige Hüftbeuge'], ['beine-po', 'core'], true, [], 'beine',
+    X('standwaage', 'Standwaage', ['Einbeinige Hüftbeuge'], ['beine-po', 'core', 'ruecken'], true, [], 'beine',
       'Auf einem Bein stehen. Mit geradem Rücken nach vorne beugen, das andere Bein streckt sich nach hinten, bis Oberkörper und Bein fast waagerecht sind. Langsam zurück.',
       'Das Standbein bleibt leicht gebeugt, der Blick zum Boden.'),
     X('abduktion-stehend', 'Bein seitlich heben im Stehen', ['Standing Abduction'], ['beine-po'], true, [], 'beine',
@@ -386,6 +386,22 @@ window.Takt = window.Takt || {};
     X('faden-einfaedeln', 'Faden einfädeln', ['Thread the Needle'], ['dehnen', 'ruecken'], true, ['matte'], 'dehnen',
       'Im Vierfüßlerstand einen Arm zur Decke öffnen und dann unter dem Körper zur anderen Seite durchschieben, bis die Schulter am Boden liegt.',
       'Dreht und entspannt die Brustwirbelsäule.'),
+    /* ---------- Mit Stab (Besenstiel), Wunsch von Nicole 2026-10-25 ---------- */
+    X('stab-durchzug', 'Schulter-Durchzug mit Stab', ['Pass-Through', 'Besenstiel über den Kopf'], ['dehnen', 'yoga'], false, ['stab'], 'dehnen',
+      'Aufrecht stehen und den Stab weit greifen. Die gestreckten Arme langsam über den Kopf nach hinten bis zum Po führen und auf demselben Weg zurück.',
+      'Je weiter die Hände auseinander, desto leichter. Nicht ins Hohlkreuz ausweichen.'),
+    X('stab-schulter', 'Schulterdehnung mit Stab', ['Stab senkrecht hinter dem Rücken', 'Handtuch-Dehnung'], ['dehnen', 'yoga'], true, ['stab'], 'dehnen',
+      'Den Stab senkrecht hinter den Rücken halten: eine Hand oben hinter dem Kopf, die andere unten am Rücken. Mit der oberen Hand sanft nach oben ziehen, dann mit der unteren nach unten.',
+      'Zug nach oben dehnt die untere Schulter, Zug nach unten den oberen Arm. Aufrecht bleiben.'),
+    X('stab-brust', 'Brustöffner mit Stab', ['Stab hinter dem Rücken anheben'], ['dehnen', 'yoga'], false, ['stab'], 'dehnen',
+      'Den Stab hinter dem Rücken schulterbreit greifen. Die Schulterblätter zusammenziehen und die gestreckten Arme langsam nach hinten oben anheben, bis es in Brust und Schultern zieht.',
+      'Brustbein nach vorne oben, der Oberkörper bleibt aufrecht.'),
+    X('stab-kindhaltung', 'Kindhaltung mit Stab', ['Lat-Dehnung kniend'], ['dehnen', 'yoga'], false, ['stab', 'matte'], 'dehnen',
+      'Im Fersensitz den Stab mit den Handflächen nach oben greifen und mit gestreckten Armen weit nach vorne legen. Die Brust Richtung Boden sinken lassen, der Po bleibt bei den Fersen.',
+      'Dehnt den breiten Rückenmuskel und die Schultern. Die Knie dürfen weit auseinander.'),
+    X('stab-ueberkopf', 'Überkopf-Dehnung mit Stab', ['Liegende Schulterdehnung'], ['dehnen', 'yoga'], false, ['stab', 'matte'], 'dehnen',
+      'Rückenlage, Knie angewinkelt, Füße aufgestellt. Den Stab schulterbreit greifen und mit gestreckten Armen langsam über den Kopf Richtung Boden sinken lassen.',
+      'Der untere Rücken bleibt am Boden, die Rippen sinken nach unten.'),
     /* ---------- Yoga ---------- */
     X('sonnengruss', 'Sonnengruß', ['Sun Salutation'], ['yoga', 'aufwaermen'], false, ['matte'], 'dehnen',
       'Fließender Ablauf: Arme hoch, vorbeugen, in den Stütz, Kobra, herabschauender Hund und zurück nach vorne. Im Atemrhythmus bewegen.',
@@ -485,12 +501,12 @@ window.Takt = window.Takt || {};
       'abduktion-stehend', 'kickback-stehend', 'squat-pulses', 'quad-dehnung', 'nacken-dehnung', 'schulterkreisen', 'armkreisen',
       'hueftkreisen', 'worlds-greatest', 'seitdehnung', 'vorbeuge-stehend', 'waden-dehnung', 'schulter-dehnung', 'brust-dehnung',
       'sonnengruss', 'krieger-1', 'krieger-2', 'baum', 'dreieck', 'stuhl', 'krieger-3', 'hampelmann', 'laufen-stelle', 'kniehebelauf',
-      'burpees', 'squat-jacks', 'inchworm', 'schattenboxen', 'seilspringen'],
+      'burpees', 'squat-jacks', 'inchworm', 'schattenboxen', 'seilspringen', 'stab-durchzug', 'stab-schulter', 'stab-brust'],
     stuetz: ['vacuum-unterarmstuetz', 'plank', 'high-plank', 'plank-shoulder-taps', 'plank-hip-dips', 'mountain-climbers', 'plank-jacks',
       'spiderman-plank', 'plank-rock', 'plank-knie', 'plank-beinheben', 'herabschauender-hund', 'liegestuetz', 'knie-liegestuetz',
       'pike-pushup'],
     knien: ['vacuum-vierfuessler', 'vacuum-kniend', 'vacuum-kindhaltung', 'vacuum-baerenstand', 'bird-dog', 'baerenstand', 'donkey-kicks',
-      'fire-hydrants', 'kickback', 'katze-kuh', 'hueftbeuger-dehnung', 'taube', 'kindhaltung', 'faden-einfaedeln'],
+      'fire-hydrants', 'kickback', 'katze-kuh', 'hueftbeuger-dehnung', 'taube', 'kindhaltung', 'faden-einfaedeln', 'stab-kindhaltung'],
     bauchlage: ['superman', 'swimmer', 'ytw', 'snow-angels', 'rueckenstrecker', 'prone-cobra', 'arm-bein-bauchlage', 'kobra', 'heuschrecke',
       'sphinx'],
     sitzen: ['vacuum-sitzend', 'vacuum-schneidersitz', 'russian-twist', 'reverse-plank', 'knee-tucks', 'boot', 'band-rudern', 'hip-thrust',
@@ -500,12 +516,65 @@ window.Takt = window.Takt || {};
       'hollow-hold', 'hollow-rocks', 'scheibenwischer', 'crunch', 'reverse-crunch', 'fahrrad-crunch', 'beinheben', 'flutter-kicks',
       'scherenschlag', 'v-ups', 'sit-up', 'heel-touches', 'toe-touches', 'seitlicher-crunch', 'kreuz-crunch', 'tabletop-crunch',
       'glute-bridge', 'glute-bridge-einbeinig', 'frog-pumps', 'glute-bridge-marsch', 'tisch-rudern', 'figur-vier', 'liegender-twist',
-      'knie-zur-brust', 'happy-baby', 'totenstellung']
+      'knie-zur-brust', 'happy-baby', 'totenstellung', 'stab-ueberkopf']
   };
   T.POSITIONS = Object.keys(POSITION);
+
+  /* Bewegungsmuster jeder Kraft-Übung. Der Mix nimmt je Thema verschiedene Muster (MIX_MUSTER in js/workouts.js), z. B. bei
+     Beine & Po Kniebeuge, Brücke, Ausfallschritt und Abspreizen statt dreimal Kniebeuge (Nicole, 2026-10-25).
+     Dehnungen und Mobilisation haben keins und kommen nicht in den Kraft-Zirkel. */
+  var MUSTER = {
+    stabil: ['plank', 'high-plank', 'dead-bug', 'hollow-hold', 'hollow-rocks', 'baerenstand', 'plank-rock', 'plank-knie',
+      'plank-beinheben', 'boot'],                                     // Rumpf gegen Hohlkreuz stabil halten
+    seitlich: ['seitstuetz', 'seitstuetz-hueftheben', 'seitstuetz-knie', 'heel-touches', 'seitlicher-crunch'],
+    drehen: ['plank-shoulder-taps', 'plank-hip-dips', 'russian-twist', 'spiderman-plank', 'scheibenwischer', 'fahrrad-crunch',
+      'kreuz-crunch', 'pallof-press'],                                // Drehen oder gegen Drehen halten
+    gegengleich: ['bird-dog', 'swimmer', 'arm-bein-bauchlage'],
+    beugen: ['crunch', 'v-ups', 'sit-up', 'toe-touches', 'tabletop-crunch'],
+    'beine-heben': ['reverse-crunch', 'beinheben', 'flutter-kicks', 'scherenschlag', 'knee-tucks'],
+    'vakuum-halten': ['vacuum-stehend', 'vacuum-vierfuessler', 'vacuum-liegend', 'vacuum-sitzend', 'vacuum-vorgebeugt', 'vacuum-kniend',
+      'vacuum-schneidersitz', 'vacuum-kindhaltung', 'vacuum-arme-oben'],
+    'vakuum-bewegt': ['vacuum-fersentippen', 'vacuum-beckenkippen', 'vacuum-marschieren', 'vacuum-gehen'],
+    'vakuum-stuetz': ['vacuum-unterarmstuetz', 'vacuum-baerenstand', 'vacuum-glute-bridge'],
+    strecken: ['superman', 'rueckenstrecker', 'heuschrecke'],         // Rückenstrecker
+    schulterblatt: ['ytw', 'snow-angels', 'prone-cobra', 'wall-angels', 'band-pull-apart'],
+    ziehen: ['band-rudern', 'tisch-rudern'],
+    hueftbeuge: ['good-morning', 'standwaage', 'krieger-3'],
+    kniebeuge: ['kniebeuge', 'sumo-kniebeuge', 'wandsitzen', 'squat-pulses', 'stuhl', 'sprung-kniebeuge', 'squat-jacks'],
+    ausfallschritt: ['ausfallschritt', 'ausfallschritt-rueck', 'seitlicher-ausfallschritt', 'curtsy-lunge', 'bulgarian-split-squat',
+      'step-ups'],
+    'huefte-strecken': ['glute-bridge', 'glute-bridge-einbeinig', 'glute-bridge-marsch', 'hip-thrust', 'frog-pumps', 'donkey-kicks',
+      'kickback', 'kickback-stehend', 'reverse-plank'],              // Po: Hüfte strecken
+    abspreizen: ['fire-hydrants', 'clamshells', 'beinheben-seitlich', 'abduktion-stehend'],
+    anziehen: ['innenschenkel'],
+    wade: ['wadenheben'],
+    druecken: ['liegestuetz', 'knie-liegestuetz', 'pike-pushup', 'stuhl-dips'],
+    cardio: ['hampelmann', 'laufen-stelle', 'kniehebelauf', 'burpees', 'schattenboxen', 'seilspringen', 'mountain-climbers', 'plank-jacks']
+  };
+
+  /* Schwerpunkt im Durchgang (Dehnen, Yoga): Körperregion oder Art der Haltung. Der Mix geht sie reihum durch (MIX_FOKUS). */
+  var FOKUS = {
+    'beine-hinten': ['hamstring-dehnung', 'vorbeuge-stehend', 'waden-dehnung', 'herabschauender-hund', 'inchworm'],
+    'huefte-vorne': ['hueftbeuger-dehnung', 'quad-dehnung'],         // Hüftbeuger, vorderer Oberschenkel
+    huefte: ['taube', 'figur-vier', 'huefte-90-90', 'schmetterling', 'happy-baby'],
+    wirbelsaeule: ['katze-kuh', 'kindhaltung', 'knie-zur-brust', 'liegender-twist', 'faden-einfaedeln', 'open-book'],
+    oben: ['nacken-dehnung', 'schulter-dehnung', 'brust-dehnung', 'stab-durchzug', 'stab-schulter', 'stab-brust', 'stab-kindhaltung',
+      'stab-ueberkopf'],                                               // Schultern, Brust, Nacken
+    seite: ['seitdehnung', 'dreieck'],
+    stand: ['krieger-1', 'krieger-2', 'stuhl'],
+    balance: ['baum', 'krieger-3'],
+    rueckbeuge: ['kobra', 'sphinx', 'heuschrecke'],
+    rumpf: ['boot']
+  };
+
   var byId = {};
   T.EXERCISES.forEach(function (e) { byId[e.id] = e; });
-  T.POSITIONS.forEach(function (p) {
-    POSITION[p].forEach(function (id) { if (byId[id]) byId[id].position = p; });
-  });
+  function assign(map, field) {
+    Object.keys(map).forEach(function (k) {
+      map[k].forEach(function (id) { if (byId[id]) byId[id][field] = k; });
+    });
+  }
+  assign(POSITION, 'position');
+  assign(MUSTER, 'muster');
+  assign(FOKUS, 'fokus');
 })(window.Takt);

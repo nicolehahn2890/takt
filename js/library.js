@@ -22,7 +22,7 @@ window.Takt = window.Takt || {};
   ];
   var TAG_LABEL = { vacuum: 'Vacuum', atmung: 'Atmung', core: 'Core', bauch: 'Bauch', ruecken: 'R\u00fccken', 'beine-po': 'Beine & Po',
     dehnen: 'Dehnen', yoga: 'Yoga', ganzkoerper: 'Ganzk\u00f6rper', oberkoerper: 'Oberk\u00f6rper', aufwaermen: 'Aufw\u00e4rmen' };
-  var HILF_LABEL = { band: 'Band', stuhl: 'Stuhl', tisch: 'Tisch', sofa: 'Sofa', wand: 'Wand', matte: 'Matte' };
+  var HILF_LABEL = { band: 'Band', stuhl: 'Stuhl', tisch: 'Tisch', sofa: 'Sofa', wand: 'Wand', matte: 'Matte', stab: 'Besenstiel' };
 
   /* Suche ohne Gross/Klein und ohne Umlaut-Unterschied */
   function norm(s) {

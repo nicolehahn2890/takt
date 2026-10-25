@@ -96,11 +96,13 @@ var mixIdx = Takt.indexExercises(Takt.EXERCISES);
 function mixRank(id) { return Takt.POSITIONS.indexOf(mixIdx[id].position); }
 var MIX_KEYS = ['core', 'vacuum', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'];
 var MIX_KRAFT = ['core', 'bauch', 'beine', 'ruecken', 'ganz'];
-/* alle 255 Themen-Kombinationen, je mit eigenem Seed */
-function mixEach(minutes, fn) {
+/* alle 255 Themen-Kombinationen, je mit eigenem Seed; extra z. B. { stab: true } */
+function mixEach(minutes, fn, extra) {
   for (var mask = 1; mask < 256; mask++) {
     var th = MIX_KEYS.filter(function (k, i) { return mask & (1 << i); });
-    fn(Takt.makeMix({ themes: th, minutes: minutes, seed: mask * 31 + minutes }, Takt.EXERCISES), th);
+    var o = { themes: th, minutes: minutes, seed: mask * 31 + minutes };
+    Object.keys(extra || {}).forEach(function (k) { o[k] = extra[k]; });
+    fn(Takt.makeMix(o, Takt.EXERCISES), th);
   }
 }
 
@@ -231,10 +233,46 @@ test('mix Kombi: erst der Zirkel, dann Dehnen fuer die Muskeln, die gearbeitet h
     ok(mixIds(mixBlock(w, 'Hauptteil')).every(function (id) { return mixIdx[id].tags.indexOf('beine-po') >= 0; }), 'Hauptteil');
     var d = mixBlock(w, 'Dehnen').items;
     ok(d.every(function (i) { return i.rest === 5; }), '5 s Wechsel');
-    // Beine zuerst; passt die letzte Bein-Dehnung nicht mehr, darf eine kuerzere andere nachruecken
-    ok(d.filter(function (i) { return legs.indexOf(i.exId) >= 0; }).length >= Math.min(d.length, legs.length) - 1,
-      'Beine zuerst: ' + mixIds(mixBlock(w, 'Dehnen')));
+    // zuerst die Regionen der Beine (Beinrueckseite, Hueftbeuger, Huefte), dann der Rest des Koerpers
+    ok(d.filter(function (i) { return legs.indexOf(i.exId) >= 0; }).length >= Math.min(d.length, 3), 'Beine zuerst: ' + mixIds(mixBlock(w, 'Dehnen')));
+    var f = d.map(function (i) { return mixIdx[i.exId].fokus; });
+    ok(f.filter(function (x, j) { return f.indexOf(x) === j; }).length >= Math.min(d.length, 6) - 1, 'Regionen: ' + f);
     eq(mixIds(mixBlock(w, 'Abschluss')), ['totenstellung']);
+  }
+});
+
+test('mix Zirkel mit Hand und Fuss: je Thema feste Bewegungsmuster, Varianten zufaellig', function () {
+  var want = { bauch: ['beugen', 'stabil', 'drehen', 'beine-heben', 'seitlich'],
+    beine: ['kniebeuge', 'huefte-strecken', 'ausfallschritt', 'abspreizen', 'hueftbeuge'],
+    core: ['stabil', 'seitlich', 'vakuum-halten', 'drehen', 'gegengleich'],
+    ruecken: ['strecken', 'schulterblatt', 'gegengleich', 'hueftbeuge', 'schulterblatt'],
+    ganz: ['kniebeuge', 'druecken', 'cardio', 'stabil', 'cardio'],
+    vacuum: ['vakuum-halten', 'vakuum-bewegt', 'vakuum-halten', 'vakuum-stuetz', 'vakuum-halten'] };
+  Object.keys(want).forEach(function (th) {
+    var seen = {};
+    for (var seed = 1; seed <= 20; seed++) {
+      var ids = mixIds(mixBlock(Takt.makeMix({ themes: [th], minutes: 15, seed: seed }, Takt.EXERCISES), 'Hauptteil'));
+      eq(ids.map(function (id) { return mixIdx[id].muster; }).sort(), want[th].slice().sort(), th + ' ' + seed);
+      ids.forEach(function (id) { seen[id] = 1; });
+    }
+    ok(Object.keys(seen).length >= 10, th + ': zu wenig Abwechslung (' + Object.keys(seen).length + ' Uebungen)');
+  });
+  ['core,bauch', 'beine,bauch', 'ruecken,core'].forEach(function (th) {
+    var m = mixIds(mixBlock(Takt.makeMix({ themes: th.split(','), minutes: 15, seed: 4 }, Takt.EXERCISES), 'Hauptteil'))
+      .map(function (id) { return mixIdx[id].muster; });
+    eq(m.filter(function (x, i) { return m.indexOf(x) === i; }).length, 5, th + ': ' + m);
+  });
+});
+
+test('mix Durchgang: Dehnen reihum alle Koerperregionen, Yoga verschiedene Arten von Haltungen', function () {
+  for (var seed = 1; seed <= 10; seed++) {
+    var d = mixIds(mixBlock(Takt.makeMix({ themes: ['dehnen'], minutes: 10, seed: seed }, Takt.EXERCISES), 'Hauptteil'))
+      .map(function (id) { return mixIdx[id].fokus; });
+    // die letzte Uebung fuellt nur die Restzeit und darf eine Region doppeln
+    ok(d.filter(function (x, i) { return d.indexOf(x) === i; }).length >= Math.min(d.length, 6) - 1, 'Dehnen ' + seed + ': ' + d);
+    var y = mixIds(mixBlock(Takt.makeMix({ themes: ['yoga'], minutes: 10, seed: seed }, Takt.EXERCISES), 'Hauptteil')).slice(1)
+      .map(function (id) { return mixIdx[id].fokus; });
+    ok(y.filter(function (x, i) { return y.indexOf(x) === i; }).length >= Math.min(y.length, 8) - 1, 'Yoga ' + seed + ': ' + y);
   }
 });
 
@@ -246,6 +284,33 @@ test('mix Zirkel: reihum aus den Themen, 5 Uebungen, ab 30 Min. 6', function () 
     ok(main.filter(function (id) { return mixIdx[id].tags.indexOf('beine-po') >= 0; }).length >= 2, 'Beine ' + main);
   }
   eq(mixIds(mixBlock(Takt.makeMix({ themes: ['core'], minutes: 30, seed: 2 }, Takt.EXERCISES), 'Hauptteil')).length, 6);
+});
+
+test('mix Besenstiel: ohne Schalter nie, mit Schalter im Dehnen und Yoga zuerst', function () {
+  function stick(w) { return mixAll(w).filter(function (id) { return mixIdx[id].hilfsmittel.indexOf('stab') >= 0; }); }
+  for (var seed = 1; seed <= 20; seed++) {
+    eq(stick(Takt.makeMix({ themes: ['dehnen', 'ruecken'], minutes: 20, seed: seed }, Takt.EXERCISES)), [], 'ohne Schalter ' + seed);
+    ok(stick(Takt.makeMix({ themes: ['dehnen'], minutes: 15, seed: seed, stab: true }, Takt.EXERCISES)).length >= 2, 'Dehnen ' + seed);
+    ok(stick(Takt.makeMix({ themes: ['yoga'], minutes: 10, seed: seed, stab: true }, Takt.EXERCISES)).length >= 1, 'Yoga ' + seed);
+  }
+});
+
+test('mix mit Besenstiel: Dauer, Positionen und Speichern stimmen fuer jede Themen-Kombination', function () {
+  var bad = [];
+  [5, 15, 30].forEach(function (m) {
+    mixEach(m, function (w, th) {
+      var s = Takt.workoutSeconds(w, mixIdx);
+      if (s > m * 60 || s < m * 60 * 0.9) bad.push(th + ' ' + m + ' Min.: ' + s + ' s');
+      w.blocks.forEach(function (b) {
+        var r = b.items.map(function (i) { return mixRank(i.exId); });
+        if (r.some(function (x, i) { return i && x < r[i - 1]; })) bad.push(th + ' ' + b.label + ': ' + mixIds(b));
+      });
+      var all = mixAll(w);
+      if (all.some(function (x, i) { return all.indexOf(x) !== i; })) bad.push(th + ': doppelt');
+      if (!Takt.validateWorkout(Takt.copyWorkout(w)).ok) bad.push(th + ': ungueltig');
+    }, { stab: true });
+  });
+  eq(bad, []);
 });
 
 test('mix mit duennem Thema: Zirkel mit Core und Ganzkoerper aufgefuellt, Durchgang nicht', function () {

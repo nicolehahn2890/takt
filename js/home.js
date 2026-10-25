@@ -153,7 +153,7 @@ window.Takt = window.Takt || {};
   }
 
   /* ---------- Mix ---------- */
-  var mix = { themes: ['core'], minutes: 15, w: null };
+  var mix = { themes: ['core'], minutes: 15, stab: false, w: null };   // stab: Uebungen mit Besenstiel erlaubt
   var MIX_ORDER = ['core', 'vacuum', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'];
   var MIX_MINUTES = [5, 10, 15, 20, 30];
   function openMix() {
@@ -163,6 +163,7 @@ window.Takt = window.Takt || {};
       if (th.length) mix.themes = th;
       if (MIX_MINUTES.indexOf(last.minutes) >= 0) mix.minutes = last.minutes;
     }
+    if (last && typeof last.stab === 'boolean') mix.stab = last.stab;
     mix.w = null;
     renderMix();
     openSheet('mix');
@@ -172,6 +173,8 @@ window.Takt = window.Takt || {};
       return '<button class="chip' + (mix.themes.indexOf(k) >= 0 ? ' on' : '') + '" data-mix="' + k + '">' + T.esc(T.MIX_LABELS[k]) + '</button>';
     }).join('');
     Array.prototype.forEach.call($('mx-seg').children, function (b) { b.classList.toggle('on', Number(b.getAttribute('data-min')) === mix.minutes); });
+    $('mx-stab').classList.toggle('on', mix.stab);
+    $('mx-stab').setAttribute('aria-pressed', String(mix.stab));
     $('mx-go').disabled = !mix.themes.length;
     $('mx-go').hidden = !!mix.w;
     $('mx-res').hidden = !mix.w;
@@ -182,8 +185,8 @@ window.Takt = window.Takt || {};
     drawFigs($('mx-list'));
   }
   function doMix() {
-    mix.w = T.makeMix({ themes: mix.themes, minutes: mix.minutes, seed: Math.floor(Math.random() * 2147483647) }, T.EXERCISES);
-    api.data().settings.mixLast = { themes: mix.themes.slice(), minutes: mix.minutes };
+    mix.w = T.makeMix({ themes: mix.themes, minutes: mix.minutes, stab: mix.stab, seed: Math.floor(Math.random() * 2147483647) }, T.EXERCISES);
+    api.data().settings.mixLast = { themes: mix.themes.slice(), minutes: mix.minutes, stab: mix.stab };
     api.save();
     renderMix();
   }
@@ -217,6 +220,7 @@ window.Takt = window.Takt || {};
       var b = e.target.closest('[data-min]');
       if (b) { mix.minutes = Number(b.getAttribute('data-min')); mix.w = null; renderMix(); }
     });
+    $('mx-stab').addEventListener('click', function () { mix.stab = !mix.stab; mix.w = null; renderMix(); });
     $('mx-go').addEventListener('click', doMix);
     $('mx-again').addEventListener('click', doMix);
     $('mx-save').addEventListener('click', saveMix);

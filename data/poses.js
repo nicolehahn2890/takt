@@ -361,6 +361,19 @@ window.Takt = window.Takt || {};
       { handN: [178, 34] }, { handN: [144, 36] }, { handF: [176, 36] }], { hold: 0.1, move: 0.25 }),
     'seilspringen': P([S({ handN: [138, 94], handF: [134, 94] }),
       { hip: [120, 70], sh: [120, 20], footN: [121, 148], footF: [125, 148], footDirN: 60, footDirF: 60,
-        handN: [142, 86], handF: [138, 86] }], { hold: 0.05, move: 0.25 })
+        handN: [142, 86], handF: [138, 86] }], { hold: 0.05, move: 0.25 }),
+    /* ---------- Mit Stab (Besenstiel), 2026-10-25: der Stab laeuft durch beide Haende (js/figure.js) ---------- */
+    'stab-durchzug': P([FR({ handN: [168, 100], handF: [72, 100] }), { handN: [170, -24], handF: [70, -24] },
+      { handN: [196, 42], handF: [44, 42] }, { handN: [170, -24], handF: [70, -24] }],
+      { scale: 0.72, hold: 0.3, move: 1.1, props: [{ type: 'stab', hinten: true }] }),
+    'stab-schulter': P([S({ handN: [106, 26], elbowN: 1, handF: [104, 88], elbowF: 1 }), { handN: [106, 22], handF: [104, 84] }],
+      { hold: 0.8, move: 1.2, props: [{ type: 'stab', ext: 12 }] }),
+    'stab-brust': P([S({ handN: [100, 98], handF: [104, 96] }), { handN: [76, 78], handF: [80, 74] }],
+      { hold: 1, move: 1.4, props: [{ type: 'stab', ext: 12, dir: [0.5, -0.87] }] }),
+    'stab-kindhaltung': P([{ hip: [140, 134], sh: [92, 152], footN: [156, 162], footF: [159, 162], kneeN: 1, kneeF: 1, footDirN: 0,
+      footDirF: 0, handN: [30, 160], handF: [32, 158], elbowN: -1, elbowF: -1 }, { sh: [90, 154] }],
+      { hold: 1.2, move: 1.6, props: [{ type: 'stab', ext: 9, dir: [1, -0.4] }] }),
+    'stab-ueberkopf': P([SB({ hip: [152, 158], sh: [102, 158], footN: [198, 160], footF: [202, 160], handN: [104, 100], handF: [106, 98] }),
+      { handN: [44, 150], handF: [46, 147] }], { hold: 1, move: 1.6, props: [{ type: 'stab', ext: 9, dir: [0.5, -0.87] }] })
   };
 })(window.Takt);
