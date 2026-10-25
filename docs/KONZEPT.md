@@ -1,7 +1,7 @@
 # Homeworkout-Timer-App – Konzept und Umsetzungsplan
 
 Name: **Takt** – "Dein Training, dein Takt" · Repo `nicolehahn2890/takt` (öffentlich) · Live: https://nicolehahn2890.github.io/takt/
-Stand: 2026-10-25 (v=47) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
+Stand: 2026-10-25 (live v=47) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
 
 Dieses Dokument beschreibt den aktuellen Stand. Pläne und Specs unter `docs/superpowers/` sind Momentaufnahmen ihres Datums; weicht etwas ab, gilt dieses Dokument. Gestaltung: `docs/design_handoff_takt_redesign/design-system/DESIGN_GUIDE.md`.
 
@@ -426,7 +426,7 @@ Zurückgestellt:
 - Bei Kombinationen läuft jeder Teil für sich vom Stehen zum Liegen, zwischen Zirkel und Dehnen steht man einmal auf. Auch zwischen den Runden eines Zirkels steht man wieder auf (eine Runde geht einmal vom Stehen zum Boden).
 - In kurzen Kombinationen (10 Min.) hat der Dehn-Teil oft nur 2–3 Dehnungen, eine davon kürzer (30 s).
 
-Ansage „Vakuum“ (Nicole, 2026-10-25): „Vacuum mit Fersentippen“ las Katja noch englisch (die anderen 15 Vacuum-Übungen heißen „Stomach Vacuum …“ und werden schon als „Bauch-Vakuum …“ gesprochen). Der Ansagetext ist jetzt „Vakuum mit Fersentippen“, ein Test verhindert „Vacuum“ in Ansagen. **Offen:** Die Sprachdatei muss auf Nicoles PC neu erzeugt werden (`python tools/make_voice.py`, erzeugt nur diese eine Datei neu und aktualisiert `data/voice-manifest.js`), weil der Sprachdienst (`speech.platform.bing.com`) aus der Cloud-Sitzung gesperrt ist. Bis dahin spielt die App die alte Datei.
+Ansage „Vakuum“ (Nicole, 2026-10-25): „Vacuum mit Fersentippen“ las Katja noch englisch (die anderen 15 Vacuum-Übungen heißen „Stomach Vacuum …“ und werden schon als „Bauch-Vakuum …“ gesprochen). Der Ansagetext ist jetzt „Vakuum mit Fersentippen“, ein Test verhindert „Vacuum“ in Ansagen. Die Sprachdatei erzeugt Nicole auf ihrem PC neu (`python tools/make_voice.py` erzeugt nur diese eine Datei und aktualisiert `data/voice-manifest.js`), weil der Sprachdienst (`speech.platform.bing.com`) aus der Cloud-Sitzung gesperrt ist. Die App lädt die neue Datei von selbst, weil `js/audio.js` den Ansagetext an die Adresse hängt.
 
 ## 9. Verifikation
 
