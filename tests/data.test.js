@@ -192,6 +192,11 @@ test('data: Vorlagen vom Stehen zum Liegen, kein Aufstehen mitten im Block', fun
   eq(bad, []);
 });
 
+test('data: Katja sagt immer Vakuum, nie Vacuum', function () {
+  eq(Takt.EXERCISES.filter(function (e) { return /vacuum/i.test(e.ansage || e.name); }).map(function (e) { return e.id; }), []);
+  eq(Takt.EXERCISES.filter(function (e) { return e.id === 'vacuum-fersentippen'; })[0].ansage, 'Vakuum mit Fersentippen');
+});
+
 test('data: Stomach-Uebungen spricht Katja als Bauch-Vakuum', function () {
   var st = Takt.EXERCISES.filter(function (e) { return /^Stomach Vacuum/.test(e.name); });
   eq(st.length, 15);

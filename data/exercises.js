@@ -470,8 +470,9 @@ window.Takt = window.Takt || {};
   var ANSAGE = { 'huefte-90-90': 'Neunzig neunzig Hüfte' };
   T.EXERCISES.forEach(function (e) {
     if (ANSAGE[e.id]) e.ansage = ANSAGE[e.id];
-    // Katja liest deutsch: „Stomach“ klingt falsch, gesprochen wird „Bauch-Vakuum“ (Nicole, 2026-10-24)
-    else if (/^Stomach Vacuum/.test(e.name)) e.ansage = e.name.replace('Stomach Vacuum', 'Bauch-Vakuum');
+    // Katja liest deutsch: „Stomach“ und „Vacuum“ klingen falsch, gesprochen wird „Bauch-Vakuum“ (Nicole, 2026-10-24),
+    // ohne „Stomach“ davor einfach „Vakuum“ (Nicole, 2026-10-25)
+    else if (/Vacuum/.test(e.name)) e.ansage = e.name.replace('Stomach Vacuum', 'Bauch-Vakuum').replace(/Vacuum/g, 'Vakuum');
   });
 
   /* Ausgangsposition jeder Zeit-Übung, von oben nach unten. Mix und Vorlagen laufen in dieser Reihenfolge,
