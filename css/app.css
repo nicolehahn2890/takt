@@ -112,7 +112,6 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
 .t-ctrl .main { background: var(--theme); color: var(--bg); font-size: 16px; }
 .t-ctrl .main small { color: rgba(23,18,23,.7); }
 .t-ctrl button:active { transform: scale(.96); }
-.t-debug { text-align: center; color: var(--muted); font-size: 11px; padding: 0 12px 8px; font-variant-numeric: tabular-nums; opacity: .8; }
 
 .banner {
   position: absolute; left: 12px; right: 12px; top: calc(60px + env(safe-area-inset-top)); z-index: 5;

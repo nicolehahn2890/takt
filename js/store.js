@@ -13,7 +13,7 @@ window.Takt = window.Takt || {};
       settings: {
         lang: 'de', announce: 'full', sounds: true,
         defaultWork: 40, defaultRest: 10, prepSeconds: 5,
-        debugClock: true, intensity: 'normal', budgetLast: null, showImages: true
+        intensity: 'normal', budgetLast: null, showImages: true
       },
       log: [],
       learn: {},

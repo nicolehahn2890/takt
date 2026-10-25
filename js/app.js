@@ -290,17 +290,6 @@ window.Takt = window.Takt || {};
     }
     $('b-toggle-ic').textContent = v.paused ? '\u25b6\ufe0e' : '\u275a\u275a';
     $('b-toggle-label').textContent = v.paused ? 'Weiter' : 'Pause';
-
-    var dbg = $('t-debug');
-    if (data.settings.debugClock && v.startedAt) {
-      dbg.hidden = false;
-      dbg.textContent = 'Start ' + new Date(v.startedAt).toLocaleTimeString('de-DE') +
-        ' \u00b7 seit Start ' + T.fmt((Date.now() - v.startedAt) / 1000) +
-        ' \u00b7 Pausen ' + T.fmt(v.pausedSec) +
-        ' \u00b7 Rest gesamt ' + T.fmt(v.remainingTotal);
-    } else {
-      dbg.hidden = true;
-    }
   }
 
   function act(events) {

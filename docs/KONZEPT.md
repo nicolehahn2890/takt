@@ -1,7 +1,7 @@
 # Homeworkout-Timer-App – Konzept und Umsetzungsplan
 
 Name: **Takt** – "Dein Training, dein Takt" · Repo `nicolehahn2890/takt` (öffentlich) · Live: https://nicolehahn2890.github.io/takt/
-Stand: 2026-10-25 (live v=50) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
+Stand: 2026-10-25 (live v=51) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
 
 Dieses Dokument beschreibt den aktuellen Stand. Pläne und Specs unter `docs/superpowers/` sind Momentaufnahmen ihres Datums; weicht etwas ab, gilt dieses Dokument. Gestaltung: `docs/design_handoff_takt_redesign/design-system/DESIGN_GUIDE.md`.
 
@@ -103,7 +103,7 @@ Folgerung: Der Ansage-Weg über Sprachdateien ist bestätigt. Ansagen bei gesper
 
 ## 4. Produkt – Screens und Verhalten
 
-Stand v=50. Was noch fehlt oder bewusst wegfällt, ist markiert.
+Stand v=51. Was noch fehlt oder bewusst wegfällt, ist markiert.
 
 ### 4.1 Home (Startseite)
 - Kopf: Logo-Figur, „Takt“, „Dein Training, dein Takt“. Darunter Minuten und Anzahl Trainings dieser Woche.
@@ -151,7 +151,7 @@ Stand v=50. Was noch fehlt oder bewusst wegfällt, ist markiert.
 - Zurücksetzen: „Alles löschen“ entfernt Workouts, eigene Übungen mit Fotos, Notizen, Tagebuch, Abzeichen und Einstellungen (wie neu installiert; Vorlagen und Bibliothek bleiben). Zwei Rückfragen, die erste nennt den Stand des letzten Backups.
 
 ### 4.7 Einstellungen
-- Keine eigene Seite (bewusst zurückgestellt). Feste Werte: Vorbereitung 5 s, Ansagen voll, Töne an, Test-Hilfe Uhrzeit im Training an (`debugClock`, vor einer Veröffentlichung aus).
+- Keine eigene Seite (bewusst zurückgestellt). Feste Werte: Vorbereitung 5 s, Ansagen voll, Töne an. Die Test-Hilfe mit der Uhrzeit im Training ist seit v=51 entfernt.
 - Offen für später: Ansage-Umfang, Töne an/aus, Standard-Dauer/-Pause, „Über die App“ mit Hinweis „kein medizinischer Rat“ (wichtig, sobald andere die App nutzen).
 
 ## 5. Funktionen V1 im Detail
@@ -163,7 +163,7 @@ Stand v=50. Was noch fehlt oder bewusst wegfällt, ist markiert.
 - Ansagen als vorab erzeugte MP3-Dateien, abgespielt über Web Audio mit `navigator.audioSession.type = 'ambient'` (mischt sich mit Spotify, getestet). Die Dateien eines Workouts werden vor dem Start geladen und dekodiert. Der Start-Tipp schaltet den Ton frei (iOS-Regel). Keine Browser-Sprachausgabe (stoppt Spotify).
 - Hinweis auf der Startseite „Vor dem Start: Ohne Kopfhörer: Schalter am iPhone auf Klingeln, sonst bleibt Takt stumm.“ (v=46; vorher mit „Musik in Spotify starten, Takt vorne lassen“, in v=43 kurz entfernt, siehe 8.7).
 - Beim Wechsel zu Spotify läuft das Training weiter; Töne kamen im Test auch im Hintergrund.
-- Test-Hilfe (abschaltbar): klein Startuhrzeit und vergangene Zeit anzeigen, damit Nicole die Restzeit mit der iPhone-Uhr vergleichen kann (offene Beobachtung aus Test 2).
+- Test-Hilfe: klein Startuhrzeit und vergangene Zeit anzeigen, damit Nicole die Restzeit mit der iPhone-Uhr vergleichen kann (offene Beobachtung aus Test 2). Die Zeiten stimmten (3.3), die Zeile ist seit v=51 entfernt (Nicole, 2026-10-25).
 - Offline-fähig und installierbar (PWA: Manifest + Service Worker): Schritt 5.
 - Export/Import als JSON: umgesetzt als Backup in der Statistik (Schritt 4).
 
@@ -262,7 +262,7 @@ Geplant (Schritt 5): manifest.webmanifest, sw.js, weitere App-Icons, Schrift lok
   workouts: [ { id, name, theme, defaultWork, defaultRest, blocks: [ { label, repeat, items: [ { exId|null, name, duration, rest|null, bilateral } ] } ],
                 source: 'own', origin?: 'mix', createdAt, updatedAt } ],
   exercisesOwn: [ …wie Bibliothek, quelle: 'eigen', videoUrl, photoId ],
-  settings: { announce: 'full'|'name'|'beeps'|'silent', sounds, prepSeconds, debugClock, budgetLast: { [workoutId]: { minutes, intensity } },
+  settings: { announce: 'full'|'name'|'beeps'|'silent', sounds, prepSeconds, budgetLast: { [workoutId]: { minutes, intensity } },
               mixLast: { themes, minutes, stab }, lastBackup,
               lang, defaultWork, defaultRest, intensity, showImages },   // die letzten fünf vorgesehen, noch ungenutzt
   log: [ { id, workoutId, name, date, plannedSec, actualSec, activeSec, theme, areaSec, adjustments: [ { exId, delta } ],
@@ -295,7 +295,7 @@ Summe grob 1,0–1,2 Mio. Tokens über alle Schritte, verteilt auf mehrere Sitzu
 
 ### 8.1 Offene Kleinigkeiten aus Schritt 1 (aus den Code-Reviews, bewusst zurückgestellt)
 
-- Google Fonts extern statt lokal, Test-Hilfe `debugClock` vor Veröffentlichung auf `false` → Schritt 5 (PWA). (Favicon und `apple-touch-icon` gibt es seit Design v2.)
+- Google Fonts extern statt lokal → Schritt 5 (PWA). (Die Test-Hilfe `debugClock` ist seit v=51 entfernt; ältere Speicherstände behalten den Schlüssel, er wird nicht mehr gelesen.) (Favicon und `apple-touch-icon` gibt es seit Design v2.)
 - Bei jeder Änderung `?v=` in `index.html` hochzählen (iPhone-Cache); MP3s und Manifest haben keine Version.
 - Schließen-Knopf 38 px und Start-Knopf ca. 42 px kleiner als 44 px Touch-Ziel; `safe-area-inset-left/right` im Querformat; `-webkit-text-size-adjust`.
 - Wake Lock: Wettlauf, wenn `off()` während einer laufenden Anfrage kommt. (Erledigt v=49: eine Anfrage, die nach `off()` zurückkommt, wird sofort freigegeben.)
@@ -457,6 +457,7 @@ Behoben (Entscheidungen Nicole, 2026-10-25: alles außer dem Entwurfs-Speicher, 
 - Kleinere: Frühaufsteherin und Nachteule nach Mitternacht (5.8); „Als Nächstes:“ kam ohne Namen, wenn eine Sprachdatei nicht laden konnte; „Noch zehn Sekunden“ schnitt nach der Rückkehr aus einer anderen App den Seitenwechsel ab; eine zurückgestellte Abzeichen-Feier ging beim Neuladen verloren; Fenster und „Lädt …“ beim Start (8.3); voller Fotospeicher (8.2); Editor-Meldungen, Zurück aus der Kopie, „Ende“ statt Pause bei der letzten Übung (4.2); Suche mit ae, oe, ue (4.3); Mix-Fenster merkt die Auswahl sofort (5.4).
 - Aufgeräumt: ungenutzte Funktionen und CSS, der nie gespielte Satz „Los geht's!“ samt Datei.
 - Unterlagen abgeglichen: dieses Konzept (u. a. 6.1, 6.2, 8.8, 8.9), Design-Guide samt Kopie im Design-Skill (150 Übungen, Besenstiel), Figuren-Galerie (Filter Aufwärmen).
+- Uhrzeit-Zeile unten im Training (Test-Hilfe aus Schritt 1) entfernt (v=51, Nicole).
 - Aufwärmen der 8 Kraft-Vorlagen nach dem Schema des Mix (v=50, Vorschlag von Nicole abgenommen): erst den Puls heben (Auf der Stelle laufen, Hampelmann, Kniehebelauf, Schattenboxen), dann die Gelenke des Themas (Hüftkreisen, Inchworm, World's Greatest Stretch, Katze-Kuh, Arm- und Schulterkreisen), 5 s Wechsel statt 15 s Pause. Raus aus dem Aufwärmen: Bauchatmung (Vacuum & Core), Mountain Climbers, Squat Jacks und die doppelte Kniebeuge (Beine & Po kurz). Bei „Starker Rücken lang“ steht man nach dem Aufwärmen nicht mehr vom Boden auf. Dauern: Vacuum & Core 10:35 / 20:10, Bauch 9:40 / 20:25, Beine & Po 10:40 / 20:15, Starker Rücken 10:00 / 20:05. Ein Test prüft das Schema.
 
 Zurückgestellt:
