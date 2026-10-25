@@ -242,3 +242,29 @@ test('data: Stomach-Uebungen spricht Katja als Bauch-Vakuum', function () {
   st.forEach(function (e) { eq(e.ansage, e.name.replace('Stomach Vacuum', 'Bauch-Vakuum'), e.id); });
   eq(Takt.EXERCISES.filter(function (e) { return e.id === 'plank'; })[0].ansage, undefined);
 });
+
+test('data: Aufwaermen der Vorlagen wie im Mix (Puls, dann Gelenke, 5 s Wechsel, nicht tiefer als der Hauptteil)', function () {
+  var idx = Takt.indexExercises(Takt.EXERCISES), bad = [];
+  var PULS = ['laufen-stelle', 'hampelmann', 'kniehebelauf', 'seilspringen', 'schattenboxen'];
+  var rank = function (id) { return Takt.POSITIONS.indexOf(idx[id].position); };
+  var warmed = 0;
+  Takt.TEMPLATES.forEach(function (w) {
+    var warm = w.blocks.filter(function (b) { return b.label === 'Aufwärmen'; })[0];
+    if (!warm) return;
+    warmed++;
+    var main = w.blocks.filter(function (b) { return b.label === 'Hauptteil'; })[0];
+    var ids = warm.items.map(function (i) { return i.exId; });
+    var puls = ids.map(function (id) { return PULS.indexOf(id) >= 0; });
+    if (!puls[0]) bad.push(w.id + ': beginnt nicht mit Puls');
+    if (puls[puls.length - 1]) bad.push(w.id + ': endet nicht mit Gelenken');
+    if (puls.some(function (p, i) { return p && i > 0 && !puls[i - 1]; })) bad.push(w.id + ': Puls nach Gelenken');
+    warm.items.forEach(function (i, k) {
+      if (i.rest !== (k < warm.items.length - 1 ? 5 : null)) bad.push(w.id + ': Pause nach ' + i.exId);
+      if (!idx[i.exId].tags.some(function (t) { return t === 'aufwaermen' || t === 'dehnen' || t === 'ganzkoerper'; })) bad.push(w.id + ': ' + i.exId + ' keine Aufwaerm-Uebung');
+    });
+    if (rank(ids[ids.length - 1]) > rank(main.items[0].exId)) bad.push(w.id + ': Aufwaermen endet tiefer als der Hauptteil beginnt');
+    main.items.forEach(function (i) { if (ids.indexOf(i.exId) >= 0) bad.push(w.id + ': ' + i.exId + ' doppelt'); });
+  });
+  eq(bad, []);
+  eq(warmed, 8);
+});
