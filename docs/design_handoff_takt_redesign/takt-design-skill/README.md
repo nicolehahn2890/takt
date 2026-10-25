@@ -4,7 +4,7 @@
 
 Screens: **Home** (weekly stat, Mix / + Neu, Meine Workouts, Vorlagen by theme) · **Vorschau** of a template · **Anpassen** sheet (time + intensity) · **Mix** sheet (themes, Besenstiel switch, total time) · **Training** (ring timer or breathing circle, figure, next-up, transport) · **Geschafft** (summary, new badges, note; „Kurz reingeschaut“ without note when less than half the planned time was trained) · **Bibliothek** (search, chips, 150 exercises) · **Übungs-Detail** · eigene Übung / Workout-Editor · **Statistik** (week/month/year, Abzeichen, Tagebuch, Backup, Zurücksetzen). A bottom tab bar switches Home / Bibliothek / Statistik.
 
-> **Status (2026-10-24):** this guide is kept in sync with the app. Where it disagrees with `css/app.css`, the CSS wins; please fix the guide. The folders `assets/figure/`, `assets/photos/` and the logo alternates named in the index live in the Claude Design project; in the repo only `assets/badges/` is bundled here, the logo is `assets/takt-mark.svg` at the repo root.
+> **Status (2026-10-25, app v=52):** this guide is kept in sync with the app. Where it disagrees with `css/app.css`, the CSS wins; please fix the guide. The folders `assets/figure/`, `assets/photos/` and the logo alternates named in the index live in the Claude Design project; in the repo only `assets/badges/` is bundled here, the logo is `assets/takt-mark.svg` at the repo root.
 
 ## Sources
 - GitHub: **https://github.com/nicolehahn2890/takt** (branch `main`) — `css/app.css`, `index.html`, `js/app.js`, `js/library.js`, `js/figure.js`, `data/*.js`, `mockups/editor/index.html` (workout-editor prototype, matches the three screenshots supplied in chat), `docs/KONZEPT.md`. Explore the repo further for anything this system doesn't cover (editor, picker, Mix logic, voice lines).
@@ -40,7 +40,7 @@ Intentional additions: **ExerciseFigure** (React wrapper around `Takt.figure` so
 - **Placeholders** give a concrete example: „Suchen, z. B. Plank oder Brücke“, „z. B. Knie leicht gebeugt lassen“.
 - **Errors** explain and suggest: „Speichern hat nicht geklappt. Ist der Speicher voll oder der private Modus an?“, „Bitte gib dem Workout einen Namen.“
 - **Instructional copy** (exercise descriptions) is imperative, body-focused, 1–2 sentences: „Im Vierfüßlerstand ganz ausatmen und den Bauch zur Wirbelsäule hochziehen.“ Hints add one safety cue.
-- **Voice lines:** „Mach dich bereit.“ „Los geht's!“ „Pause.“ „Als Nächstes:“ „Noch zehn Sekunden.“ „Seite wechseln.“
+- **Voice lines:** „Mach dich bereit.“ „Pause.“ „Als Nächstes:“ „Noch zehn Sekunden.“ „Seite wechseln.“ „Links.“ „Rechts.“ „Geschafft, super gemacht!“ plus every exercise name (where Katja misreads one, a spoken text replaces it, e.g. „Stomach Vacuum …“ → „Bauch-Vakuum …“). „Los geht's!“ was never played and is gone since v=49.
 - **No emoji.** Unicode glyphs only for controls.
 
 ## VISUAL FOUNDATIONS

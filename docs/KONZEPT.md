@@ -24,7 +24,7 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 - Eigenes Training in unter 2 Minuten zusammenklicken und sofort starten.
 - Beim Training: Handy liegt auf der Matte, Bildschirm bleibt an, Übung wird angesagt, nächste Übung ist sichtbar, Bedienung mit einem Tipp.
 - 6 Themen mit je 2 fertigen Vorlagen (kurz ~10 Min, lang ~20 Min).
-- Übungsbibliothek (deutsch, ~100 Home-Übungen) mit Kurzbeschreibung, Bild wo vorhanden, eigene Übungen/Fotos/Video-Links möglich.
+- Übungsbibliothek (deutsch, ~100 Home-Übungen, heute 150) mit Kurzbeschreibung, Bild wo vorhanden, eigene Übungen/Fotos/Video-Links möglich.
 - Später ohne Umbau als Store-App verpackbar (Capacitor) und für andere nutzbar.
 
 **Nicht-Ziele (V1)**
@@ -286,7 +286,7 @@ Dazu `takt_run_v1` (laufendes Training samt zurückgestellter Abzeichen-Feiern, 
 | 0a | Mockup des Training-Screens (statisches HTML, 2 Varianten) im Browser zeigen | Erledigt: Variante A (Ring) | ~40k |
 | 0b | Spike auf Nicoles iPhone (Pflicht, Hauptgerät): Mini-Seite mit Sprachansage, Ton, Bildschirm-an, Spotify nebenbei, Stummschalter, App-Wechsel | Erledigt: Test 1 und 2, Ergebnis in 3.1 und 3.2 | ~30k |
 | 1 | Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Sprachdateien für feste Sätze (gewählte Stimme), Training-Screen (Ring) mit einem Test-Workout, Test-Hilfe Uhrzeit (Repo + Pages gibt es schon) | Erledigt 2026-10-22 (live, 52 Tests grün, Code-Review ohne kritische Funde, iPhone-Test bestanden, siehe 3.3) | ~220k |
-| 2 | Bibliothek (110 Übungen mit animierter Figur statt Bildern, Katja-Ansagen; seit 2026-10-23 145), Übungs-Screens, eigene Übungen mit Foto/Video | Erledigt 2026-10-22 (live, 81 Tests grün, zwei Prüfungen ohne kritische Funde). iPhone-Test bestanden 2026-10-24 (Figuren flüssig, Ansage anhören, eigenes Foto, Suche mit Tastatur) | ~450k |
+| 2 | Bibliothek (110 Übungen mit animierter Figur statt Bildern, Katja-Ansagen; seit 2026-10-23 145, seit 2026-10-25 150), Übungs-Screens, eigene Übungen mit Foto/Video | Erledigt 2026-10-22 (live, 81 Tests grün, zwei Prüfungen ohne kritische Funde). iPhone-Test bestanden 2026-10-24 (Figuren flüssig, Ansage anhören, eigenes Foto, Suche mit Tastatur) | ~450k |
 | 3 | Workout-Editor, Start-Screen, 12 Vorlagen, Zeit-Budget, Intensität, Mix-Modus | Erledigt 2026-10-23 (live v=15, 121 Tests grün, klickbarer Entwurf von Nicole abgenommen, zwei Prüfungen, wichtige Funde behoben). iPhone-Test bestanden 2026-10-24 (Editor, Kopie einer Vorlage, Anpassen) | ~290k |
 | 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Backup (Teilen per Link entfällt vorerst) | Erledigt 2026-10-24 (live v=41, 201 Tests grün, Prüfung ohne kritische Funde; Abzeichen auf Nicoles Wunsch mit Icons + Fortschritt, 22 Stück). Nachbesserungen nach dem ersten Benutzen v=42–44 (8.7), 205 Tests grün. iPhone-Test 2026-10-24 bestanden bis auf die lernende Dauer (noch nicht geprüft), siehe 8.6 | ~250k + ~70k Abzeichen v2 |
 | 5 | PWA (Manifest, Service Worker, Icons), Querformat, Feinschliff, Installations-Hinweis beim ersten Start, Abschlusstest auf dem iPhone | Installierbar, offline, auf dem Homescreen | ~120k |
@@ -443,7 +443,7 @@ Meine Festlegungen (Nicole kann widersprechen): Damit kein Muster nur eine einzi
 
 Die Sprachdateien der 5 Stab-Übungen hat Nicole am selben Tag auf ihrem PC erzeugt (`python tools/make_voice.py`, der Sprachdienst ist aus der Cloud-Sitzung gesperrt); damit sind alle Tests grün.
 
-### 8.10 Prüfung der ganzen App (2026-10-25, v=49)
+### 8.10 Prüfung der ganzen App (2026-10-25, v=49 bis v=52)
 
 Wunsch von Nicole: die komplette App auf Fehler prüfen und alle Unterlagen auf Widersprüche und Veraltetes. Geprüft: alle Tests (auch in 5 Zeitzonen), Querverweise der Daten (150 Übungen, 144 Figuren, Sprachdateien, 12 Vorlagen, 22 Abzeichen), alle Screens im Browser, dazu drei unabhängige Code-Prüfungen (Training; Speichern und Statistik; Workouts, Editor und Bibliothek). Kein Absturz, kein Datenverlust gespeicherter Daten, keine Sicherheitslücke.
 
