@@ -1,4 +1,4 @@
-/* Takt: Übungsbibliothek (150 Übungen, davon 6 Atem-Übungen ohne Figur). Haltungen der Figur: data/poses.js.
+/* Takt: Übungsbibliothek (152 Übungen, davon 6 Atem-Übungen ohne Figur). Haltungen der Figur: data/poses.js.
    Nach Änderungen an Namen: python tools/make_voice.py */
 window.Takt = window.Takt || {};
 (function (T) {
@@ -30,6 +30,12 @@ window.Takt = window.Takt || {};
     X('vacuum-fersentippen', 'Vacuum mit Fersentippen', ['Heel Taps mit Vakuum'], ['vacuum', 'core'], false, ['matte'], 'core',
       'Rückenlage, Beine angewinkelt in der Luft, Knie über der Hüfte. Bauch tief einziehen und halten, dabei abwechselnd eine Ferse langsam zum Boden tippen.',
       'Der Bauch bleibt die ganze Zeit eingezogen, flach weiteratmen.'),
+    X('vacuum-beinstrecken', 'Vacuum mit Beinstrecken', ['Dead Bug nur Beine mit Vakuum'], ['vacuum', 'core'], false, ['matte'], 'core',
+      'Rückenlage, Arme neben dem Körper, Knie über der Hüfte. Bauch tief einziehen und halten, dabei abwechselnd ein Bein langsam nach vorne strecken und wieder zurückholen.',
+      'Der untere Rücken bleibt am Boden, flach weiteratmen.'),
+    X('vacuum-dead-bug', 'Vacuum mit Dead Bug', ['Dead Bug mit Vakuum'], ['vacuum', 'core'], false, ['matte'], 'core',
+      'Rückenlage, Arme zur Decke, Knie über der Hüfte. Bauch tief einziehen und halten, dabei gegengleich einen Arm nach hinten und das andere Bein nach vorne strecken und zurückholen.',
+      'Langsam bewegen, der Bauch bleibt die ganze Zeit eingezogen.'),
     X('vacuum-vorgebeugt', 'Stomach Vacuum vorgebeugt', ['Vakuum mit Händen auf den Oberschenkeln'], ['vacuum', 'core'], false, [], 'core',
       'Leicht in die Knie gehen und mit geradem Rücken nach vorne beugen, Hände auf die Oberschenkel. Ganz ausatmen und den Bauch tief nach innen und oben ziehen.',
       'Die klassische Variante, hier lässt sich der Bauch am leichtesten einziehen.'),
@@ -512,7 +518,7 @@ window.Takt = window.Takt || {};
     sitzen: ['vacuum-sitzend', 'vacuum-schneidersitz', 'russian-twist', 'reverse-plank', 'knee-tucks', 'boot', 'band-rudern', 'hip-thrust',
       'stuhl-dips', 'hamstring-dehnung', 'schmetterling', 'huefte-90-90'],
     seitenlage: ['seitstuetz', 'seitstuetz-hueftheben', 'seitstuetz-knie', 'clamshells', 'beinheben-seitlich', 'innenschenkel', 'open-book'],
-    rueckenlage: ['vacuum-liegend', 'vacuum-fersentippen', 'vacuum-glute-bridge', 'vacuum-beckenkippen', 'vacuum-marschieren', 'dead-bug',
+    rueckenlage: ['vacuum-liegend', 'vacuum-fersentippen', 'vacuum-beinstrecken', 'vacuum-dead-bug', 'vacuum-glute-bridge', 'vacuum-beckenkippen', 'vacuum-marschieren', 'dead-bug',
       'hollow-hold', 'hollow-rocks', 'scheibenwischer', 'crunch', 'reverse-crunch', 'fahrrad-crunch', 'beinheben', 'flutter-kicks',
       'scherenschlag', 'v-ups', 'sit-up', 'heel-touches', 'toe-touches', 'seitlicher-crunch', 'kreuz-crunch', 'tabletop-crunch',
       'glute-bridge', 'glute-bridge-einbeinig', 'frog-pumps', 'glute-bridge-marsch', 'tisch-rudern', 'figur-vier', 'liegender-twist',
@@ -534,7 +540,8 @@ window.Takt = window.Takt || {};
     'beine-heben': ['reverse-crunch', 'beinheben', 'flutter-kicks', 'scherenschlag', 'knee-tucks'],
     'vakuum-halten': ['vacuum-stehend', 'vacuum-vierfuessler', 'vacuum-liegend', 'vacuum-sitzend', 'vacuum-vorgebeugt', 'vacuum-kniend',
       'vacuum-schneidersitz', 'vacuum-kindhaltung', 'vacuum-arme-oben'],
-    'vakuum-bewegt': ['vacuum-fersentippen', 'vacuum-beckenkippen', 'vacuum-marschieren', 'vacuum-gehen'],
+    'vakuum-bewegt': ['vacuum-fersentippen', 'vacuum-beinstrecken', 'vacuum-dead-bug', 'vacuum-beckenkippen', 'vacuum-marschieren',
+      'vacuum-gehen'],
     'vakuum-stuetz': ['vacuum-unterarmstuetz', 'vacuum-baerenstand', 'vacuum-glute-bridge'],
     strecken: ['superman', 'rueckenstrecker', 'heuschrecke'],         // Rückenstrecker
     schulterblatt: ['ytw', 'snow-angels', 'prone-cobra', 'wall-angels', 'band-pull-apart'],

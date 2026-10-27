@@ -304,6 +304,7 @@ article.card p::before { content: ''; width: 8px; height: 8px; border-radius: 50
 .sheet .sub { color: var(--muted); font-size: 14px; line-height: 1.45; margin: 2px 0 4px; }
 .sheet .sub b { color: var(--text); }
 .fld { display: block; }
+.fld[hidden] { display: none; }
 .fld > span { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin: 18px 2px 6px; }
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--sunken); border-radius: 14px; padding: 4px; gap: 4px; }
 .seg button { min-height: 42px; border-radius: 11px; font-weight: 600; color: var(--muted); transition: background .15s, color .15s; }

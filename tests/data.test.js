@@ -3,9 +3,9 @@ var D_HILF = ['band', 'stuhl', 'tisch', 'sofa', 'wand', 'matte', 'stab'];
 var D_ICONS = ['core', 'dehnen', 'beine', 'ganz'];
 function dSubset(arr, allowed) { return Array.isArray(arr) && arr.every(function (x) { return allowed.indexOf(x) >= 0; }); }
 
-test('data: genau 150 Uebungen mit eindeutigen Ids', function () {
+test('data: genau 152 Uebungen mit eindeutigen Ids', function () {
   var ids = Takt.EXERCISES.map(function (e) { return e.id; });
-  eq(ids.length, 150);
+  eq(ids.length, 152);
   var dup = ids.filter(function (id, i) { return ids.indexOf(id) !== i; });
   eq(dup, []);
   var bad = ids.filter(function (id) { return !/^[a-z0-9-]+$/.test(id); });
@@ -147,6 +147,32 @@ test('data: Vacuum mit Fersentippen ersetzt Bauchnabel nach innen', function () 
   var e = Takt.EXERCISES.filter(function (x) { return x.id === 'vacuum-fersentippen'; })[0];
   ok(e && e.tags.indexOf('vacuum') >= 0, 'neue Uebung fehlt');
   eq(Takt.POSES['vacuum-fersentippen'].frames.length > 1, true);
+});
+
+test('data: Vacuum mit Beinstrecken und Vacuum mit Dead Bug (Nicole, 2026-10-27)', function () {
+  var ex = {};
+  Takt.EXERCISES.forEach(function (e) { ex[e.id] = e; });
+  ['vacuum-beinstrecken', 'vacuum-dead-bug'].forEach(function (id) {
+    var e = ex[id];
+    ok(e, id + ' fehlt');
+    eq([e.tags, e.hilfsmittel, e.beidseitig, e.position, e.muster], [['vacuum', 'core'], ['matte'], false, 'rueckenlage', 'vakuum-bewegt'], id);
+    ok(Takt.POSES[id].frames.length >= 4, id + ': nicht beide Seiten');
+  });
+  eq([ex['vacuum-beinstrecken'].name, ex['vacuum-beinstrecken'].ansage], ['Vacuum mit Beinstrecken', 'Vakuum mit Beinstrecken']);
+  eq([ex['vacuum-dead-bug'].name, ex['vacuum-dead-bug'].ansage], ['Vacuum mit Dead Bug', 'Vakuum mit Dead Bug']);
+  // Beinstrecken: Arme bleiben neben dem Koerper; Dead Bug: ein Arm geht nach hinten ueber den Kopf. Bei beiden wird ein Bein lang.
+  function reach(id) {
+    var p = Takt.POSES[id], r = { hand: 999, foot: 0 }, cycle = ((p.hold || 0) + (p.move || 0)) * p.frames.length * 1000;
+    for (var t = 0; t <= cycle; t += 50) {
+      var f = Takt.figure.frameAt(p, t);
+      r.hand = Math.min(r.hand, f.handN[0], f.handF[0]);
+      r.foot = Math.max(r.foot, f.footN[0], f.footF[0]);
+    }
+    return r;
+  }
+  var b = reach('vacuum-beinstrecken'), d = reach('vacuum-dead-bug');
+  ok(b.hand > 100 && b.foot >= 185, 'Beinstrecken: ' + JSON.stringify(b));
+  ok(d.hand < 40 && d.foot >= 185, 'Dead Bug: ' + JSON.stringify(d));
 });
 
 test('data: jede Vacuum-Uebung zeigt einen Pfeil zum Bauch', function () {

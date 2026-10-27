@@ -1,7 +1,7 @@
 # Homeworkout-Timer-App – Konzept und Umsetzungsplan
 
 Name: **Takt** – "Dein Training, dein Takt" · Repo `nicolehahn2890/takt` (öffentlich) · Live: https://nicolehahn2890.github.io/takt/
-Stand: 2026-10-25 (live v=52) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
+Stand: 2026-10-27 (live v=53) · Ordner: `C:\Users\nicol\.claude\Projekt Homeworkout\`
 
 Dieses Dokument beschreibt den aktuellen Stand. Pläne und Specs unter `docs/superpowers/` sind Momentaufnahmen ihres Datums; weicht etwas ab, gilt dieses Dokument. Gestaltung: `docs/design_handoff_takt_redesign/design-system/DESIGN_GUIDE.md`.
 
@@ -24,7 +24,7 @@ Gewünscht ist eine App, in der man **eigene Trainings** aus Übung + Dauer zusa
 - Eigenes Training in unter 2 Minuten zusammenklicken und sofort starten.
 - Beim Training: Handy liegt auf der Matte, Bildschirm bleibt an, Übung wird angesagt, nächste Übung ist sichtbar, Bedienung mit einem Tipp.
 - 6 Themen mit je 2 fertigen Vorlagen (kurz ~10 Min, lang ~20 Min).
-- Übungsbibliothek (deutsch, ~100 Home-Übungen, heute 150) mit Kurzbeschreibung, Bild wo vorhanden, eigene Übungen/Fotos/Video-Links möglich.
+- Übungsbibliothek (deutsch, ~100 Home-Übungen, heute 152) mit Kurzbeschreibung, Bild wo vorhanden, eigene Übungen/Fotos/Video-Links möglich.
 - Später ohne Umbau als Store-App verpackbar (Capacitor) und für andere nutzbar.
 
 **Nicht-Ziele (V1)**
@@ -103,7 +103,7 @@ Folgerung: Der Ansage-Weg über Sprachdateien ist bestätigt. Ansagen bei gesper
 
 ## 4. Produkt – Screens und Verhalten
 
-Stand v=52. Was noch fehlt oder bewusst wegfällt, ist markiert.
+Stand v=53. Was noch fehlt oder bewusst wegfällt, ist markiert.
 
 ### 4.1 Home (Startseite)
 - Kopf: Logo-Figur, „Takt“, „Dein Training, dein Takt“. Darunter Minuten und Anzahl Trainings dieser Woche.
@@ -121,7 +121,7 @@ Stand v=52. Was noch fehlt oder bewusst wegfällt, ist markiert.
 - „Speichern“, „Speichern & Starten“, „Löschen“. Vorlagen sind schreibgeschützt; „Bearbeiten (als Kopie)“ legt eine Kopie unter „Meine Workouts“ an, „Zurück“ führt dann wieder in die Vorschau. Meldungen wie „Füge mindestens eine Übung hinzu.“ verschwinden, sobald der Fehler behoben ist.
 
 ### 4.3 Übungsbibliothek
-- 150 Übungen (5 davon mit Besenstiel). Suche (Umlaute auch als ae, oe, ue) und Filter: Alle, Core, Bauch, Rücken, Beine & Po, Dehnen, Yoga, Atmung & Vacuum, Ganzkörper, Eigene.
+- 152 Übungen (5 davon mit Besenstiel). Suche (Umlaute auch als ae, oe, ue) und Filter: Alle, Core, Bauch, Rücken, Beine & Po, Dehnen, Yoga, Atmung & Vacuum, Ganzkörper, Eigene.
 - Übungs-Detail: animierte Figur (oder eigenes Foto), Alias, Markierungen (Themen, beidseitig, Hilfsmittel), Beschreibung, Hinweis, Atem-Rhythmus, „Ansage anhören“, Video-Link, eigene Notiz.
 - Eigene Übung: Name, Beschreibung, Themen, beidseitig, Foto (auf max. 600 px verkleinert), Video-Link; bearbeiten und löschen.
 
@@ -174,11 +174,12 @@ Nächste Übung immer sichtbar; bei 10 s "noch 10 Sekunden", bei 3 s Countdown; 
 Im Fenster „Anpassen“: Schieber ab 5 Min. bis zur vollen Länge bei der gewählten Intensität (bei „hart“ also länger). Alle Dauern ohne die 5 s Vorbereitung, wie auf Karte und Vorschau. Erst werden alle Dauern und Pausen anteilig gekürzt (auf 5 s gerundet, mindestens 10 s je Übung, nie länger als geplant). Reicht das nicht, fallen Runden weg (zuerst die letzte Runde des Blocks mit den meisten Runden), dann die Pausen, zuletzt Übungen von hinten.
 
 ### 5.4 Mix-Modus
-Fenster „Mix“: Themen antippen (mehrere möglich): Core, Vacuum, Bauch, Beine & Po, Rücken, Dehnen, Yoga, Ganzkörper; Gesamtdauer 5, 10, 15, 20 oder 30 Min. Schalter „Besenstiel“ unter „Hilfsmittel“ (seit v=48, zu Beginn aus). Themen, Dauer und Schalter merkt sich das Fenster sofort (seit v=49, vorher erst beim Mischen). Takt zieht zufällig aus der Bibliothek (nur Zeit-Übungen mit Figur, ohne Hilfsmittel außer Matte, Wand und mit Schalter Besenstiel, keine Übung doppelt), bei mehreren Themen reihum aus jedem Thema. „Core“ enthält auch die Vacuum-Übungen, „Vacuum“ nur diese. Aufbau seit v=47 (Nicole, 2026-10-25, Hintergrund in 8.8 und 8.9):
+Fenster „Mix“: Themen antippen (mehrere möglich): Core, Vacuum, Bauch, Beine & Po, Rücken, Dehnen, Yoga, Ganzkörper; Gesamtdauer 5, 10, 15, 20 oder 30 Min. Schalter „Besenstiel“ unter „Hilfsmittel“ (seit v=48, zu Beginn aus). Ist Dehnen angetippt, erscheint die Zeile „Dehnen“: Gemischt (Start), Oberkörper oder Unterkörper (seit v=53). Themen, Dauer, Schalter und Dehnen-Auswahl merkt sich das Fenster sofort (seit v=49, vorher erst beim Mischen). Takt zieht zufällig aus der Bibliothek (nur Zeit-Übungen mit Figur, ohne Hilfsmittel außer Matte, Wand und mit Schalter Besenstiel, keine Übung doppelt), bei mehreren Themen reihum aus jedem Thema. „Core“ enthält auch die Vacuum-Übungen, „Vacuum“ nur diese. Aufbau seit v=47 (Nicole, 2026-10-25, Hintergrund in 8.8 und 8.9):
 - **Zirkel** (Core, Bauch, Beine & Po, Rücken, Ganzkörper, Vacuum): 5 Übungen (5 Min.: 4, 30 Min.: 6), Pause 15 s. Runden (bis 4) und Arbeitszeit (20–60 s) füllen die Zeit bis auf 5 %, die Arbeitszeit liegt dabei möglichst nah an 40 s; die Gesamtdauer wird nie überschritten. Beidseitige Übungen bekommen wie in den Vorlagen das Anderthalbfache (40 s, beidseitig 60 s = 30 s je Seite). Ein dünnes Thema wird mit Core und Ganzkörper aufgefüllt.
 - **Bewegungsmuster** (seit v=48): Je Thema kommen feste Muster in dieser Reihenfolge dran, welche Übung es wird, bleibt Zufall. Bauch: Crunch, Stabilität (z. B. Dead Bug), Drehung, untere Bauchmuskeln, seitliche Bauchmuskeln. Beine & Po: Kniebeuge, Hüftstreckung (Brücke, Kickback), Ausfallschritt, Abspreizen, Hüftbeuge, dann Innenschenkel, Wade. Core: Stabilität, Seitstütz, ruhiges Vakuum, Drehung, gegengleich (Bird Dog, Swimmer), dann Brücke. Rücken: Rückenstrecker, Schulterblätter, gegengleich, Hüftbeuge (Good Morning, Standwaage), Schulterblätter. Ganzkörper: Kniebeuge-Sprung, Drücken (Liegestütz), Cardio, Stütz, Cardio, dann Hüftstreckung. Vacuum: halten, mit Bewegung, halten, unter Last, halten. Bei mehreren Themen zählen die Muster der anderen mit. Dehnungen und Mobilisation haben kein Muster und kommen nicht in den Zirkel (vorher z. B. Knie zur Brust im Rücken-Zirkel).
 - **Aufwärmen nur bei Kraft-Themen** (Core, Bauch, Beine & Po, Rücken, Ganzkörper): erst den Puls heben (Laufen auf der Stelle, Hampelmann, Kniehebelauf, Seilspringen, Schattenboxen), dann die Gelenke des Themas bewegen (z. B. Hüftkreisen vor Beine & Po, Schulterkreisen vor Rücken, Katze-Kuh vor Bauch), je 40 s mit 5 s Wechsel; im 5-Min.-Mix nur die Mobilisation (30 s). Dehnen, Vacuum und Yoga ohne Aufwärm-Block.
 - **Durchgang** (Dehnen, Yoga): keine Runden, so viele Übungen, wie in die Zeit passen, 5 s Wechsel. Dehnungen 60 s (beidseitig 45 s je Seite), bei übriger Zeit bis zum Doppelten; Kraft- und Balance-Haltungen (z. B. Boot, Krieger, Heuschrecke) 45 s (beidseitig 30 s je Seite); nie unter 30 s je Seite. Passt die nächste Übung nicht mehr ganz, kommt eine mit kürzerer Haltezeit dazu. Dehnen ohne Aufwärm-, Vacuum- und Ganzkörper-Übungen (z. B. Armkreisen, Inchworm). Dehnen geht reihum die Körperregionen durch: Beinrückseite, Hüftbeuger/vorderer Oberschenkel, Hüfte/Po, Wirbelsäule, Schultern/Brust/Nacken, Flanke; Yoga die Arten: Stand, Rückbeuge, Hüftöffner, Vorbeuge, Balance, Wirbelsäule, Seite, Schultern, Rumpf. Mit Schalter Besenstiel kommen die Stab-Übungen zuerst dran (Region Schultern). Yoga beginnt mit dem Sonnengruß. Am Ende steht die Totenstellung (60 s, 5 Min.: 40 s).
+- **Dehnen für Oberkörper oder Unterkörper** (seit v=53, Nicole, 2026-10-27): Oberkörper = Schultern/Brust/Nacken, Flanke und Wirbelsäule (der Rücken gehört zum Oberkörper), Unterkörper = Beinrückseite, Hüftbeuger/vorderer Oberschenkel, Hüfte/Po. Gilt für das Thema Dehnen, auch neben einem Zirkel; Yoga und der Abschluss nach einem Zirkel ohne Dehnen bleiben gleich. Der Mix heißt dann z. B. „Mix: Dehnen Oberkörper“. Je Region gibt es etwa 11 Dehnungen ohne Besenstiel; bei 30 Min. werden die Haltezeiten deshalb länger (bis zum Doppelten).
 - **Kombination** von Zirkel und Durchgang: nacheinander, erst der Zirkel („Hauptteil“), dann ein Block „Dehnen“, „Yoga“ oder „Dehnen & Yoga“, dann die Totenstellung. Die Zeit teilt sich nach Anzahl der Themen. Nach einem Kraft-Zirkel kommen zuerst die Regionen mit Dehnungen für die Muskeln, die gearbeitet haben (z. B. Beinrückseite, Hüftbeuger, Hüfte nach Beine & Po), dann der Rest des Körpers.
 - **Positionen:** Jeder Teil läuft vom Stehen zum Liegen (Stehen, Stütz, Knien, Bauchlage, Sitzen, Seitenlage, Rückenlage). Das Aufwärmen endet nicht tiefer, als der Zirkel beginnt. Abschluss nach einem Zirkel ohne Durchgang: eine Dehnung für die Themen (z. B. Figur 4 nach Beine & Po, Kobra nach Bauch, Kindhaltung nach Rücken) in der Position, in der der Zirkel endet, oder tiefer; 60 s (5 Min.: 40 s).
 
@@ -206,13 +207,13 @@ Eine feste natürliche Stimme: **Katja** (`de-DE-KatjaNeural`, gewählt von Nico
 
 ## 6. Inhalte
 
-### 6.1 Übungsbibliothek (150 Übungen, deutsch)
+### 6.1 Übungsbibliothek (152 Übungen, deutsch)
 Felder: `id, name, alias[], beschreibung, hinweis, tags[], beidseitig, typ ('zeit'|'atem'), atem {ein, halten, aus, haltenLeer}, hilfsmittel[], bild, icon, quelle, position, muster, fokus`, wo nötig `ansage` (5.10). `bild` (immer null) und `icon` werden nirgends angezeigt (Reserve, die Figur ersetzt beide).
 Jede Zeit-Übung hat eine Ausgangsposition (`position`, seit v=47): `stehen, stuetz, knien, bauchlage, sitzen, seitenlage, rueckenlage`, in dieser Reihenfolge von oben nach unten (`T.POSITIONS`). Mix und Vorlagen laufen danach.
 Kraft-Übungen haben ein Bewegungsmuster (`muster`, z. B. `kniebeuge`, `huefte-strecken`, `drehen`), Dehnungen und Yoga-Haltungen einen Schwerpunkt (`fokus`, z. B. `beine-hinten`, `wirbelsaeule`, `oben`), beide seit v=48; der Mix wählt danach (5.4).
 Hilfsmittel: Matte, Wand, Stuhl, Band, Tisch, Sofa und seit v=48 Stab (Anzeige „Besenstiel“). Die Figur hält den Stab in beiden Händen (`js/figure.js`, Prop `stab`).
-144 Übungen haben eine animierte Figur (`data/poses.js`), die 6 Atem-Übungen den Atem-Kreis. Bilder aus free-exercise-db werden nicht genutzt (Figur statt Bild). Ursprünglich 110 Übungen, am 2026-10-23 kamen 36 dazu (davon 12 Vacuum-Varianten), eine fiel weg, am 2026-10-25 kamen 5 mit Besenstiel dazu.
-Themen (eine Übung kann mehrere haben): Core 43, Dehnen 33, Beine/Po 32, Yoga 24, Rücken 23, Bauch 20, Vacuum 17, Ganzkörper 13, Aufwärmen 10, Oberkörper 8, Atmung 7.
+146 Übungen haben eine animierte Figur (`data/poses.js`), die 6 Atem-Übungen den Atem-Kreis. Bilder aus free-exercise-db werden nicht genutzt (Figur statt Bild). Ursprünglich 110 Übungen, am 2026-10-23 kamen 36 dazu (davon 12 Vacuum-Varianten), eine fiel weg, am 2026-10-25 kamen 5 mit Besenstiel dazu, am 2026-10-27 „Vacuum mit Beinstrecken“ und „Vacuum mit Dead Bug“ (8.11).
+Themen (eine Übung kann mehrere haben): Core 45, Dehnen 33, Beine/Po 32, Yoga 24, Rücken 23, Bauch 20, Vacuum 19, Ganzkörper 13, Aufwärmen 10, Oberkörper 8, Atmung 7.
 
 ### 6.2 Vorlagen (12)
 Je Thema „Kurz“ (~10 Min) und „Lang“ (~20 Min): Vacuum & Core, Bauch, Dehnen & Rücken, Yoga & Atmung, Beine & Po, Starker Rücken. Vacuum & Core: kein Aufwärmen, sondern 60 s Bauchatmung zum Ankommen (seit v=52, Nicole: vor Vacuum ergibt Aufwärmen keinen Sinn), dann Hauptteil (2–3 Runden) und Abschluss. Kraft-Vorlagen (Bauch, Beine & Po, Starker Rücken): Aufwärmen (2–3 Übungen, seit v=50 wie im Mix: erst den Puls heben, dann die Gelenke des Themas, 5 s Wechsel, endet nicht tiefer als der Hauptteil beginnt), Hauptteil als Block mit 2–3 Runden, Abschluss (Dehnen/Atmung). Dehnen & Rücken: ein Durchgang ohne Block-Namen. Yoga & Atmung: Ankommen, Sonnengruß (2 Runden), Haltungen, Abschluss. Seit v=47 läuft der Hauptteil vom Stehen zum Liegen; in den anderen Blöcken (außer dem Aufwärmen) steht man nicht mitten im Block wieder auf (nur die Reihenfolge geändert, Übungen und Zeiten gleich). Nicole prüft die Vorlagen vor einer Veröffentlichung.
@@ -286,7 +287,7 @@ Dazu `takt_run_v1` (laufendes Training samt zurückgestellter Abzeichen-Feiern, 
 | 0a | Mockup des Training-Screens (statisches HTML, 2 Varianten) im Browser zeigen | Erledigt: Variante A (Ring) | ~40k |
 | 0b | Spike auf Nicoles iPhone (Pflicht, Hauptgerät): Mini-Seite mit Sprachansage, Ton, Bildschirm-an, Spotify nebenbei, Stummschalter, App-Wechsel | Erledigt: Test 1 und 2, Ergebnis in 3.1 und 3.2 | ~30k |
 | 1 | Grundgerüst, Design-Tokens, Datenmodell, Timer-Engine, Sprachdateien für feste Sätze (gewählte Stimme), Training-Screen (Ring) mit einem Test-Workout, Test-Hilfe Uhrzeit (Repo + Pages gibt es schon) | Erledigt 2026-10-22 (live, 52 Tests grün, Code-Review ohne kritische Funde, iPhone-Test bestanden, siehe 3.3) | ~220k |
-| 2 | Bibliothek (110 Übungen mit animierter Figur statt Bildern, Katja-Ansagen; seit 2026-10-23 145, seit 2026-10-25 150), Übungs-Screens, eigene Übungen mit Foto/Video | Erledigt 2026-10-22 (live, 81 Tests grün, zwei Prüfungen ohne kritische Funde). iPhone-Test bestanden 2026-10-24 (Figuren flüssig, Ansage anhören, eigenes Foto, Suche mit Tastatur) | ~450k |
+| 2 | Bibliothek (110 Übungen mit animierter Figur statt Bildern, Katja-Ansagen; seit 2026-10-23 145, seit 2026-10-25 150, seit 2026-10-27 152), Übungs-Screens, eigene Übungen mit Foto/Video | Erledigt 2026-10-22 (live, 81 Tests grün, zwei Prüfungen ohne kritische Funde). iPhone-Test bestanden 2026-10-24 (Figuren flüssig, Ansage anhören, eigenes Foto, Suche mit Tastatur) | ~450k |
 | 3 | Workout-Editor, Start-Screen, 12 Vorlagen, Zeit-Budget, Intensität, Mix-Modus | Erledigt 2026-10-23 (live v=15, 121 Tests grün, klickbarer Entwurf von Nicole abgenommen, zwei Prüfungen, wichtige Funde behoben). iPhone-Test bestanden 2026-10-24 (Editor, Kopie einer Vorlage, Anpassen) | ~290k |
 | 4 | Atem-Modus, Seitenwechsel, +15/−15, lernende Dauer, Fertig-Screen, Tagebuch + Abzeichen, Backup (Teilen per Link entfällt vorerst) | Erledigt 2026-10-24 (live v=41, 201 Tests grün, Prüfung ohne kritische Funde; Abzeichen auf Nicoles Wunsch mit Icons + Fortschritt, 22 Stück). Nachbesserungen nach dem ersten Benutzen v=42–44 (8.7), 205 Tests grün. iPhone-Test 2026-10-24 bestanden bis auf die lernende Dauer (noch nicht geprüft), siehe 8.6 | ~250k + ~70k Abzeichen v2 |
 | 5 | PWA (Manifest, Service Worker, Icons), Querformat, Feinschliff, Installations-Hinweis beim ersten Start, Abschlusstest auf dem iPhone | Installierbar, offline, auf dem Homescreen | ~120k |
@@ -463,6 +464,16 @@ Behoben (Entscheidungen Nicole, 2026-10-25: alles außer dem Entwurfs-Speicher, 
 Zurückgestellt:
 - Neuladen (z. B. wenn iOS die Home-Bildschirm-App im Hintergrund beendet) verwirft ungespeicherte Eingaben im Editor und im Formular für eigene Übungen; dafür bräuchte es einen Entwurfs-Speicher.
 - Das Ende eines Trainings prüft nicht, ob das Speichern geklappt hat (wie 8.6, volle Speicher).
+
+### 8.11 Zwei Vacuum-Übungen und Dehnen nach Körperhälfte (2026-10-27, v=53)
+
+Wunsch von Nicole: zwei Vacuum-Übungen in Rückenlage, Knie über der Hüfte, und im Mix beim Dehnen Oberkörper oder Unterkörper wählen (Start: gemischt).
+
+Entscheidungen (Nicole, 2026-10-27): Namen „Vacuum mit Beinstrecken“ (Dead Bug nur mit den Beinen, Arme liegen neben dem Körper) und „Vacuum mit Dead Bug“ (dazu gegengleich der Arm nach hinten), Katja sagt „Vakuum mit …“. Der Rücken gehört beim Dehnen zum Oberkörper.
+
+Umgesetzt: beide Übungen mit Figur und Bauch-Pfeil (`data/poses.js`), Position Rückenlage, Muster „Vakuum mit Bewegung“ (kommen im Mix Vacuum und Core), Sprachdateien. Zeile „Dehnen“ im Mix-Fenster (`index.html`, `js/home.js`, gemerkt in `settings.mixLast.dehnen`), Auswahl in `T.makeMix` über `opts.dehnen` und `T.MIX_DEHNEN` (`js/workouts.js`). Tests: beide Übungen samt Figur (Arme bleiben unten bzw. ein Arm geht über den Kopf), nur Dehnungen der Region in 5 bis 30 Min., auch neben einem Zirkel, gemischt und Yoga unverändert, Dauer für alle 255 Themen-Kombinationen je Region mit und ohne Besenstiel.
+
+Meine Festlegungen (Nicole kann widersprechen): Yoga achtet nicht auf die Auswahl. Der Block heißt neben einem Zirkel weiter „Dehnen“, nur der Name des Mix nennt die Region.
 
 ## 9. Verifikation
 

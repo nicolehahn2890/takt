@@ -72,6 +72,13 @@ window.Takt = window.Takt || {};
     'vacuum-fersentippen': P([SU({ footN: [150, 118], footF: [153, 121] }), { footF: [170, 160], footDirF: -20 },
       { footF: [153, 121], footDirF: -90 }, { footN: [168, 160], footDirN: -20 }],
       { hold: 0.3, move: 0.8, props: [{ type: 'pfeil', x: 88, y: 146, dir: 'unten' }] }),
+    'vacuum-beinstrecken': P([SU({ footN: [150, 118], footF: [153, 121] }), { footF: [190, 150], footDirF: -80 },
+      { footF: [153, 121], footDirF: -90 }, { footN: [188, 148], footDirN: -80 }],
+      { hold: 0.3, move: 0.9, props: [{ type: 'pfeil', x: 88, y: 146, dir: 'unten' }] }),
+    'vacuum-dead-bug': P([SU({ footN: [150, 118], footF: [153, 121], handN: [65, 100], handF: [68, 102], elbowN: 1, elbowF: 1 }),
+      { handN: [14, 152], footF: [190, 150], footDirF: -80 }, { handN: [65, 100], footF: [153, 121], footDirF: -90 },
+      { handF: [16, 153], footN: [188, 148], footDirN: -80 }],
+      { hold: 0.3, move: 0.9, props: [{ type: 'pfeil', x: 90, y: 146, dir: 'unten' }] }),
     /* ---------- Core ---------- */
     'plank': P([PL()]),
     'high-plank': P([HP()]),

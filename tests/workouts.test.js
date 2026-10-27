@@ -288,6 +288,57 @@ test('mix Zirkel: reihum aus den Themen, 5 Uebungen, ab 30 Min. 6', function () 
   eq(mixIds(mixBlock(Takt.makeMix({ themes: ['core'], minutes: 30, seed: 2 }, Takt.EXERCISES), 'Hauptteil')).length, 6);
 });
 
+/* Dehnen fuer Oberkoerper oder Unterkoerper (Nicole, 2026-10-27): der Ruecken gehoert zum Oberkoerper */
+var MIX_REGION = { oben: ['oben', 'seite', 'wirbelsaeule'], unten: ['beine-hinten', 'huefte-vorne', 'huefte'] };
+
+test('mix Dehnen Oberkoerper oder Unterkoerper: nur Dehnungen dieser Region, Name sagt es', function () {
+  Object.keys(MIX_REGION).forEach(function (r) {
+    [5, 10, 20, 30].forEach(function (m) {
+      for (var seed = 1; seed <= 10; seed++) {
+        var w = Takt.makeMix({ themes: ['dehnen'], minutes: m, seed: seed, dehnen: r }, Takt.EXERCISES);
+        var bad = mixIds(mixBlock(w, 'Hauptteil')).filter(function (id) { return MIX_REGION[r].indexOf(mixIdx[id].fokus) < 0; });
+        eq(bad, [], r + ' ' + m + ' Min. ' + seed);
+        eq(mixIds(mixBlock(w, 'Abschluss')), ['totenstellung'], r);
+      }
+    });
+  });
+  eq(Takt.makeMix({ themes: ['dehnen'], minutes: 15, seed: 1, dehnen: 'oben' }, Takt.EXERCISES).name, 'Mix: Dehnen Oberkörper');
+  eq(Takt.makeMix({ themes: ['core', 'dehnen'], minutes: 15, seed: 1, dehnen: 'unten' }, Takt.EXERCISES).name, 'Mix: Core, Dehnen Unterkörper');
+});
+
+test('mix Dehnen Region neben einem Zirkel: der Dehnen-Teil bleibt in der Region', function () {
+  for (var seed = 1; seed <= 10; seed++) {
+    var w = Takt.makeMix({ themes: ['beine', 'dehnen'], minutes: 20, seed: seed, dehnen: 'oben' }, Takt.EXERCISES);
+    eq(mixLabels(w), ['Aufwärmen', 'Hauptteil', 'Dehnen', 'Abschluss']);
+    eq(mixIds(mixBlock(w, 'Dehnen')).filter(function (id) { return MIX_REGION.oben.indexOf(mixIdx[id].fokus) < 0; }), [], 'Seed ' + seed);
+  }
+});
+
+test('mix Dehnen gemischt ist wie bisher, Yoga achtet nicht auf die Region', function () {
+  for (var seed = 1; seed <= 5; seed++) {
+    var plain = Takt.makeMix({ themes: ['dehnen', 'ruecken'], minutes: 15, seed: seed }, Takt.EXERCISES);
+    eq(Takt.makeMix({ themes: ['dehnen', 'ruecken'], minutes: 15, seed: seed, dehnen: 'mix' }, Takt.EXERCISES), plain);
+    eq(Takt.makeMix({ themes: ['dehnen', 'ruecken'], minutes: 15, seed: seed, dehnen: 'quatsch' }, Takt.EXERCISES), plain);
+    eq(Takt.makeMix({ themes: ['yoga'], minutes: 15, seed: seed, dehnen: 'oben' }, Takt.EXERCISES),
+      Takt.makeMix({ themes: ['yoga'], minutes: 15, seed: seed }, Takt.EXERCISES));
+  }
+});
+
+test('mix Dehnen Region: Dauer passt fuer jede Themen-Kombination, auch mit Besenstiel', function () {
+  var bad = [];
+  ['oben', 'unten'].forEach(function (r) {
+    [5, 10, 15, 20, 30].forEach(function (m) {
+      [false, true].forEach(function (stab) {
+        mixEach(m, function (w, th) {
+          var s = Takt.workoutSeconds(w, mixIdx);
+          if (s > m * 60 || s < m * 60 * 0.9) bad.push(r + (stab ? ' Stab ' : ' ') + th.join(',') + ' ' + m + ' Min.: ' + s + ' s');
+        }, { dehnen: r, stab: stab });
+      });
+    });
+  });
+  eq(bad, []);
+});
+
 test('mix Besenstiel: ohne Schalter nie, mit Schalter im Dehnen und Yoga zuerst', function () {
   function stick(w) { return mixAll(w).filter(function (id) { return mixIdx[id].hilfsmittel.indexOf('stab') >= 0; }); }
   for (var seed = 1; seed <= 20; seed++) {

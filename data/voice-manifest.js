@@ -521,6 +521,14 @@ Takt.VOICE_FILES = {
   "src": "assets/voice/ex_vacuum-beckenkippen.mp3",
   "text": "Bauch-Vakuum mit Beckenkippen"
  },
+ "ex_vacuum-beinstrecken": {
+  "src": "assets/voice/ex_vacuum-beinstrecken.mp3",
+  "text": "Vakuum mit Beinstrecken"
+ },
+ "ex_vacuum-dead-bug": {
+  "src": "assets/voice/ex_vacuum-dead-bug.mp3",
+  "text": "Vakuum mit Dead Bug"
+ },
  "ex_vacuum-fersentippen": {
   "src": "assets/voice/ex_vacuum-fersentippen.mp3",
   "text": "Vakuum mit Fersentippen"

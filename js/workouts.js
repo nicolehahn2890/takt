@@ -320,6 +320,10 @@ window.Takt = window.Takt || {};
     dehnen: ['beine-hinten', 'huefte-vorne', 'huefte', 'wirbelsaeule', 'oben', 'seite'],
     yoga: ['stand', 'rueckbeuge', 'huefte', 'beine-hinten', 'balance', 'wirbelsaeule', 'seite', 'oben', 'rumpf']
   };
+  /* Dehnen auf Wunsch nur fuer den Oberkoerper oder nur fuer den Unterkoerper, sonst gemischt (Nicole, 2026-10-27).
+     Der Ruecken gehoert zum Oberkoerper. Gilt nur fuer das Thema Dehnen, Yoga bleibt, wie es ist. */
+  T.MIX_DEHNEN = { oben: ['oben', 'seite', 'wirbelsaeule'], unten: ['beine-hinten', 'huefte-vorne', 'huefte'] };
+  T.MIX_DEHNEN_LABELS = { oben: 'Oberk\u00f6rper', unten: 'Unterk\u00f6rper' };
   /* Haltezeit im Durchgang: Dehnungen hold (beidseitig holdSide je Seite), bei Restzeit bis zum Doppelten;
      Kraft- und Balance-Haltungen (Boot, Krieger) pose (poseSide je Seite); notfalls mindestens holdMin je Seite */
   var MIX = { warm: 2, main: 5, work: 40, rest: 15, warmWork: 40, warmRest: 5, coolWork: 60, maxWork: 60, minWork: 20, maxRounds: 4,
@@ -355,9 +359,12 @@ window.Takt = window.Takt || {};
   function holdFor(e) {
     return stretch(e) ? (e.beidseitig ? 2 * MIX.holdSide : MIX.hold) : (e.beidseitig ? 2 * MIX.poseSide : MIX.pose);
   }
-  /* "Mix: Core, Bauch"; bei vielen Themen gekuerzt ("Mix: Core, Bauch +3"), damit der Name in 40 Zeichen passt */
-  function mixName(themes) {
-    var labels = themes.map(function (k) { return T.MIX_LABELS[k]; });
+  /* "Mix: Core, Bauch"; bei vielen Themen gekuerzt ("Mix: Core, Bauch +3"), damit der Name in 40 Zeichen passt.
+     Mit Region heisst Dehnen z. B. "Dehnen Oberkoerper". */
+  function mixName(themes, region) {
+    var labels = themes.map(function (k) {
+      return k === 'dehnen' && region ? T.MIX_LABELS[k] + ' ' + T.MIX_DEHNEN_LABELS[region] : T.MIX_LABELS[k];
+    });
     for (var k = labels.length; k >= 1; k--) {
       var name = 'Mix: ' + labels.slice(0, k).join(', ') + (k < labels.length ? ' +' + (labels.length - k) : '');
       if (name.length <= LIMIT.name) return name;
@@ -376,7 +383,10 @@ window.Takt = window.Takt || {};
     var minutes = Number(opts.minutes) > 0 ? Number(opts.minutes) : 15;
     var size = minutes <= 5 ? MIX_SHORT : minutes >= 30 ? MIX_LONG : MIX;
     var stab = !!opts.stab;
+    var region = Object.prototype.hasOwnProperty.call(T.MIX_DEHNEN, opts.dehnen) ? opts.dehnen : null;
     var pool = (exercises || []).filter(function (e) { return mixable(e, stab); });
+    /* im Thema, beim Dehnen mit Region nur Dehnungen dieser Region */
+    function inMix(e, k) { return inTheme(e, k) && !(k === 'dehnen' && region && T.MIX_DEHNEN[region].indexOf(e.fokus) < 0); }
     var used = [];
     function free(list) { return list.filter(function (e) { return used.indexOf(e.id) < 0; }); }
     function pick(list) {
@@ -399,7 +409,7 @@ window.Takt = window.Takt || {};
         return e;
       }
       function nextFor(k) {
-        var cands = free(pool.filter(function (x) { return inTheme(x, k) && x[field]; }));
+        var cands = free(pool.filter(function (x) { return inMix(x, k) && x[field]; }));
         var list = lists[k] || [];
         var first = list.filter(function (m) { return cands.some(function (x) { return x[field] === m && isPref(x); }); });
         list = first.concat(list.filter(function (m) { return first.indexOf(m) < 0; }));
@@ -429,7 +439,7 @@ window.Takt = window.Takt || {};
     var coolB = { label: LABEL.cool, repeat: 1, items: [] };
     var workout = {
       id: 'mix-' + ((Math.floor(Number(opts.seed)) || 0) >>> 0),
-      name: mixName(themes),
+      name: mixName(themes, region),
       theme: MIX_COLOR[themes[0]], defaultWork: MIX.work, defaultRest: circ.length ? MIX.rest : MIX.flowRest, source: 'mix',
       blocks: [warmB, mainB, flowB, coolB]
     };

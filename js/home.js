@@ -159,7 +159,8 @@ window.Takt = window.Takt || {};
   }
 
   /* ---------- Mix ---------- */
-  var mix = { themes: ['core'], minutes: 15, stab: false, w: null };   // stab: Uebungen mit Besenstiel erlaubt
+  var mix = { themes: ['core'], minutes: 15, stab: false, dehnen: 'mix', w: null };   // stab: Uebungen mit Besenstiel erlaubt
+  var MIX_DEHNEN = ['mix', 'oben', 'unten'];   // Dehnen gemischt, nur Oberkoerper oder nur Unterkoerper
   var MIX_ORDER = ['core', 'vacuum', 'bauch', 'beine', 'ruecken', 'dehnen', 'yoga', 'ganz'];
   var MIX_MINUTES = [5, 10, 15, 20, 30];
   function openMix() {
@@ -170,6 +171,7 @@ window.Takt = window.Takt || {};
       if (MIX_MINUTES.indexOf(last.minutes) >= 0) mix.minutes = last.minutes;
     }
     if (last && typeof last.stab === 'boolean') mix.stab = last.stab;
+    if (last && MIX_DEHNEN.indexOf(last.dehnen) >= 0) mix.dehnen = last.dehnen;
     mix.w = null;
     renderMix();
     openSheet('mix');
@@ -181,6 +183,8 @@ window.Takt = window.Takt || {};
     Array.prototype.forEach.call($('mx-seg').children, function (b) { b.classList.toggle('on', Number(b.getAttribute('data-min')) === mix.minutes); });
     $('mx-stab').classList.toggle('on', mix.stab);
     $('mx-stab').setAttribute('aria-pressed', String(mix.stab));
+    $('mx-dehnen-fld').hidden = mix.themes.indexOf('dehnen') < 0;
+    Array.prototype.forEach.call($('mx-dehnen').children, function (b) { b.classList.toggle('on', b.getAttribute('data-dehnen') === mix.dehnen); });
     $('mx-go').disabled = !mix.themes.length;
     $('mx-go').hidden = !!mix.w;
     $('mx-res').hidden = !mix.w;
@@ -192,11 +196,11 @@ window.Takt = window.Takt || {};
   }
   /* Auswahl sofort merken (nicht erst beim Mischen): das Fenster oeffnet immer mit der zuletzt gewaehlten */
   function rememberMix() {
-    api.data().settings.mixLast = { themes: mix.themes.slice(), minutes: mix.minutes, stab: mix.stab };
+    api.data().settings.mixLast = { themes: mix.themes.slice(), minutes: mix.minutes, stab: mix.stab, dehnen: mix.dehnen };
     api.save();
   }
   function doMix() {
-    mix.w = T.makeMix({ themes: mix.themes, minutes: mix.minutes, stab: mix.stab, seed: Math.floor(Math.random() * 2147483647) }, T.EXERCISES);
+    mix.w = T.makeMix({ themes: mix.themes, minutes: mix.minutes, stab: mix.stab, dehnen: mix.dehnen, seed: Math.floor(Math.random() * 2147483647) }, T.EXERCISES);
     rememberMix();
     renderMix();
   }
@@ -232,6 +236,10 @@ window.Takt = window.Takt || {};
       if (b) { mix.minutes = Number(b.getAttribute('data-min')); mix.w = null; rememberMix(); renderMix(); }
     });
     $('mx-stab').addEventListener('click', function () { mix.stab = !mix.stab; mix.w = null; rememberMix(); renderMix(); });
+    $('mx-dehnen').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-dehnen]');
+      if (b) { mix.dehnen = b.getAttribute('data-dehnen'); mix.w = null; rememberMix(); renderMix(); }
+    });
     $('mx-go').addEventListener('click', doMix);
     $('mx-again').addEventListener('click', doMix);
     $('mx-save').addEventListener('click', saveMix);
